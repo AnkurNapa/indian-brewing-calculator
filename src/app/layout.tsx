@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Archivo } from 'next/font/google';
 import './globals.css';
 
-const inter = Inter({
+const brandFont = Archivo({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
-  variable: '--font-inter',
+  variable: '--font-brand',
 });
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={brandFont.variable}>
       <body className="min-h-screen bg-parchment font-body text-ink">{children}</body>
     </html>
   );

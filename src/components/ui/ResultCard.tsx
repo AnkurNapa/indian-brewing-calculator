@@ -9,9 +9,9 @@ interface ResultCardProps {
 }
 
 const toneStyles: Record<NonNullable<ResultCardProps['tone']>, string> = {
-  default: 'border-white/10 bg-white/5 backdrop-blur-xl',
-  warning: 'border-[#f5a623]/40 bg-[#f5a623]/10 backdrop-blur-xl',
-  success: 'border-[#4caf50]/40 bg-[#4caf50]/10 backdrop-blur-xl',
+  default: 'border-[#e2e6ea] bg-white shadow-sm',
+  warning: 'border-[#e08b2d]/40 bg-[#e08b2d]/10 shadow-sm',
+  success: 'border-[#59a14f]/40 bg-[#59a14f]/10 shadow-sm',
 };
 
 export function ResultCard({ title, value, unit, tone = 'default', children }: ResultCardProps) {
