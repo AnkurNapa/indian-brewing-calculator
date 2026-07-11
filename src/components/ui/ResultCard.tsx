@@ -9,15 +9,15 @@ interface ResultCardProps {
 }
 
 const toneStyles: Record<NonNullable<ResultCardProps['tone']>, string> = {
-  default: 'border-teal-600 bg-teal-50',
-  warning: 'border-amber-500 bg-amber-50',
-  success: 'border-teal-700 bg-teal-100',
+  default: 'border-white/10 bg-white/5 backdrop-blur-xl',
+  warning: 'border-[#f5a623]/40 bg-[#f5a623]/10 backdrop-blur-xl',
+  success: 'border-[#4caf50]/40 bg-[#4caf50]/10 backdrop-blur-xl',
 };
 
 export function ResultCard({ title, value, unit, tone = 'default', children }: ResultCardProps) {
   return (
     <div
-      className={`rounded-lg border-l-4 p-4 shadow-sm ${toneStyles[tone]} sm:p-5`}
+      className={`rounded-lg border p-4 ${toneStyles[tone]} sm:p-5`}
     >
       <h3 className="font-display text-sm uppercase tracking-wide text-ink/70">{title}</h3>
       {value !== undefined ? (

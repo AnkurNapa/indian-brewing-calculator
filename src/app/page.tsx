@@ -33,7 +33,7 @@ export default function Home() {
 
       <Tabs tabs={TABS} activeId={activeTab} onChange={setActiveTab} />
 
-      <div className="rounded-xl border-2 border-amber-200 bg-white/60 p-4 shadow-md sm:p-6">
+      <div className="rounded-xl border border-white/10 bg-slate-900/70 p-4 backdrop-blur-xl sm:p-6">
         {activeTab === 'water-report' ? (
           <div className="flex flex-col gap-8">
             <WaterReportForm
