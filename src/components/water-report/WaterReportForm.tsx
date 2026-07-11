@@ -1,0 +1,77 @@
+'use client';
+
+import { IonProfile, calculateResidualAlkalinity } from '@/lib/waterChemistry';
+import { NumberField } from '@/components/ui/NumberField';
+import { ResultCard } from '@/components/ui/ResultCard';
+import { SOURCE_WATER_PROFILES } from '@/lib/waterProfiles';
+import { roundForDisplay } from '@/lib/units';
+
+interface WaterReportFormProps {
+  profile: IonProfile;
+  onChange: (profile: IonProfile) => void;
+  title?: string;
+}
+
+const ION_FIELDS: { key: keyof IonProfile; label: string }[] = [
+  { key: 'calcium', label: 'Calcium (Ca)' },
+  { key: 'magnesium', label: 'Magnesium (Mg)' },
+  { key: 'sodium', label: 'Sodium (Na)' },
+  { key: 'sulfate', label: 'Sulfate (SO4)' },
+  { key: 'chloride', label: 'Chloride (Cl)' },
+  { key: 'bicarbonate', label: 'Bicarbonate (HCO3)' },
+  { key: 'alkalinity', label: 'Total Alkalinity (as CaCO3)' },
+];
+
+export function WaterReportForm({ profile, onChange, title = 'Source Water Report' }: WaterReportFormProps) {
+  const ra = calculateResidualAlkalinity(profile);
+
+  return (
+    <section className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
+        <h2 className="font-display text-xl font-bold text-ink">{title}</h2>
+        <label className="font-body text-sm font-medium text-amber-900">
+          Quick-fill from a known water type
+          <select
+            className="mt-1 min-h-[44px] w-full rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-base text-ink"
+            onChange={(e) => {
+              const preset = SOURCE_WATER_PROFILES.find((p) => p.id === e.target.value);
+              if (preset) onChange({ ...preset.profile });
+            }}
+            defaultValue=""
+          >
+            <option value="" disabled>
+              Choose a preset...
+            </option>
+            {SOURCE_WATER_PROFILES.map((preset) => (
+              <option key={preset.id} value={preset.id}>
+                {preset.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {ION_FIELDS.map(({ key, label }) => (
+          <NumberField
+            key={key}
+            label={label}
+            unit="mg/L"
+            value={profile[key]}
+            onChange={(value) => onChange({ ...profile, [key]: value })}
+          />
+        ))}
+      </div>
+
+      <ResultCard
+        title="Residual Alkalinity"
+        value={roundForDisplay(ra).toString()}
+        unit="mg/L as CaCO3"
+        tone={ra > 100 ? 'warning' : 'default'}
+      >
+        RA = Alkalinity - (Ca/1.4 + Mg/1.7). Higher RA pushes mash pH up; very low or
+        negative RA (e.g. RO water) allows dark malt acidity to dominate.
+      </ResultCard>
+    </section>
+  );
+}
