@@ -11,6 +11,7 @@ import { WaterVolumesPanel } from '@/components/water-volumes/WaterVolumesPanel'
 import { BrewhouseCalculatorsPanel } from '@/components/brewhouse/BrewhouseCalculatorsPanel';
 import { TransferLauteringPanel } from '@/components/transfer-lautering/TransferLauteringPanel';
 import { FermentationTrackerPanel } from '@/components/fermentation-tracker/FermentationTrackerPanel';
+import { StyleCheckPanel } from '@/components/style-check/StyleCheckPanel';
 import { useWaterProfile } from '@/hooks/useWaterProfile';
 import {
   DropletIcon,
@@ -21,6 +22,7 @@ import {
   PipeFlowIcon,
   FermenterIcon,
   CalculatorIcon,
+  StyleCheckIcon,
 } from '@/components/ui/icons';
 
 const TABS: TabDef[] = [
@@ -32,6 +34,7 @@ const TABS: TabDef[] = [
   { id: 'transfer-lautering', label: 'Transfer & Lautering', shortLabel: 'Transfer', icon: PipeFlowIcon },
   { id: 'fermentation-tracker', label: 'Fermentation Tracker', shortLabel: 'Ferment', icon: FermenterIcon },
   { id: 'brewhouse', label: 'Brewhouse Calculators', shortLabel: 'Calcs', icon: CalculatorIcon },
+  { id: 'style-check', label: 'BJCP Style Check', shortLabel: 'Style', icon: StyleCheckIcon },
 ];
 
 export default function Home() {
@@ -102,6 +105,10 @@ export default function Home() {
         {activeTab === 'fermentation-tracker' ? <FermentationTrackerPanel /> : null}
 
         {activeTab === 'brewhouse' ? <BrewhouseCalculatorsPanel /> : null}
+
+        {activeTab === 'style-check' ? (
+          <StyleCheckPanel grainBill={state.grainBill} batchVolumeL={state.batchVolumeL} />
+        ) : null}
       </div>
 
       <footer className="flex flex-col items-center gap-1 text-center font-body text-xs text-amber-700/70">

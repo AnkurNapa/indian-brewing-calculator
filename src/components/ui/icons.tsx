@@ -97,3 +97,14 @@ export function CalculatorIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+/** Checklist/target badge -- BJCP Style Check. */
+export function StyleCheckIcon({ className }: IconProps) {
+  return (
+    <svg {...commonProps} className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="4.5" />
+      <circle cx="12" cy="12" r="0.5" fill="currentColor" />
+    </svg>
+  );
+}
