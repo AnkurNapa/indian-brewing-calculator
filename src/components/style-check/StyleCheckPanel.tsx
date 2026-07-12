@@ -19,6 +19,12 @@ interface StyleCheckPanelProps {
   onOgChange: (value: number) => void;
   fg: number;
   onFgChange: (value: number) => void;
+  bjcpStyleId: string;
+  onBjcpStyleChange: (id: string) => void;
+  wortGravitySg: number;
+  onWortGravityChange: (value: number) => void;
+  hopAdditions: HopAddition[];
+  onHopAdditionsChange: (hops: HopAddition[]) => void;
 }
 
 function ParameterRow({ label, unit, compliance }: { label: string; unit: string; compliance: ParameterCompliance }) {
@@ -39,15 +45,23 @@ function ParameterRow({ label, unit, compliance }: { label: string; unit: string
   );
 }
 
-export function StyleCheckPanel({ grainBill, batchVolumeL, og, onOgChange, fg, onFgChange }: StyleCheckPanelProps) {
-  const [styleId, setStyleId] = useState(BJCP_STYLES[0].id);
+export function StyleCheckPanel({
+  grainBill,
+  batchVolumeL,
+  og,
+  onOgChange,
+  fg,
+  onFgChange,
+  bjcpStyleId,
+  onBjcpStyleChange,
+  wortGravitySg,
+  onWortGravityChange,
+  hopAdditions,
+  onHopAdditionsChange,
+}: StyleCheckPanelProps) {
   const [styleSearch, setStyleSearch] = useState('');
-  const [wortGravity, setWortGravity] = useState(1.06);
-  const [hopAdditions, setHopAdditions] = useState<HopAddition[]>([
-    { name: 'Bittering Hop', alphaAcidPercent: 12, weightG: 25, boilTimeMinutes: 60 },
-  ]);
 
-  const style = BJCP_STYLES.find((s) => s.id === styleId) ?? BJCP_STYLES[0];
+  const style = BJCP_STYLES.find((s) => s.id === bjcpStyleId) ?? BJCP_STYLES[0];
 
   const filteredStyles = useMemo(() => {
     const query = styleSearch.trim().toLowerCase();
@@ -59,7 +73,7 @@ export function StyleCheckPanel({ grainBill, batchVolumeL, og, onOgChange, fg, o
 
   const srm = useMemo(() => calculateSrm(grainBill, batchVolumeL), [grainBill, batchVolumeL]);
   const abvPercent = calculateAbvAdvanced(og, fg);
-  const ibuResult = calculateIbu(hopAdditions, wortGravity, batchVolumeL);
+  const ibuResult = calculateIbu(hopAdditions, wortGravitySg, batchVolumeL);
 
   const compliance = checkStyleCompliance(
     { og, fg, ibu: ibuResult.totalIbu, srm, abvPercent },
@@ -67,7 +81,7 @@ export function StyleCheckPanel({ grainBill, batchVolumeL, og, onOgChange, fg, o
   );
 
   const updateHopRow = (index: number, patch: Partial<HopAddition>) => {
-    setHopAdditions(hopAdditions.map((row, i) => (i === index ? { ...row, ...patch } : row)));
+    onHopAdditionsChange(hopAdditions.map((row, i) => (i === index ? { ...row, ...patch } : row)));
   };
 
   return (
@@ -94,13 +108,13 @@ export function StyleCheckPanel({ grainBill, batchVolumeL, og, onOgChange, fg, o
               <button
                 key={s.id}
                 type="button"
-                onClick={() => setStyleId(s.id)}
+                onClick={() => onBjcpStyleChange(s.id)}
                 className={`flex min-h-[44px] w-full flex-col items-start justify-center gap-0.5 border-b border-amber-100 px-3 py-1.5 text-left last:border-b-0 ${
-                  s.id === styleId ? 'bg-teal-700 text-parchment' : 'hover:bg-amber-100'
+                  s.id === bjcpStyleId ? 'bg-teal-700 text-parchment' : 'hover:bg-amber-100'
                 }`}
               >
                 <span className="font-semibold">{s.name}</span>
-                <span className={`text-xs ${s.id === styleId ? 'text-parchment/80' : 'text-amber-700/80'}`}>
+                <span className={`text-xs ${s.id === bjcpStyleId ? 'text-parchment/80' : 'text-amber-700/80'}`}>
                   {s.category}
                 </span>
               </button>
@@ -126,7 +140,7 @@ export function StyleCheckPanel({ grainBill, batchVolumeL, og, onOgChange, fg, o
       <div className="rounded-lg border-2 border-amber-300 bg-amber-50/60 p-4">
         <h3 className="font-display text-sm font-bold uppercase tracking-wide text-amber-900">Hops (for IBU)</h3>
         <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <NumberField label="Wort Gravity (SG)" value={wortGravity} step={0.001} onChange={setWortGravity} />
+          <NumberField label="Wort Gravity (SG)" value={wortGravitySg} step={0.001} onChange={onWortGravityChange} />
         </div>
         <div className="mt-3 flex flex-col gap-2">
           {hopAdditions.map((row, index) => (
@@ -158,7 +172,7 @@ export function StyleCheckPanel({ grainBill, batchVolumeL, og, onOgChange, fg, o
           <button
             type="button"
             onClick={() =>
-              setHopAdditions([...hopAdditions, { name: '', alphaAcidPercent: 0, weightG: 0, boilTimeMinutes: 0 }])
+              onHopAdditionsChange([...hopAdditions, { name: '', alphaAcidPercent: 0, weightG: 0, boilTimeMinutes: 0 }])
             }
             className="min-h-[44px] self-start rounded-md bg-teal-700 px-4 py-2 font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800"
           >

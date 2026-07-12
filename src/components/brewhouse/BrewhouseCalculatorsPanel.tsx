@@ -39,6 +39,10 @@ interface SharedRecipeProps {
   batchVolumeL: number;
   onBatchVolumeChange: (value: number) => void;
   grainBill: GrainBillItem[];
+  wortGravitySg: number;
+  onWortGravityChange: (value: number) => void;
+  hopAdditions: HopAddition[];
+  onHopAdditionsChange: (hops: HopAddition[]) => void;
 }
 
 function AbvAttenuationCalculator({ og, onOgChange, fg, onFgChange }: Pick<SharedRecipeProps, 'og' | 'onOgChange' | 'fg' | 'onFgChange'>) {
@@ -360,23 +364,27 @@ function DryHopCalculator({ batchVolumeL }: { batchVolumeL: number }) {
   );
 }
 
-function IbuCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeProps, 'batchVolumeL' | 'onBatchVolumeChange'>) {
-  const [wortGravity, setWortGravity] = useState(1.05);
-  const [hopAdditions, setHopAdditions] = useState<HopAddition[]>([
-    { name: 'Bittering Hop', alphaAcidPercent: 12, weightG: 20, boilTimeMinutes: 60 },
-  ]);
-
-  const result = calculateIbu(hopAdditions, wortGravity, batchVolumeL);
+function IbuCalculator({
+  batchVolumeL,
+  onBatchVolumeChange,
+  wortGravitySg,
+  onWortGravityChange,
+  hopAdditions,
+  onHopAdditionsChange,
+}: Pick<SharedRecipeProps, 'batchVolumeL' | 'onBatchVolumeChange' | 'wortGravitySg' | 'onWortGravityChange' | 'hopAdditions' | 'onHopAdditionsChange'>) {
+  const result = calculateIbu(hopAdditions, wortGravitySg, batchVolumeL);
 
   const updateRow = (index: number, patch: Partial<HopAddition>) => {
-    setHopAdditions(hopAdditions.map((row, i) => (i === index ? { ...row, ...patch } : row)));
+    onHopAdditionsChange(hopAdditions.map((row, i) => (i === index ? { ...row, ...patch } : row)));
   };
 
   return (
     <SectionCard title="IBU (Tinseth)">
-      <p className="-mt-2 font-body text-xs text-ink/60">Batch volume is shared; wort/boil gravity is kept separate from OG since it can differ.</p>
+      <p className="-mt-2 font-body text-xs text-ink/60">
+        Batch volume, wort gravity, and this hop schedule are shared with the BJCP Style Check tab.
+      </p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <NumberField label="Wort Gravity (SG)" value={wortGravity} step={0.001} onChange={setWortGravity} />
+        <NumberField label="Wort Gravity (SG)" value={wortGravitySg} step={0.001} onChange={onWortGravityChange} />
         <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
       </div>
       <div className="flex flex-col gap-2">
@@ -421,7 +429,7 @@ function IbuCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeP
         <button
           type="button"
           onClick={() =>
-            setHopAdditions([...hopAdditions, { name: '', alphaAcidPercent: 0, weightG: 0, boilTimeMinutes: 0 }])
+            onHopAdditionsChange([...hopAdditions, { name: '', alphaAcidPercent: 0, weightG: 0, boilTimeMinutes: 0 }])
           }
           className="min-h-[44px] self-start rounded-md bg-teal-700 px-4 py-2 font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800"
         >
@@ -430,7 +438,7 @@ function IbuCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeP
       </div>
       <ResultCard title="Total IBU" value={roundForDisplay(result.totalIbu, 1).toString()} />
 
-      <HopWeightForTargetIbuCalculator wortGravity={wortGravity} batchVolumeL={batchVolumeL} />
+      <HopWeightForTargetIbuCalculator wortGravity={wortGravitySg} batchVolumeL={batchVolumeL} />
       <DryHopCalculator batchVolumeL={batchVolumeL} />
     </SectionCard>
   );
@@ -466,14 +474,18 @@ export function BrewhouseCalculatorsPanel({
   batchVolumeL,
   onBatchVolumeChange,
   grainBill,
+  wortGravitySg,
+  onWortGravityChange,
+  hopAdditions,
+  onHopAdditionsChange,
 }: SharedRecipeProps) {
   return (
     <section className="flex flex-col gap-4">
       <h2 className="font-display text-xl font-bold text-ink">Brewhouse Calculators</h2>
       <p className="font-body text-sm text-amber-800">
         Day-to-day production math: gravity/ABV, efficiency, carbonation, pitch rate, bitterness, and color. OG,
-        FG, and batch volume are shared with the BJCP Style Check tab; grain bill is shared with the Water
-        Report tab.
+        FG, batch volume, hop schedule, and grain bill are all shared with the Home overview and BJCP Style
+        Check tabs.
       </p>
       {/* Ordered to match when each reading is actually taken on brew day:
           mash-out efficiency, then gravity corrections, hop bitterness, and
@@ -482,7 +494,14 @@ export function BrewhouseCalculatorsPanel({
           carbonation methods. */}
       <EfficiencyCalculator />
       <HydrometerCorrectionCalculator />
-      <IbuCalculator batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
+      <IbuCalculator
+        batchVolumeL={batchVolumeL}
+        onBatchVolumeChange={onBatchVolumeChange}
+        wortGravitySg={wortGravitySg}
+        onWortGravityChange={onWortGravityChange}
+        hopAdditions={hopAdditions}
+        onHopAdditionsChange={onHopAdditionsChange}
+      />
       <SrmColorCalculator grainBill={grainBill} batchVolumeL={batchVolumeL} />
       <PitchRateCalculator og={og} onOgChange={onOgChange} batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
       <AbvAttenuationCalculator og={og} onOgChange={onOgChange} fg={fg} onFgChange={onFgChange} />

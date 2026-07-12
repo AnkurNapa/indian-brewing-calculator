@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tabs, TabDef } from '@/components/ui/Tabs';
 import { SessionSummary } from '@/components/ui/SessionSummary';
 import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
@@ -105,6 +105,10 @@ export default function Home() {
 
   const activeIndex = TABS.findIndex((tab) => tab.id === activeTab);
   const nextTab = activeIndex >= 0 && activeIndex < TABS.length - 1 ? TABS[activeIndex + 1] : null;
+
+  useEffect(() => {
+    document.title = activeTab === 'home' ? 'Brew Water' : `${activeTabDef.label} - Brew Water`;
+  }, [activeTab, activeTabDef.label]);
 
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-24 pt-2 sm:px-6 sm:pb-16 sm:pt-6">
@@ -215,6 +219,10 @@ export default function Home() {
             batchVolumeL={state.batchVolumeL}
             onBatchVolumeChange={(batchVolumeL) => setState((prev) => ({ ...prev, batchVolumeL }))}
             grainBill={state.grainBill}
+            wortGravitySg={state.wortGravitySg}
+            onWortGravityChange={(wortGravitySg) => setState((prev) => ({ ...prev, wortGravitySg }))}
+            hopAdditions={state.hopAdditions}
+            onHopAdditionsChange={(hopAdditions) => setState((prev) => ({ ...prev, hopAdditions }))}
           />
         ) : null}
 
@@ -226,6 +234,12 @@ export default function Home() {
             onOgChange={(ogSg) => setState((prev) => ({ ...prev, ogSg }))}
             fg={state.fgSg}
             onFgChange={(fgSg) => setState((prev) => ({ ...prev, fgSg }))}
+            bjcpStyleId={state.bjcpStyleId}
+            onBjcpStyleChange={(bjcpStyleId) => setState((prev) => ({ ...prev, bjcpStyleId }))}
+            wortGravitySg={state.wortGravitySg}
+            onWortGravityChange={(wortGravitySg) => setState((prev) => ({ ...prev, wortGravitySg }))}
+            hopAdditions={state.hopAdditions}
+            onHopAdditionsChange={(hopAdditions) => setState((prev) => ({ ...prev, hopAdditions }))}
           />
         ) : null}
 

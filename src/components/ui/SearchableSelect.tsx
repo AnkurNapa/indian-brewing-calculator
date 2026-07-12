@@ -20,6 +20,10 @@ export function SearchableSelect({ label, options, value, onChange, placeholder 
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
+  // Briefly pulses the closed button right after a pick, so the user gets
+  // an unmistakable "yes, that registered" moment instead of having to
+  // trust that the label quietly changing was the confirmation.
+  const [justSelected, setJustSelected] = useState(false);
 
   const selected = options.find((opt) => opt.id === value);
 
@@ -40,6 +44,19 @@ export function SearchableSelect({ label, options, value, onChange, placeholder 
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (!justSelected) return;
+    const timer = setTimeout(() => setJustSelected(false), 900);
+    return () => clearTimeout(timer);
+  }, [justSelected]);
+
+  const selectOption = (id: string) => {
+    onChange(id);
+    setIsOpen(false);
+    setQuery('');
+    setJustSelected(true);
+  };
+
   return (
     <div ref={containerRef} className="relative flex flex-col gap-1">
       <label htmlFor={inputId} className="font-body text-sm font-medium text-amber-900">
@@ -49,10 +66,21 @@ export function SearchableSelect({ label, options, value, onChange, placeholder 
         id={inputId}
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex min-h-[44px] w-full items-center justify-between rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-left text-base text-ink outline-none transition-colors focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
+        className={`flex min-h-[44px] w-full items-center justify-between rounded-md border-2 bg-parchment px-3 py-2 text-left text-base text-ink outline-none transition-colors duration-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 ${
+          justSelected ? 'border-teal-500 ring-2 ring-teal-200 bg-teal-50' : 'border-amber-200'
+        }`}
       >
-        <span className={selected ? '' : 'text-ink/50'}>{selected ? selected.label : placeholder ?? 'Select...'}</span>
-        <span aria-hidden="true" className="ml-2 text-amber-700">
+        <span className="flex min-w-0 items-center gap-1.5">
+          {selected ? (
+            <span aria-hidden="true" className="flex-shrink-0 text-teal-700">
+              ✓
+            </span>
+          ) : null}
+          <span className={`truncate ${selected ? '' : 'text-ink/50'}`}>
+            {selected ? selected.label : placeholder ?? 'Select...'}
+          </span>
+        </span>
+        <span aria-hidden="true" className="ml-2 flex-shrink-0 text-amber-700">
           ▾
         </span>
       </button>
@@ -75,16 +103,17 @@ export function SearchableSelect({ label, options, value, onChange, placeholder 
                 <li key={opt.id}>
                   <button
                     type="button"
-                    onClick={() => {
-                      onChange(opt.id);
-                      setIsOpen(false);
-                      setQuery('');
-                    }}
-                    className={`block w-full px-3 py-2 text-left font-body text-sm hover:bg-teal-50 ${
+                    onClick={() => selectOption(opt.id)}
+                    className={`flex w-full items-center gap-1.5 px-3 py-2 text-left font-body text-sm hover:bg-teal-50 ${
                       opt.id === value ? 'bg-teal-100/60 font-semibold text-teal-900' : 'text-ink'
                     }`}
                   >
-                    {opt.label}
+                    {opt.id === value ? (
+                      <span aria-hidden="true" className="flex-shrink-0">
+                        ✓
+                      </span>
+                    ) : null}
+                    <span className="truncate">{opt.label}</span>
                   </button>
                 </li>
               ))

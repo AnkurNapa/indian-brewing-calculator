@@ -2,6 +2,8 @@
 
 import { useLocalStorageState } from './useLocalStorageState';
 import { EMPTY_ION_PROFILE, GrainBillItem, IonProfile } from '@/lib/waterChemistry';
+import { HopAddition } from '@/lib/ibu';
+import { BJCP_STYLES } from '@/lib/bjcpStyles';
 
 export interface AppState {
   sourceProfile: IonProfile;
@@ -15,6 +17,12 @@ export interface AppState {
   ogSg: number;
   /** Shared recipe final/current gravity, used by ABV and BJCP style check panels. */
   fgSg: number;
+  /** Shared hop schedule, used by the IBU calculator and BJCP style check -- one list, not a copy per panel. */
+  hopAdditions: HopAddition[];
+  /** Wort/boil gravity for the IBU calculation, kept separate from OG since it can differ. */
+  wortGravitySg: number;
+  /** Selected BJCP style (for numeric-range compliance), separate from the water-chemistry targetStyleId. */
+  bjcpStyleId: string;
 }
 
 export const DEFAULT_APP_STATE: AppState = {
@@ -27,6 +35,9 @@ export const DEFAULT_APP_STATE: AppState = {
   targetStyleId: 'pale-ale',
   ogSg: 1.05,
   fgSg: 1.012,
+  hopAdditions: [{ name: 'Bittering Hop', alphaAcidPercent: 12, weightG: 20, boilTimeMinutes: 60 }],
+  wortGravitySg: 1.05,
+  bjcpStyleId: BJCP_STYLES[0].id,
 };
 
 function isValidAppState(value: unknown): value is AppState {
@@ -47,6 +58,12 @@ function isValidAppState(value: unknown): value is AppState {
 
 const STORAGE_KEY = 'indian-brewing-calculator/app-state/v1';
 
+/**
+ * Merge defaults for any field added after a user's state was last
+ * persisted (isValidAppState intentionally only checks the original
+ * fields, so older stored payloads still pass validation) -- avoids
+ * wiping an existing session's data just because the app shape grew.
+ */
 export function useWaterProfile() {
   const [state, setState] = useLocalStorageState<AppState>(
     STORAGE_KEY,
@@ -54,5 +71,5 @@ export function useWaterProfile() {
     isValidAppState,
   );
 
-  return { state, setState };
+  return { state: { ...DEFAULT_APP_STATE, ...state }, setState };
 }
