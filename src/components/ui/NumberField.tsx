@@ -13,6 +13,8 @@ interface NumberFieldProps {
   step?: number;
   allowNegative?: boolean;
   helperText?: string;
+  /** Accessible name to use when `label` is empty and no visual label is rendered. */
+  ariaLabel?: string;
 }
 
 /**
@@ -31,6 +33,7 @@ export function NumberField({
   step = 1,
   allowNegative = false,
   helperText,
+  ariaLabel,
 }: NumberFieldProps) {
   const [raw, setRaw] = useState(String(value));
   const [error, setError] = useState<string | null>(null);
@@ -74,10 +77,12 @@ export function NumberField({
 
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={inputId} className="font-body text-sm font-medium text-amber-900">
-        {label}
-        {unit ? <span className="ml-1 text-amber-600">({unit})</span> : null}
-      </label>
+      {label ? (
+        <label htmlFor={inputId} className="font-body text-sm font-medium text-amber-900">
+          {label}
+          {unit ? <span className="ml-1 text-amber-600">({unit})</span> : null}
+        </label>
+      ) : null}
       <input
         id={inputId}
         type="number"
@@ -96,6 +101,7 @@ export function NumberField({
           error ? 'border-red-400' : 'border-amber-200'
         }`}
         aria-invalid={!!error}
+        aria-label={!label ? ariaLabel : undefined}
         aria-describedby={error ? `${inputId}-error` : undefined}
       />
       {error ? (

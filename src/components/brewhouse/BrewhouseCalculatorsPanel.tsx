@@ -15,6 +15,7 @@ import { calculateIbu, calculateHopWeightForTargetIbu, calculateDryHopWeight, Ho
 import { calculateSrm, srmToApproxHex } from '@/lib/srm';
 import { GrainBillItem } from '@/lib/waterChemistry';
 import { NumberField } from '@/components/ui/NumberField';
+import { GravityField } from '@/components/ui/GravityField';
 import { Input } from '@/components/ui/Input';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
@@ -54,8 +55,8 @@ function AbvAttenuationCalculator({ og, onOgChange, fg, onFgChange }: Pick<Share
     <SectionCard title="OG / FG - ABV & Attenuation">
       <p className="-mt-2 font-body text-xs text-ink/60">Shared with Pitch Rate and BJCP Style Check.</p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <NumberField label="Original Gravity (SG)" value={og} step={0.001} onChange={onOgChange} allowNegative={false} />
-        <NumberField label="Final Gravity (SG)" value={fg} step={0.001} onChange={onFgChange} allowNegative={false} />
+        <GravityField label="Original Gravity" value={og} onChange={onOgChange} />
+        <GravityField label="Final Gravity" value={fg} onChange={onFgChange} />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <ResultCard title="ABV (Simple)" value={roundForDisplay(abvSimple, 2).toString()} unit="%" />
@@ -279,7 +280,7 @@ function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange
         />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <NumberField label="Original Gravity (SG)" value={og} step={0.001} onChange={onOgChange} />
+        <GravityField label="Original Gravity" value={og} onChange={onOgChange} />
         <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

@@ -77,6 +77,7 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
                     name: malt.name,
                     colorLovibond: malt.colorLovibond,
                     category: malt.category,
+                    potentialSg: malt.potentialSg,
                   });
                 }
               }}
@@ -84,7 +85,7 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
             <p className="-mt-1.5 font-body text-xs font-semibold text-amber-700/80">
               Not in the list? Just type any grain name, weight, and color directly below.
             </p>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[2fr_1fr_1fr_1.4fr_auto] sm:items-end">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[2fr_1fr_1fr_1.4fr] sm:items-end">
             <Input
               label="Grain name"
               value={row.name}
@@ -114,6 +115,16 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
                 updateRow(index, { category: (id || undefined) as MaltCategory | undefined })
               }
               options={MALT_CATEGORY_OPTIONS.map((opt) => ({ id: opt.id, label: opt.label }))}
+            />
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+            <NumberField
+              label="Extract Potential (optional)"
+              unit="SG"
+              value={row.potentialSg ?? 0}
+              step={0.001}
+              onChange={(value) => updateRow(index, { potentialSg: value || undefined })}
+              helperText="Maltster spec, typically 1.026-1.038. Used for OG planning in Brewhouse Efficiency."
             />
             <button
               type="button"

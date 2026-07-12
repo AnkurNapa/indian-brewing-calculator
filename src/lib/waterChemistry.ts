@@ -122,6 +122,17 @@ export interface GrainBillItem {
    * and color-only inference cannot detect that).
    */
   category?: MaltCategory;
+  /**
+   * Optional extract potential, expressed as the SG this malt would
+   * produce if 1 kg were fully converted into 1 L of water (a standard
+   * maltster "potential" spec, typically 1.030-1.038 for base malts,
+   * lower for crystal/roasted malts). Not required for the water
+   * chemistry/mash pH/SRM calculations in this file, but recorded here
+   * so it travels with the rest of the grain bill (recipe recap, Home
+   * overview, share/export) instead of being a separate, disconnected
+   * entry in the Brewhouse Efficiency calculator.
+   */
+  potentialSg?: number;
 }
 
 /**

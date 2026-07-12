@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { useFermentationBatches } from '@/hooks/useFermentationBatches';
 import { FermentationEntry, calculateFermentationStats, sortEntriesByTime } from '@/lib/fermentationTracker';
 import { NumberField } from '@/components/ui/NumberField';
+import { GravityField } from '@/components/ui/GravityField';
 import { Input } from '@/components/ui/Input';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { roundForDisplay } from '@/lib/units';
@@ -208,7 +209,7 @@ export function FermentationTrackerPanel() {
                   className="min-h-[44px] w-full rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-base text-ink shadow-inner outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
                 />
               </label>
-              <NumberField label="Gravity (SG)" value={newGravity} step={0.001} onChange={setNewGravity} />
+              <GravityField label="Gravity" value={newGravity} onChange={setNewGravity} />
               <NumberField label="Temperature" unit="°C" value={newTemp} step={0.5} onChange={setNewTemp} allowNegative />
               <Input label="Note (optional)" value={newNote} onChange={setNewNote} placeholder="e.g. krausen dropping" />
             </div>

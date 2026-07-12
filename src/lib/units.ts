@@ -44,6 +44,27 @@ export function roundForDisplay(value: number, decimals = 2): number {
   return Math.round(value * factor) / factor;
 }
 
+/**
+ * Specific gravity <-> degrees Plato conversion, using the standard
+ * published polynomial (the same relationship used throughout general
+ * brewing software/education, not sourced from any proprietary tool).
+ * Degrees Brix uses the identical physical scale (extract percent by
+ * weight) as Plato for an unfermented wort reading, so the same
+ * conversion is used for both -- they only diverge for readings taken
+ * *during* fermentation (alcohol throws off a refractometer's Brix
+ * reading), which is out of scope for a simple gravity-unit toggle.
+ */
+export function sgToPlato(sg: number): number {
+  const safeSg = Number.isFinite(sg) ? sg : 1;
+  return -616.868 + 1111.14 * safeSg - 630.272 * safeSg ** 2 + 135.997 * safeSg ** 3;
+}
+
+/** Inverse of sgToPlato -- standard published approximation. */
+export function platoToSg(plato: number): number {
+  const safePlato = Number.isFinite(plato) ? plato : 0;
+  return 1 + safePlato / (258.6 - (safePlato / 258.2) * 227.1);
+}
+
 export const UNIT_LABELS = {
   volumeSmall: 'L',
   volumeLarge: 'HL',

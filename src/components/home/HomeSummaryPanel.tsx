@@ -108,10 +108,21 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab }: Ho
   const handleShare = async () => {
     const text = buildRecipeShareText(state, {
       bjcpStyleName: bjcpStyle.name,
+      targetWaterStyleName: targetStyleName,
       ibu: ibuResult.totalIbu,
       srm,
       abvPercent: advancedAbv,
       parametersInRange: compliance.parametersInRange,
+      fermentationBatches: fermentationBatches.map((batch) => {
+        const stats = calculateFermentationStats(batch.entries);
+        return {
+          name: batch.name,
+          entryCount: batch.entries.length,
+          currentGravity: stats.currentGravity,
+          apparentAttenuationPercent: stats.apparentAttenuationPercent,
+          likelyComplete: stats.likelyComplete,
+        };
+      }),
     });
     try {
       if (typeof navigator !== 'undefined' && navigator.share) {
@@ -151,6 +162,9 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab }: Ho
               {state.grainBill.map((row, i) => (
                 <li key={i}>
                   {row.name || 'Unnamed grain'} -- {row.weightKg} kg @ {row.colorLovibond}°L
+                  {Number.isFinite(row.potentialSg) && (row.potentialSg as number) > 0
+                    ? `, ${row.potentialSg} SG potential`
+                    : ''}
                 </li>
               ))}
             </ul>

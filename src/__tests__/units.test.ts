@@ -1,5 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { hlToL, lToHl, kgToG, gToKg, roundForDisplay, clamp, parseNumericInput, parseNonNegative } from '@/lib/units';
+import {
+  hlToL,
+  lToHl,
+  kgToG,
+  gToKg,
+  roundForDisplay,
+  clamp,
+  parseNumericInput,
+  parseNonNegative,
+  sgToPlato,
+  platoToSg,
+} from '@/lib/units';
 
 describe('unit conversions', () => {
   it('converts HL to L', () => {
@@ -65,6 +76,20 @@ describe('unit conversions', () => {
 
     it('malformed input returns null', () => {
       expect(parseNonNegative('not a number')).toBeNull();
+    });
+  });
+
+  describe('sgToPlato / platoToSg', () => {
+    it('converts common gravity readings to roughly the expected Plato', () => {
+      expect(sgToPlato(1.05)).toBeCloseTo(12.4, 0);
+      expect(sgToPlato(1.01)).toBeCloseTo(2.5, 0);
+      expect(sgToPlato(1.0)).toBeCloseTo(0, 0);
+    });
+
+    it('round-trips SG -> Plato -> SG within a small tolerance', () => {
+      const original = 1.052;
+      const roundTripped = platoToSg(sgToPlato(original));
+      expect(roundTripped).toBeCloseTo(original, 3);
     });
   });
 });

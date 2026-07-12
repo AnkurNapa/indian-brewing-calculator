@@ -8,6 +8,7 @@ import { calculateIbu, HopAddition } from '@/lib/ibu';
 import { BJCP_STYLES } from '@/lib/bjcpStyles';
 import { checkStyleCompliance, ParameterCompliance } from '@/lib/styleCompliance';
 import { NumberField } from '@/components/ui/NumberField';
+import { GravityField } from '@/components/ui/GravityField';
 import { Input } from '@/components/ui/Input';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { roundForDisplay } from '@/lib/units';
@@ -132,8 +133,8 @@ export function StyleCheckPanel({
           Batch volume ({batchVolumeL} L) comes from Mash Adjustment; OG/FG are shared with Brewhouse Calculators.
         </p>
         <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <NumberField label="Original Gravity (SG)" value={og} step={0.001} onChange={onOgChange} />
-          <NumberField label="Final Gravity (SG)" value={fg} step={0.001} onChange={onFgChange} />
+          <GravityField label="Original Gravity" value={og} onChange={onOgChange} />
+          <GravityField label="Final Gravity" value={fg} onChange={onFgChange} />
         </div>
       </div>
 
