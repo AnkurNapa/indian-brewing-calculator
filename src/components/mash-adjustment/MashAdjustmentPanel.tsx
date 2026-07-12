@@ -107,7 +107,7 @@ export function MashAdjustmentPanel({
         {mashPhResult.note}
       </ResultCard>
 
-      <div className="rounded-lg border-2 border-teal-200 bg-teal-50/60 p-4">
+      <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
         <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">
           Salt Additions ({targetStyle.name})
         </h3>

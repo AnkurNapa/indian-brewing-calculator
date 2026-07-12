@@ -389,7 +389,7 @@ function IbuCalculator({
       </div>
       <div className="flex flex-col gap-2">
         {hopAdditions.map((row, index) => (
-          <div key={index} className="flex flex-col gap-3 rounded-md border border-amber-200 bg-amber-50/40 p-2 sm:border-0 sm:bg-transparent sm:p-0">
+          <div key={index} className="flex flex-col gap-3 rounded-md border-2 border-amber-200 bg-amber-50/40 p-2 sm:border-0 sm:bg-transparent sm:p-0">
             <SearchableSelect
               label="Quick-fill from common hop varieties"
               placeholder="Search hop varieties..."

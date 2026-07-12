@@ -63,7 +63,7 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
         {grainBill.map((row, index) => (
           <div
             key={index}
-            className="flex flex-col gap-3 rounded-lg border-2 border-amber-200 bg-amber-50/60 p-3"
+            className="flex flex-col gap-3 rounded-lg border-2 border-amber-200 bg-amber-50/40 p-3"
           >
             <SearchableSelect
               label="Quick-fill from Weyermann malts"

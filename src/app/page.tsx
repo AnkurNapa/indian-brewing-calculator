@@ -281,7 +281,7 @@ export default function Home() {
         <p>
           Built by Ankur Napa &middot;{' '}
           <a
-            href="https://linkedin.com/in/ankurnapa"
+            href="https://www.linkedin.com/in/ankur-napa"
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-amber-900"

@@ -269,7 +269,7 @@ export function FermentationTrackerPanel() {
                     type="button"
                     onClick={() => deleteEntry(entry.id)}
                     aria-label="Delete reading"
-                    className="min-h-[36px] rounded-md border-2 border-red-300 px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
+                    className="min-h-[44px] rounded-md border-2 border-red-300 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-50"
                   >
                     Delete
                   </button>

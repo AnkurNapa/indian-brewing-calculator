@@ -42,7 +42,7 @@ function SummarySection({
         <button
           type="button"
           onClick={() => onJumpToTab(tabId)}
-          className="min-h-[36px] flex-shrink-0 rounded-full border border-teal-300 px-3 py-1 font-body text-xs font-semibold text-teal-800 hover:bg-teal-50"
+          className="min-h-[44px] flex-shrink-0 rounded-full border-2 border-teal-300 px-3 py-2 font-body text-xs font-semibold text-teal-800 hover:bg-teal-50"
         >
           Edit
         </button>
@@ -197,7 +197,7 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab }: Ho
           <button
             type="button"
             onClick={() => onJumpToTab('style-check')}
-            className="min-h-[36px] flex-shrink-0 rounded-full border border-teal-300 px-3 py-1 font-body text-xs font-semibold text-teal-800 hover:bg-teal-50"
+            className="min-h-[44px] flex-shrink-0 rounded-full border-2 border-teal-300 px-3 py-2 font-body text-xs font-semibold text-teal-800 hover:bg-teal-50"
           >
             Change Style
           </button>

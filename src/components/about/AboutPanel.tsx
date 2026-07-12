@@ -94,13 +94,13 @@ export function AboutPanel() {
             <span className="text-xs text-ink/60">brewing-distilling-ai</span>
           </a>
           <a
-            href="https://linkedin.com/in/ankurnapa"
+            href="https://www.linkedin.com/in/ankur-napa"
             target="_blank"
             rel="noopener noreferrer"
             className="flex min-h-[44px] items-center justify-between rounded-md border border-teal-200 bg-white px-3 py-2 font-medium text-teal-800 hover:bg-teal-50"
           >
             <span>LinkedIn</span>
-            <span className="text-xs text-ink/60">linkedin.com/in/ankurnapa</span>
+            <span className="text-xs text-ink/60">linkedin.com/in/ankur-napa</span>
           </a>
         </div>
       </SectionCard>
