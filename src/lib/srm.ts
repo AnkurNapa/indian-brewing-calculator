@@ -64,3 +64,49 @@ export function mcuToSrm(mcu: number): number {
 export function calculateSrm(grainBill: SrmGrainItem[], volumeL: number): number {
   return mcuToSrm(calculateMcu(grainBill, volumeL));
 }
+
+/**
+ * A small set of SRM reference points (straw to black), each an approximate
+ * sRGB hex commonly used across homebrew color charts to represent that SRM
+ * value when viewed through ~1 inch of beer. Interpolated linearly between
+ * the nearest two points -- a visual approximation for a color swatch, not
+ * a colorimetric conversion.
+ */
+const SRM_COLOR_STOPS: { srm: number; hex: [number, number, number] }[] = [
+  { srm: 0, hex: [255, 230, 153] },
+  { srm: 2, hex: [255, 216, 120] },
+  { srm: 4, hex: [250, 190, 66] },
+  { srm: 6, hex: [242, 162, 39] },
+  { srm: 8, hex: [230, 135, 27] },
+  { srm: 10, hex: [211, 112, 21] },
+  { srm: 13, hex: [189, 94, 19] },
+  { srm: 17, hex: [161, 74, 17] },
+  { srm: 20, hex: [138, 60, 16] },
+  { srm: 24, hex: [120, 48, 15] },
+  { srm: 29, hex: [96, 36, 14] },
+  { srm: 35, hex: [74, 27, 13] },
+  { srm: 40, hex: [58, 20, 12] },
+  { srm: 50, hex: [37, 14, 11] },
+  { srm: 60, hex: [22, 10, 9] },
+];
+
+/** Approximate CSS hex color for a given SRM, for a visual color swatch. */
+export function srmToApproxHex(srm: number): string {
+  const safeSrm = Math.max(0, Number.isFinite(srm) ? srm : 0);
+  const clamped = Math.min(safeSrm, SRM_COLOR_STOPS[SRM_COLOR_STOPS.length - 1].srm);
+
+  let lower = SRM_COLOR_STOPS[0];
+  let upper = SRM_COLOR_STOPS[SRM_COLOR_STOPS.length - 1];
+  for (let i = 0; i < SRM_COLOR_STOPS.length - 1; i += 1) {
+    if (clamped >= SRM_COLOR_STOPS[i].srm && clamped <= SRM_COLOR_STOPS[i + 1].srm) {
+      lower = SRM_COLOR_STOPS[i];
+      upper = SRM_COLOR_STOPS[i + 1];
+      break;
+    }
+  }
+
+  const range = upper.srm - lower.srm;
+  const t = range > 0 ? (clamped - lower.srm) / range : 0;
+  const [r, g, b] = lower.hex.map((channel, i) => Math.round(channel + (upper.hex[i] - channel) * t));
+  return `rgb(${r}, ${g}, ${b})`;
+}

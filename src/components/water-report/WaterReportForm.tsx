@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { IonProfile, calculateResidualAlkalinity } from '@/lib/waterChemistry';
 import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
@@ -25,6 +26,7 @@ const ION_FIELDS: { key: keyof IonProfile; label: string }[] = [
 
 export function WaterReportForm({ profile, onChange, title = 'Source Water Report' }: WaterReportFormProps) {
   const ra = calculateResidualAlkalinity(profile);
+  const [selectedPresetId, setSelectedPresetId] = useState('');
 
   return (
     <section className="flex flex-col gap-4">
@@ -33,11 +35,14 @@ export function WaterReportForm({ profile, onChange, title = 'Source Water Repor
         <SearchableSelect
           label="Quick-fill from a known water type"
           placeholder="Choose a preset..."
-          value=""
+          value={selectedPresetId}
           options={SOURCE_WATER_PROFILES.map((preset) => ({ id: preset.id, label: preset.name }))}
           onChange={(id) => {
             const preset = SOURCE_WATER_PROFILES.find((p) => p.id === id);
-            if (preset) onChange({ ...preset.profile });
+            if (preset) {
+              onChange({ ...preset.profile });
+              setSelectedPresetId(id);
+            }
           }}
         />
       </div>

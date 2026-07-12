@@ -12,6 +12,8 @@ import { calculatePrimingDose, PRIMING_SUGARS } from '@/lib/priming';
 import { calculateForceCarbonationPressure } from '@/lib/forceCarbonation';
 import { calculatePitchRate, calculateRepitchSlurryVolume, YeastStyle } from '@/lib/pitchRate';
 import { calculateIbu, calculateHopWeightForTargetIbu, calculateDryHopWeight, HopAddition } from '@/lib/ibu';
+import { calculateSrm, srmToApproxHex } from '@/lib/srm';
+import { GrainBillItem } from '@/lib/waterChemistry';
 import { NumberField } from '@/components/ui/NumberField';
 import { Input } from '@/components/ui/Input';
 import { ResultCard } from '@/components/ui/ResultCard';
@@ -36,6 +38,7 @@ interface SharedRecipeProps {
   onFgChange: (value: number) => void;
   batchVolumeL: number;
   onBatchVolumeChange: (value: number) => void;
+  grainBill: GrainBillItem[];
 }
 
 function AbvAttenuationCalculator({ og, onOgChange, fg, onFgChange }: Pick<SharedRecipeProps, 'og' | 'onOgChange' | 'fg' | 'onFgChange'>) {
@@ -241,7 +244,7 @@ function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange
       <SearchableSelect
         label="Quick-fill from common yeast strains"
         placeholder="Search yeast strains..."
-        value=""
+        value={YEAST_STRAINS.find((s) => s.name === strainName)?.id ?? ''}
         options={YEAST_STRAINS.map((strain) => ({ id: strain.id, label: strain.name }))}
         onChange={(id) => {
           const strain = YEAST_STRAINS.find((s) => s.id === id);
@@ -382,7 +385,7 @@ function IbuCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeP
             <SearchableSelect
               label="Quick-fill from common hop varieties"
               placeholder="Search hop varieties..."
-              value=""
+              value={HOP_VARIETIES.find((h) => h.name === row.name)?.id ?? ''}
               options={HOP_VARIETIES.map((hop) => ({ id: hop.id, label: `${hop.name} (~${hop.alphaAcidPercent}% AA)` }))}
               onChange={(id) => {
                 const hop = HOP_VARIETIES.find((h) => h.id === id);
@@ -433,6 +436,28 @@ function IbuCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeP
   );
 }
 
+function SrmColorCalculator({ grainBill, batchVolumeL }: { grainBill: GrainBillItem[]; batchVolumeL: number }) {
+  const srm = calculateSrm(grainBill, batchVolumeL);
+  const hasGrain = grainBill.some((row) => row.weightKg > 0);
+
+  return (
+    <SectionCard title="Beer Color (SRM)">
+      <p className="-mt-2 font-body text-xs text-ink/60">
+        Predicted from the Grain Bill (Water Report tab) and batch volume via the Morey equation -- most accurate
+        under ~50 SRM. Add grains there to see a prediction here.
+      </p>
+      <div className="flex items-center gap-4">
+        <div
+          aria-hidden="true"
+          className="h-16 w-16 flex-shrink-0 rounded-full border-2 border-amber-200 shadow-inner"
+          style={{ backgroundColor: hasGrain ? srmToApproxHex(srm) : '#eef1f4' }}
+        />
+        <ResultCard title="Estimated Color" value={hasGrain ? roundForDisplay(srm, 1).toString() : '--'} unit="SRM" />
+      </div>
+    </SectionCard>
+  );
+}
+
 export function BrewhouseCalculatorsPanel({
   og,
   onOgChange,
@@ -440,22 +465,25 @@ export function BrewhouseCalculatorsPanel({
   onFgChange,
   batchVolumeL,
   onBatchVolumeChange,
+  grainBill,
 }: SharedRecipeProps) {
   return (
     <section className="flex flex-col gap-4">
       <h2 className="font-display text-xl font-bold text-ink">Brewhouse Calculators</h2>
       <p className="font-body text-sm text-amber-800">
-        Day-to-day production math: gravity/ABV, efficiency, carbonation, pitch rate, and bitterness. OG, FG, and
-        batch volume are shared with the BJCP Style Check tab.
+        Day-to-day production math: gravity/ABV, efficiency, carbonation, pitch rate, bitterness, and color. OG,
+        FG, and batch volume are shared with the BJCP Style Check tab; grain bill is shared with the Water
+        Report tab.
       </p>
       {/* Ordered to match when each reading is actually taken on brew day:
-          mash-out efficiency, then gravity corrections and hop bitterness
-          during the boil, pitch rate at pitching, OG/FG tracking through
-          fermentation, and finally the two packaging-time carbonation
-          methods. */}
+          mash-out efficiency, then gravity corrections, hop bitterness, and
+          color during the boil, pitch rate at pitching, OG/FG tracking
+          through fermentation, and finally the two packaging-time
+          carbonation methods. */}
       <EfficiencyCalculator />
       <HydrometerCorrectionCalculator />
       <IbuCalculator batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
+      <SrmColorCalculator grainBill={grainBill} batchVolumeL={batchVolumeL} />
       <PitchRateCalculator og={og} onOgChange={onOgChange} batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
       <AbvAttenuationCalculator og={og} onOgChange={onOgChange} fg={fg} onFgChange={onFgChange} />
       <PrimingCalculator batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />

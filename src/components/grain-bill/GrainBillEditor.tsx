@@ -68,7 +68,7 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
             <SearchableSelect
               label="Quick-fill from Weyermann malts"
               placeholder="Search Weyermann malts..."
-              value=""
+              value={WEYERMANN_MALTS.find((m) => m.name === row.name)?.id ?? ''}
               options={WEYERMANN_MALTS.map((malt) => ({ id: malt.id, label: malt.name }))}
               onChange={(id) => {
                 const malt = WEYERMANN_MALTS.find((m) => m.id === id);

@@ -17,8 +17,11 @@ import { FermentationTrackerPanel } from '@/components/fermentation-tracker/Ferm
 import { StyleCheckPanel } from '@/components/style-check/StyleCheckPanel';
 import { AboutPanel } from '@/components/about/AboutPanel';
 import { BackupPanel } from '@/components/backup/BackupPanel';
+import { HomeSummaryPanel } from '@/components/home/HomeSummaryPanel';
 import { useWaterProfile } from '@/hooks/useWaterProfile';
+import { useFermentationBatches } from '@/hooks/useFermentationBatches';
 import {
+  HomeIcon,
   DropletIcon,
   FlaskIcon,
   FunnelIcon,
@@ -35,9 +38,11 @@ import {
 /**
  * Ordered to mirror an actual brew-day walk-through, from water prep
  * through to packaging and record-keeping, so swiping/tapping forward
- * through the tabs follows the same order a brewer works the floor.
+ * through the tabs follows the same order a brewer works the floor. Home
+ * comes first as the session overview / checkpoint screen.
  */
 const TABS: TabDef[] = [
+  { id: 'home', label: 'Home', shortLabel: 'Home', icon: HomeIcon },
   { id: 'water-report', label: 'Water Report', shortLabel: 'Water', icon: DropletIcon },
   { id: 'mash-adjustment', label: 'Mash Adjustment', shortLabel: 'Mash', icon: FlaskIcon },
   { id: 'sparge-adjustment', label: 'Sparge Adjustment', shortLabel: 'Sparge', icon: FunnelIcon },
@@ -54,8 +59,9 @@ const TABS: TabDef[] = [
 const TAB_BY_ID = new Map(TABS.map((tab) => [tab.id, tab]));
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState('water-report');
+  const [activeTab, setActiveTab] = useState('home');
   const { state, setState } = useWaterProfile();
+  const { batches: fermentationBatches } = useFermentationBatches();
   const activeTabDef = TAB_BY_ID.get(activeTab) ?? TABS[0];
 
   const targetStyleName = TARGET_STYLE_PROFILES.find((s) => s.id === state.targetStyleId)?.name ?? '--';
@@ -68,6 +74,7 @@ export default function Home() {
    * step" rather than a generic, always-identical dashboard.
    */
   const summaryItemsByTab: Record<string, { label: string; value: string }[]> = {
+    home: [],
     'water-report': totalGrainKg > 0 ? [{ label: 'Grain Bill', value: `${totalGrainKg.toFixed(2)} kg` }] : [],
     'mash-adjustment': [
       { label: 'Batch Volume', value: `${state.batchVolumeL} L` },
@@ -96,22 +103,49 @@ export default function Home() {
   };
   const summaryItems = summaryItemsByTab[activeTab] ?? [];
 
+  const activeIndex = TABS.findIndex((tab) => tab.id === activeTab);
+  const nextTab = activeIndex >= 0 && activeIndex < TABS.length - 1 ? TABS[activeIndex + 1] : null;
+
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-24 pt-2 sm:px-6 sm:pb-16 sm:pt-6">
-      <header className="hidden flex-col gap-1 text-center sm:flex">
-        <h1 className="font-display text-2xl font-extrabold text-amber-900 sm:text-3xl">
-          Indian Brewing Water Calculator
-        </h1>
+      <header className="hidden flex-col items-center gap-1 text-center sm:flex">
+        <div className="flex items-center gap-2">
+          <DropletIcon className="h-7 w-7 flex-shrink-0 text-teal-700" />
+          <h1 className="font-display text-2xl font-extrabold text-amber-900 sm:text-3xl">Brew Water</h1>
+        </div>
         <p className="font-body text-sm text-amber-800">
           A metric (L / HL / mg / g / °C) brewing water chemistry lab notebook.
         </p>
       </header>
 
-      {/* Compact native-style app bar on phones: current screen title only,
-          since the bottom tab bar (below) carries navigation. */}
-      <div className="sticky top-0 z-20 -mx-4 flex items-center gap-2 border-b-2 border-amber-200 bg-parchment/97 px-4 py-3 backdrop-blur sm:hidden">
-        <activeTabDef.icon className="h-5 w-5 flex-shrink-0 text-teal-700" />
-        <h1 className="font-display text-base font-bold text-amber-900">{activeTabDef.label}</h1>
+      {/* Compact native-style app bar on phones: a short (2-3 word) screen
+          title plus a "step X of N" progress readout, so the current
+          location in the brew-day flow is always legible at a glance --
+          instead of the long full tab label, which doesn't fit a phone
+          title bar cleanly. */}
+      <div className="sticky top-0 z-20 -mx-4 flex items-center justify-between gap-2 border-b-2 border-amber-200 bg-parchment/97 px-4 py-3 backdrop-blur sm:hidden">
+        <div className="flex items-center gap-2">
+          {activeTab !== 'home' ? (
+            <button
+              type="button"
+              onClick={() => setActiveTab('home')}
+              aria-label="Go to Home overview"
+              className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-teal-700 hover:bg-teal-50 active:bg-teal-100"
+            >
+              <HomeIcon className="h-5 w-5" />
+            </button>
+          ) : (
+            <activeTabDef.icon className="h-5 w-5 flex-shrink-0 text-teal-700" />
+          )}
+          <h1 className="font-display text-base font-bold text-amber-900">
+            {activeTabDef.shortLabel ?? activeTabDef.label}
+          </h1>
+        </div>
+        {activeTab !== 'home' ? (
+          <span className="flex-shrink-0 rounded-full bg-amber-100 px-2 py-1 font-body text-[0.65rem] font-semibold text-amber-700">
+            Step {activeIndex} of {TABS.length - 1}
+          </span>
+        ) : null}
       </div>
 
       <Tabs tabs={TABS} activeId={activeTab} onChange={setActiveTab} />
@@ -119,6 +153,10 @@ export default function Home() {
       <SessionSummary items={summaryItems} />
 
       <div className="rounded-2xl border border-[#e2e6ea] bg-white p-4 shadow-sm sm:p-6">
+        {activeTab === 'home' ? (
+          <HomeSummaryPanel state={state} fermentationBatches={fermentationBatches} onJumpToTab={setActiveTab} />
+        ) : null}
+
         {activeTab === 'water-report' ? (
           <div className="flex flex-col gap-8">
             <WaterReportForm
@@ -176,6 +214,7 @@ export default function Home() {
             onFgChange={(fgSg) => setState((prev) => ({ ...prev, fgSg }))}
             batchVolumeL={state.batchVolumeL}
             onBatchVolumeChange={(batchVolumeL) => setState((prev) => ({ ...prev, batchVolumeL }))}
+            grainBill={state.grainBill}
           />
         ) : null}
 
@@ -193,6 +232,30 @@ export default function Home() {
         {activeTab === 'backup' ? <BackupPanel grainBill={state.grainBill} /> : null}
 
         {activeTab === 'about' ? <AboutPanel /> : null}
+
+        {nextTab ? (
+          <div className="mt-6 border-t border-amber-200 pt-4">
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab(nextTab.id);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="flex min-h-[52px] w-full items-center justify-between gap-2 rounded-xl bg-teal-700 px-4 py-3 text-left font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800 active:bg-teal-900"
+            >
+              <span className="flex flex-col">
+                <span className="text-xs font-normal uppercase tracking-wide text-parchment/70">Next Step</span>
+                <span className="flex items-center gap-1.5">
+                  <nextTab.icon className="h-4 w-4 flex-shrink-0" />
+                  {nextTab.label}
+                </span>
+              </span>
+              <span aria-hidden="true" className="text-lg">
+                →
+              </span>
+            </button>
+          </div>
+        ) : null}
       </div>
 
       <footer className="flex flex-col items-center gap-1 text-center font-body text-xs text-amber-700/70">

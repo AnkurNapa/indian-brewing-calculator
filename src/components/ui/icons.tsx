@@ -120,6 +120,17 @@ export function InfoIcon({ className }: IconProps) {
   );
 }
 
+/** House -- Home / brew session overview. */
+export function HomeIcon({ className }: IconProps) {
+  return (
+    <svg {...commonProps} className={className} aria-hidden="true">
+      <path d="M4 11.5 12 4l8 7.5" />
+      <path d="M6 10v9.5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V10" />
+      <path d="M10 20.5V14h4v6.5" />
+    </svg>
+  );
+}
+
 /** Cloud with sync arrows -- Google Sync. */
 export function CloudSyncIcon({ className }: IconProps) {
   return (
