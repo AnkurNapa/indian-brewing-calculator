@@ -119,3 +119,13 @@ export function InfoIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+/** Cloud with sync arrows -- Google Sync. */
+export function CloudSyncIcon({ className }: IconProps) {
+  return (
+    <svg {...commonProps} className={className} aria-hidden="true">
+      <path d="M7 17.5a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.2 8.1a3.7 3.7 0 0 1-.7 7.4H7.3Z" />
+      <path d="M10.5 12.5 12 11l1.5 1.5M12 11v5" />
+    </svg>
+  );
+}

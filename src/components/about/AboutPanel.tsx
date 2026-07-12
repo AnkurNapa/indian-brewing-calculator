@@ -20,7 +20,12 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'Is my data uploaded anywhere?',
     answer:
-      'No. Everything you enter is saved only in your browser\'s local storage on this device -- see the footer note on every tab. There is no server or database behind this app.',
+      'By default, no -- everything you enter is saved only in your browser\'s local storage on this device, and there is no server or database behind this app. The Backup & Sync tab has an optional Google Sync you can opt into, which writes your data to a private spreadsheet in your own Google Drive; nothing is sent to any server the app author runs.',
+  },
+  {
+    question: 'How does Backup & Sync work?',
+    answer:
+      'Two independent options: a local Export/Import (download a .json backup or .csv tables, no account needed) and Google Sync (sign in with your own Google account; the app talks directly to the Sheets API from your browser to read/write a spreadsheet it creates in your Drive). Use either, both, or neither.',
   },
   {
     question: 'Where do the formulas come from?',
@@ -131,8 +136,10 @@ export function AboutPanel() {
           arising from use of this app or reliance on its calculations.
         </p>
         <p>
-          All data you enter is stored only in your own browser&apos;s local storage on this device -- see the
-          privacy note in the footer. Continued use of the app constitutes acceptance of these terms.
+          By default, all data you enter is stored only in your own browser&apos;s local storage on this device.
+          If you opt in to Google Sync (Backup &amp; Sync tab), your data is written to a spreadsheet in your
+          own Google Drive using your own Google sign-in -- this app never has a server that stores, sees, or
+          transmits your data anywhere else. Continued use of the app constitutes acceptance of these terms.
         </p>
       </SectionCard>
     </section>

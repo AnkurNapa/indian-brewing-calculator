@@ -13,6 +13,7 @@ import { TransferLauteringPanel } from '@/components/transfer-lautering/Transfer
 import { FermentationTrackerPanel } from '@/components/fermentation-tracker/FermentationTrackerPanel';
 import { StyleCheckPanel } from '@/components/style-check/StyleCheckPanel';
 import { AboutPanel } from '@/components/about/AboutPanel';
+import { BackupPanel } from '@/components/backup/BackupPanel';
 import { useWaterProfile } from '@/hooks/useWaterProfile';
 import {
   DropletIcon,
@@ -25,6 +26,7 @@ import {
   CalculatorIcon,
   StyleCheckIcon,
   InfoIcon,
+  CloudSyncIcon,
 } from '@/components/ui/icons';
 
 const TABS: TabDef[] = [
@@ -37,6 +39,7 @@ const TABS: TabDef[] = [
   { id: 'fermentation-tracker', label: 'Fermentation Tracker', shortLabel: 'Ferment', icon: FermenterIcon },
   { id: 'brewhouse', label: 'Brewhouse Calculators', shortLabel: 'Calcs', icon: CalculatorIcon },
   { id: 'style-check', label: 'BJCP Style Check', shortLabel: 'Style', icon: StyleCheckIcon },
+  { id: 'backup', label: 'Backup & Sync', shortLabel: 'Backup', icon: CloudSyncIcon },
   { id: 'about', label: 'About', shortLabel: 'About', icon: InfoIcon },
 ];
 
@@ -129,6 +132,8 @@ export default function Home() {
           />
         ) : null}
 
+        {activeTab === 'backup' ? <BackupPanel grainBill={state.grainBill} /> : null}
+
         {activeTab === 'about' ? <AboutPanel /> : null}
       </div>
 
@@ -150,10 +155,11 @@ export default function Home() {
           </a>
         </p>
         <p className="max-w-md text-amber-700/60">
-          This app does not collect or transmit your data anywhere. All entries (water reports, grain bills,
-          batch settings) are saved only in your own browser&apos;s local storage on this device. We take no
-          responsibility for the confidentiality or backup of data stored this way -- clearing your browser
-          data will erase it.
+          By default, this app does not collect or transmit your data anywhere -- all entries are saved only in
+          your own browser&apos;s local storage on this device, and clearing your browser data will erase it. If
+          you choose to use Google Sync (Backup &amp; Sync tab), your data is written to a private spreadsheet
+          in your own Google Drive -- never to any server we run. We take no responsibility for the
+          confidentiality or backup of data stored either way.
         </p>
       </footer>
     </main>
