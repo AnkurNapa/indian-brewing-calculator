@@ -107,7 +107,8 @@ export default function Home() {
   const nextTab = activeIndex >= 0 && activeIndex < TABS.length - 1 ? TABS[activeIndex + 1] : null;
 
   useEffect(() => {
-    document.title = activeTab === 'home' ? 'Brew Water' : `${activeTabDef.label} - Brew Water`;
+    document.title =
+      activeTab === 'home' ? "Indian Brewer's Calculator" : `${activeTabDef.label} - Indian Brewer's Calculator`;
   }, [activeTab, activeTabDef.label]);
 
   return (
@@ -115,7 +116,9 @@ export default function Home() {
       <header className="hidden flex-col items-center gap-1 text-center sm:flex">
         <div className="flex items-center gap-2">
           <DropletIcon className="h-7 w-7 flex-shrink-0 text-teal-700" />
-          <h1 className="font-display text-2xl font-extrabold text-amber-900 sm:text-3xl">Brew Water</h1>
+          <h1 className="font-display text-2xl font-extrabold text-amber-900 sm:text-3xl">
+            Indian Brewer&apos;s Calculator
+          </h1>
         </div>
         <p className="font-body text-sm text-amber-800">
           A metric (L / HL / mg / g / °C) brewing water chemistry lab notebook.
@@ -272,7 +275,8 @@ export default function Home() {
         ) : null}
       </div>
 
-      <footer className="flex flex-col items-center gap-1 text-center font-body text-xs text-amber-700/70">
+      <footer className="flex flex-col items-center gap-2 border-t border-amber-200 pt-6 text-center font-body text-xs text-amber-700/70">
+        <p className="font-display text-sm font-bold text-amber-900">Indian Brewer&apos;s Calculator</p>
         <p>All units metric: Liters, Hectoliters, milligrams, grams, °Celsius, °Lovibond for grain color.</p>
         <p>
           Built by Ankur Napa &middot;{' '}

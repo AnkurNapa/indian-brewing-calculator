@@ -213,8 +213,23 @@ function residualAlkalinityToMeq(residualAlkalinity: number, mashWaterVolumeL: n
  * does not supply an explicit mash water volume. This is a typical
  * homebrew/small-commercial mash thickness, used only to estimate the
  * residual-alkalinity buffering term when volume isn't otherwise known.
+ * Matches the default used by the Water Volumes calculator so the two
+ * stay consistent.
  */
-const DEFAULT_MASH_THICKNESS_L_PER_KG = 3.0;
+export const DEFAULT_MASH_THICKNESS_L_PER_KG = 3.0;
+
+/**
+ * Estimate mash (strike) water volume from total grist weight, using the
+ * default mash thickness. Exported so any caller needing "the water the
+ * mash pH/acid dose is actually happening in" -- as opposed to the final
+ * batch volume, which also includes sparge water added later -- uses the
+ * same basis `predictMashPh` uses internally, instead of accidentally
+ * substituting the much larger total batch volume.
+ */
+export function estimateMashWaterVolumeL(totalGristWeightKg: number): number {
+  const safeWeight = Number.isFinite(totalGristWeightKg) && totalGristWeightKg > 0 ? totalGristWeightKg : 0;
+  return safeWeight * DEFAULT_MASH_THICKNESS_L_PER_KG;
+}
 
 /**
  * Predict mash pH from the source water's residual alkalinity and the
@@ -289,7 +304,7 @@ export function predictMashPh(
   const mashWaterVolume =
     Number.isFinite(mashWaterVolumeL) && (mashWaterVolumeL as number) > 0
       ? (mashWaterVolumeL as number)
-      : totalGristWeightKg * DEFAULT_MASH_THICKNESS_L_PER_KG;
+      : estimateMashWaterVolumeL(totalGristWeightKg);
 
   const raMeq = residualAlkalinityToMeq(residualAlkalinity, mashWaterVolume);
   const raShiftPh = totalBufferingMeqPerPh > 0 ? raMeq / totalBufferingMeqPerPh : 0;

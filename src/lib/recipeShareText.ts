@@ -47,7 +47,7 @@ export function buildRecipeShareText(state: AppState, extras: RecipeShareExtras)
   lines.push(`IBU: ${roundForDisplay(extras.ibu, 1)}   Color: ${extras.srm !== null ? `${roundForDisplay(extras.srm, 1)} SRM` : 'n/a'}`);
   lines.push('');
 
-  lines.push('Made with Indian Brewing Water Calculator (ankurnapa.github.io/indian-brewing-calculator)');
+  lines.push("Made with Indian Brewer's Calculator (ankurnapa.github.io/indian-brewing-calculator)");
 
   return lines.join('\n');
 }

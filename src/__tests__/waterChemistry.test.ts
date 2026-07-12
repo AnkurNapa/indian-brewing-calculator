@@ -5,6 +5,7 @@ import {
   ionProfileToMeq,
   predictMashPh,
   classifyMaltCategory,
+  estimateMashWaterVolumeL,
   EMPTY_ION_PROFILE,
   MASH_PH_MIN,
   MASH_PH_MAX,
@@ -156,5 +157,28 @@ describe('predictMashPh', () => {
     const thick = predictMashPh(100, grainBill, 5);
     // More mash water carries more alkalinity to neutralize -> higher pH shift.
     expect(thin.predictedPh).toBeGreaterThan(thick.predictedPh);
+  });
+});
+
+describe('estimateMashWaterVolumeL', () => {
+  it('scales linearly with grist weight at the default mash thickness (3 L/kg)', () => {
+    expect(estimateMashWaterVolumeL(5)).toBeCloseTo(15, 5);
+    expect(estimateMashWaterVolumeL(10)).toBeCloseTo(30, 5);
+  });
+
+  it('is meaningfully smaller than a typical full batch volume, not equal to it', () => {
+    // Regression guard for the bug where acid dosing used the full batch
+    // volume (mash + sparge water) instead of just the mash water the
+    // acid is actually added to -- a 5 kg grist in a 20 L batch has ~15 L
+    // of mash water, not 20 L, so dosing against the full batch volume
+    // would overdose acid by ~33% in this example.
+    const grainWeightKg = 5;
+    const batchVolumeL = 20;
+    expect(estimateMashWaterVolumeL(grainWeightKg)).toBeLessThan(batchVolumeL);
+  });
+
+  it('returns 0 for zero or negative grist weight', () => {
+    expect(estimateMashWaterVolumeL(0)).toBe(0);
+    expect(estimateMashWaterVolumeL(-5)).toBe(0);
   });
 });

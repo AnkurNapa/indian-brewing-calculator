@@ -1,6 +1,6 @@
 {
-  "name": "Indian Brewing Water Calculator",
-  "short_name": "Brew Water",
+  "name": "Indian Brewer's Calculator",
+  "short_name": "Brewer's Calc",
   "description": "A metric brewing water chemistry lab notebook: residual alkalinity, mash pH, salt & acid dosing, sparge adjustment, fermentation tracking, and BJCP style checks.",
   "start_url": "./",
   "scope": "./",

@@ -9,7 +9,7 @@ const brandFont = Archivo({
 });
 
 export const metadata: Metadata = {
-  title: 'Indian Brewing Water Calculator',
+  title: "Indian Brewer's Calculator",
   description: 'A metric brewing water chemistry calculator: residual alkalinity, mash pH prediction, salt & acid dosing, sparge adjustment, and water blending.',
   manifest: 'manifest.webmanifest',
   icons: {
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Brew Water',
+    title: "Brewer's Calc",
   },
 };
 

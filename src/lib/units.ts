@@ -5,7 +5,7 @@
  *   - Volume: Liters (L), Hectoliters (HL)
  *   - Mass: milligrams (mg), grams (g), kilograms (kg)
  *   - Temperature: degrees Celsius (°C)
- *   - Grain color: degrees Lovibond (°L) — a brewing-industry convention,
+ *   - Grain color: degrees Lovibond (°L) -- a brewing-industry convention,
  *     not an SI unit, but retained because it is the universal grain-color
  *     scale used by maltsters and brewers worldwide (including in metric
  *     countries). No imperial units (gallons, ounces, °F) are used anywhere.

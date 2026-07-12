@@ -73,31 +73,34 @@ export function AboutPanel() {
       <h2 className="font-display text-xl font-bold text-ink">About</h2>
 
       <SectionCard title="About Me">
-        <p>Ankur Napa — brewmaster exploring where AI meets brewing and distilling.</p>
-        <div className="flex flex-col gap-1">
+        <p>Ankur Napa, brewmaster exploring where AI meets brewing and distilling.</p>
+        <div className="flex flex-col gap-2">
           <a
             href="https://ankurnapa.github.io"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline hover:text-teal-800"
+            className="flex min-h-[44px] items-center justify-between rounded-md border border-teal-200 bg-white px-3 py-2 font-medium text-teal-800 hover:bg-teal-50"
           >
-            Blog — ankurnapa.github.io
+            <span>Blog</span>
+            <span className="text-xs text-ink/60">ankurnapa.github.io</span>
           </a>
           <a
             href="https://ankurnapa.github.io/brewing-distilling-ai/"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline hover:text-teal-800"
+            className="flex min-h-[44px] items-center justify-between rounded-md border border-teal-200 bg-white px-3 py-2 font-medium text-teal-800 hover:bg-teal-50"
           >
-            AI for Brewers and Distillers — brewing-distilling-ai
+            <span>AI for Brewers and Distillers</span>
+            <span className="text-xs text-ink/60">brewing-distilling-ai</span>
           </a>
           <a
             href="https://linkedin.com/in/ankurnapa"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline hover:text-teal-800"
+            className="flex min-h-[44px] items-center justify-between rounded-md border border-teal-200 bg-white px-3 py-2 font-medium text-teal-800 hover:bg-teal-50"
           >
-            LinkedIn — linkedin.com/in/ankurnapa
+            <span>LinkedIn</span>
+            <span className="text-xs text-ink/60">linkedin.com/in/ankurnapa</span>
           </a>
         </div>
       </SectionCard>

@@ -1,7 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { IonProfile, EMPTY_ION_PROFILE, GrainBillItem, calculateResidualAlkalinity, predictMashPh } from '@/lib/waterChemistry';
+import {
+  IonProfile,
+  EMPTY_ION_PROFILE,
+  GrainBillItem,
+  calculateResidualAlkalinity,
+  predictMashPh,
+  estimateMashWaterVolumeL,
+} from '@/lib/waterChemistry';
 import { solveSaltAdditions } from '@/lib/saltAdditions';
 import { ACID_TYPES, calculateAcidDose } from '@/lib/acidAdditions';
 import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
@@ -38,6 +45,7 @@ export function MashAdjustmentPanel({
 
   const residualAlkalinity = calculateResidualAlkalinity(sourceProfile);
   const mashPhResult = predictMashPh(residualAlkalinity, grainBill);
+  const mashWaterVolumeL = estimateMashWaterVolumeL(mashPhResult.totalGristWeightKg);
 
   const saltResult = solveSaltAdditions(
     sourceProfile,
@@ -53,7 +61,10 @@ export function MashAdjustmentPanel({
   );
 
   const acid = ACID_TYPES.find((a) => a.id === acidId) ?? ACID_TYPES[0];
-  const acidDose = calculateAcidDose(mashPhResult.predictedPh, targetMashPh, batchVolumeL, acid);
+  // Acid is dosed into the mash (strike water), not the full batch --
+  // batchVolumeL also includes sparge water added later, so using it
+  // here would overdose acid relative to what's actually in the mash tun.
+  const acidDose = calculateAcidDose(mashPhResult.predictedPh, targetMashPh, mashWaterVolumeL, acid);
 
   const dilutionResult = saltResult.infeasible
     ? solveDilutionRatio(sourceProfile, EMPTY_ION_PROFILE, {
@@ -166,6 +177,11 @@ export function MashAdjustmentPanel({
           {acidDose.alreadyAtTarget
             ? 'Already at or below target pH -- no acid needed.'
             : `Add approximately ${roundForDisplay(acidDose.mL, 1)} mL of ${acid.name} to the mash.`}
+        </p>
+        <p className="mt-1 font-body text-xs text-ink/60">
+          Dosed against an estimated {roundForDisplay(mashWaterVolumeL, 1)} L of mash water (grist weight x{' '}
+          {estimateMashWaterVolumeL(1)} L/kg), not the {batchVolumeL} L total batch volume -- acid goes in the mash
+          tun, sparge water comes later.
         </p>
       </div>
     </section>
