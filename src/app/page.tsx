@@ -9,6 +9,7 @@ import { SpargeAdjustmentPanel } from '@/components/sparge-adjustment/SpargeAdju
 import { BlendingPanel } from '@/components/blending/BlendingPanel';
 import { WaterVolumesPanel } from '@/components/water-volumes/WaterVolumesPanel';
 import { BrewhouseCalculatorsPanel } from '@/components/brewhouse/BrewhouseCalculatorsPanel';
+import { TransferLauteringPanel } from '@/components/transfer-lautering/TransferLauteringPanel';
 import { useWaterProfile } from '@/hooks/useWaterProfile';
 
 const TABS: TabDef[] = [
@@ -17,6 +18,7 @@ const TABS: TabDef[] = [
   { id: 'sparge-adjustment', label: 'Sparge Adjustment' },
   { id: 'blending', label: 'Blending' },
   { id: 'water-volumes', label: 'Water Volumes' },
+  { id: 'transfer-lautering', label: 'Transfer & Lautering' },
   { id: 'brewhouse', label: 'Brewhouse Calculators' },
 ];
 
@@ -82,6 +84,8 @@ export default function Home() {
         ) : null}
 
         {activeTab === 'water-volumes' ? <WaterVolumesPanel grainBill={state.grainBill} /> : null}
+
+        {activeTab === 'transfer-lautering' ? <TransferLauteringPanel grainBill={state.grainBill} /> : null}
 
         {activeTab === 'brewhouse' ? <BrewhouseCalculatorsPanel /> : null}
       </div>
