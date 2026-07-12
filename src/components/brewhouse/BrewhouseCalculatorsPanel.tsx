@@ -246,7 +246,7 @@ function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange
   return (
     <SectionCard title="Yeast Pitch Rate">
       <SearchableSelect
-        label="Quick-fill from common yeast strains"
+        label="Quick-fill from common yeast strains (optional)"
         placeholder="Search yeast strains..."
         value={YEAST_STRAINS.find((s) => s.name === strainName)?.id ?? ''}
         options={YEAST_STRAINS.map((strain) => ({ id: strain.id, label: strain.name }))}
@@ -258,6 +258,9 @@ function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange
           }
         }}
       />
+      <p className="-mt-2 font-body text-xs text-ink/50">
+        Not in the list? Just type any strain name below and pick Ale or Lager.
+      </p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
           label="Strain (optional)"
@@ -391,7 +394,7 @@ function IbuCalculator({
         {hopAdditions.map((row, index) => (
           <div key={index} className="flex flex-col gap-3 rounded-md border-2 border-amber-200 bg-amber-50/40 p-2 sm:border-0 sm:bg-transparent sm:p-0">
             <SearchableSelect
-              label="Quick-fill from common hop varieties"
+              label="Quick-fill from common hop varieties (optional)"
               placeholder="Search hop varieties..."
               value={HOP_VARIETIES.find((h) => h.name === row.name)?.id ?? ''}
               options={HOP_VARIETIES.map((hop) => ({ id: hop.id, label: `${hop.name} (~${hop.alphaAcidPercent}% AA)` }))}
@@ -400,6 +403,9 @@ function IbuCalculator({
                 if (hop) updateRow(index, { name: hop.name, alphaAcidPercent: hop.alphaAcidPercent });
               }}
             />
+            <p className="-mt-1.5 font-body text-xs text-ink/50">
+              Not in the list? Just type any hop name, alpha acid, weight, and boil time directly below.
+            </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
             <Input label="Hop" value={row.name} onChange={(value) => updateRow(index, { name: value })} />
             <NumberField

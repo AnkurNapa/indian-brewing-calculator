@@ -66,7 +66,7 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
             className="flex flex-col gap-3 rounded-lg border-2 border-amber-200 bg-amber-50/40 p-3"
           >
             <SearchableSelect
-              label="Quick-fill from Weyermann malts"
+              label="Quick-fill from Weyermann malts (optional)"
               placeholder="Search Weyermann malts..."
               value={WEYERMANN_MALTS.find((m) => m.name === row.name)?.id ?? ''}
               options={WEYERMANN_MALTS.map((malt) => ({ id: malt.id, label: malt.name }))}
@@ -81,6 +81,9 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
                 }
               }}
             />
+            <p className="-mt-1.5 font-body text-xs text-ink/50">
+              Not in the list? Just type any grain name, weight, and color directly below.
+            </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-[2fr_1fr_1fr_1.4fr_auto] sm:items-end">
             <Input
               label="Grain name"
