@@ -5,18 +5,26 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:capacitor": "BUILD_TARGET=capacitor NODE_ENV=production next build",
     "start": "next start",
+    "cap:sync": "npm run build:capacitor && npx cap sync",
+    "cap:open:ios": "npx cap open ios",
+    "cap:open:android": "npx cap open android",
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/ios": "^8.4.1",
     "next": "14.2.35",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.4.1",
     "@testing-library/jest-dom": "^6.4.8",
     "@types/node": "20.14.15",
     "@types/react": "18.3.3",
