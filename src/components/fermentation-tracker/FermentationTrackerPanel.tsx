@@ -1,9 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useFermentationBatches } from '@/hooks/useFermentationBatches';
 import { useShareText } from '@/hooks/useShareText';
-import { FermentationEntry, calculateFermentationStats, sortEntriesByTime } from '@/lib/fermentationTracker';
+import { FermentationBatch, FermentationEntry, calculateFermentationStats, sortEntriesByTime } from '@/lib/fermentationTracker';
 import { buildFermentationShareText } from '@/lib/fermentationShareText';
 import { NumberField } from '@/components/ui/NumberField';
 import { GravityField } from '@/components/ui/GravityField';
@@ -70,8 +69,12 @@ const TUTORIAL_STEPS = [
   },
 ];
 
-export function FermentationTrackerPanel() {
-  const { batches, setBatches } = useFermentationBatches();
+interface FermentationTrackerPanelProps {
+  batches: FermentationBatch[];
+  onBatchesChange: (batches: FermentationBatch[]) => void;
+}
+
+export function FermentationTrackerPanel({ batches, onBatchesChange: setBatches }: FermentationTrackerPanelProps) {
   const [activeBatchId, setActiveBatchId] = useState<string | null>(batches[0]?.id ?? null);
   const [newBatchName, setNewBatchName] = useState('');
 

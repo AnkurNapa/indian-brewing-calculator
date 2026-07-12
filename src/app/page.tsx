@@ -66,7 +66,7 @@ const TAB_BY_ID = new Map(TABS.map((tab) => [tab.id, tab]));
 export default function Home() {
   const [activeTab, setActiveTab] = useState('home');
   const { state, setState } = useWaterProfile();
-  const { batches: fermentationBatches } = useFermentationBatches();
+  const { batches: fermentationBatches, setBatches: setFermentationBatches } = useFermentationBatches();
   const { snapshots: recipeSnapshots, addSnapshot: addRecipeSnapshot, deleteSnapshot: deleteRecipeSnapshot } = useRecipeSnapshots();
   const activeTabDef = TAB_BY_ID.get(activeTab) ?? TABS[0];
 
@@ -253,7 +253,9 @@ export default function Home() {
 
         {activeTab === 'transfer-lautering' ? <TransferLauteringPanel grainBill={state.grainBill} /> : null}
 
-        {activeTab === 'fermentation-tracker' ? <FermentationTrackerPanel /> : null}
+        {activeTab === 'fermentation-tracker' ? (
+          <FermentationTrackerPanel batches={fermentationBatches} onBatchesChange={setFermentationBatches} />
+        ) : null}
 
         {activeTab === 'brewhouse' ? (
           <BrewhouseCalculatorsPanel
@@ -306,7 +308,9 @@ export default function Home() {
           />
         ) : null}
 
-        {activeTab === 'backup' ? <BackupPanel grainBill={state.grainBill} /> : null}
+        {activeTab === 'backup' ? (
+          <BackupPanel grainBill={state.grainBill} fermentationBatches={fermentationBatches} />
+        ) : null}
 
         {activeTab === 'about' ? <AboutPanel /> : null}
 

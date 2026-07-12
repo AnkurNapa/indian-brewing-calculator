@@ -1,18 +1,17 @@
 'use client';
 
 import { GrainBillItem } from '@/lib/waterChemistry';
-import { useFermentationBatches } from '@/hooks/useFermentationBatches';
+import { FermentationBatch } from '@/lib/fermentationTracker';
 import { ExportImportPanel } from './ExportImportPanel';
 import { SyncPanel } from '@/components/sync/SyncPanel';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
 
 interface BackupPanelProps {
   grainBill: GrainBillItem[];
+  fermentationBatches: FermentationBatch[];
 }
 
-export function BackupPanel({ grainBill }: BackupPanelProps) {
-  const { batches } = useFermentationBatches();
-
+export function BackupPanel({ grainBill, fermentationBatches }: BackupPanelProps) {
   return (
     <section className="flex flex-col gap-4">
       <h2 className="font-display text-xl font-bold text-ink">Backup & Sync</h2>
@@ -37,7 +36,7 @@ export function BackupPanel({ grainBill }: BackupPanelProps) {
           },
         ]}
       />
-      <ExportImportPanel grainBill={grainBill} fermentationBatches={batches} />
+      <ExportImportPanel grainBill={grainBill} fermentationBatches={fermentationBatches} />
       <SyncPanel />
     </section>
   );
