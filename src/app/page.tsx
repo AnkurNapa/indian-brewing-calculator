@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { Tabs, TabDef } from '@/components/ui/Tabs';
+import { SessionSummary } from '@/components/ui/SessionSummary';
+import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
+import { roundForDisplay } from '@/lib/units';
 import { WaterReportForm } from '@/components/water-report/WaterReportForm';
 import { GrainBillEditor } from '@/components/grain-bill/GrainBillEditor';
 import { MashAdjustmentPanel } from '@/components/mash-adjustment/MashAdjustmentPanel';
@@ -55,6 +58,44 @@ export default function Home() {
   const { state, setState } = useWaterProfile();
   const activeTabDef = TAB_BY_ID.get(activeTab) ?? TABS[0];
 
+  const targetStyleName = TARGET_STYLE_PROFILES.find((s) => s.id === state.targetStyleId)?.name ?? '--';
+  const totalGrainKg = state.grainBill.reduce((sum, row) => sum + (Number.isFinite(row.weightKg) ? row.weightKg : 0), 0);
+
+  /**
+   * What's shown depends on the active tab: each panel only recaps the
+   * selections that actually feed it (and were most likely made on an
+   * earlier tab), so the strip reads as "here's what's carrying into this
+   * step" rather than a generic, always-identical dashboard.
+   */
+  const summaryItemsByTab: Record<string, { label: string; value: string }[]> = {
+    'water-report': totalGrainKg > 0 ? [{ label: 'Grain Bill', value: `${totalGrainKg.toFixed(2)} kg` }] : [],
+    'mash-adjustment': [
+      { label: 'Batch Volume', value: `${state.batchVolumeL} L` },
+      { label: 'Target Style', value: targetStyleName },
+    ],
+    'sparge-adjustment': [{ label: 'Sparge Volume', value: `${state.spargeVolumeL} L` }],
+    'water-volumes': [
+      { label: 'Batch Volume', value: `${state.batchVolumeL} L` },
+      { label: 'Grain Bill', value: `${totalGrainKg.toFixed(2)} kg` },
+    ],
+    'transfer-lautering': [{ label: 'Grain Bill', value: `${totalGrainKg.toFixed(2)} kg` }],
+    brewhouse: [
+      { label: 'Batch Volume', value: `${state.batchVolumeL} L` },
+      { label: 'OG', value: roundForDisplay(state.ogSg, 3).toString() },
+      { label: 'FG', value: roundForDisplay(state.fgSg, 3).toString() },
+    ],
+    'fermentation-tracker': [],
+    'style-check': [
+      { label: 'Target Style', value: targetStyleName },
+      { label: 'OG', value: roundForDisplay(state.ogSg, 3).toString() },
+      { label: 'FG', value: roundForDisplay(state.fgSg, 3).toString() },
+    ],
+    blending: [],
+    backup: [],
+    about: [],
+  };
+  const summaryItems = summaryItemsByTab[activeTab] ?? [];
+
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-24 pt-2 sm:px-6 sm:pb-16 sm:pt-6">
       <header className="hidden flex-col gap-1 text-center sm:flex">
@@ -74,6 +115,8 @@ export default function Home() {
       </div>
 
       <Tabs tabs={TABS} activeId={activeTab} onChange={setActiveTab} />
+
+      <SessionSummary items={summaryItems} />
 
       <div className="rounded-2xl border border-[#e2e6ea] bg-white p-4 shadow-sm sm:p-6">
         {activeTab === 'water-report' ? (
