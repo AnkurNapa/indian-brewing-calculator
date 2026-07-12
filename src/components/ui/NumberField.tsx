@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useId } from 'react';
+import { useState, useId, useEffect, useRef } from 'react';
 import { parseNonNegative } from '@/lib/units';
 
 interface NumberFieldProps {
@@ -35,6 +35,19 @@ export function NumberField({
   const [raw, setRaw] = useState(String(value));
   const [error, setError] = useState<string | null>(null);
   const inputId = useId();
+  const isFocusedRef = useRef(false);
+
+  // Re-sync the displayed text when `value` changes from outside this
+  // field (e.g. a water preset fills the ion fields, or another tab
+  // updates a shared value like OG/FG while this field stays mounted).
+  // Skipped while the user is actively typing so we don't clobber their
+  // in-progress edit before they blur to commit it.
+  useEffect(() => {
+    if (isFocusedRef.current) return;
+    setRaw(String(value));
+    setError(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   const commit = (text: string) => {
     const parsed = allowNegative
@@ -72,7 +85,13 @@ export function NumberField({
         step={step}
         value={raw}
         onChange={(e) => setRaw(e.target.value)}
-        onBlur={(e) => commit(e.target.value)}
+        onFocus={() => {
+          isFocusedRef.current = true;
+        }}
+        onBlur={(e) => {
+          isFocusedRef.current = false;
+          commit(e.target.value);
+        }}
         className={`min-h-[44px] w-full rounded-md border-2 bg-parchment px-3 py-2 text-base text-ink shadow-inner outline-none transition-colors focus:border-teal-500 focus:ring-2 focus:ring-teal-200 ${
           error ? 'border-red-400' : 'border-amber-200'
         }`}
