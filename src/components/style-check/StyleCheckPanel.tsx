@@ -145,7 +145,12 @@ export function StyleCheckPanel({
         <div className="mt-3 flex flex-col gap-2">
           {hopAdditions.map((row, index) => (
             <div key={index} className="grid grid-cols-1 gap-3 sm:grid-cols-4">
-              <Input label="Hop" value={row.name} onChange={(value) => updateHopRow(index, { name: value })} />
+              <Input
+                label="Hop"
+                value={row.name}
+                onChange={(value) => updateHopRow(index, { name: value })}
+                placeholder="Type any hop name..."
+              />
               <NumberField
                 label="Alpha Acid"
                 unit="%"

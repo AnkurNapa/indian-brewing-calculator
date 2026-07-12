@@ -81,7 +81,7 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
                 }
               }}
             />
-            <p className="-mt-1.5 font-body text-xs text-ink/50">
+            <p className="-mt-1.5 font-body text-xs font-semibold text-amber-700/80">
               Not in the list? Just type any grain name, weight, and color directly below.
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-[2fr_1fr_1fr_1.4fr_auto] sm:items-end">
@@ -89,7 +89,7 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
               label="Grain name"
               value={row.name}
               onChange={(value) => updateRow(index, { name: value })}
-              placeholder="e.g. Pilsner Malt"
+              placeholder="Type any grain name..."
             />
             <NumberField
               label="Weight"

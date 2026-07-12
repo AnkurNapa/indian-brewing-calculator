@@ -258,7 +258,7 @@ function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange
           }
         }}
       />
-      <p className="-mt-2 font-body text-xs text-ink/50">
+      <p className="-mt-2 font-body text-xs font-semibold text-amber-700/80">
         Not in the list? Just type any strain name below and pick Ale or Lager.
       </p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -403,11 +403,16 @@ function IbuCalculator({
                 if (hop) updateRow(index, { name: hop.name, alphaAcidPercent: hop.alphaAcidPercent });
               }}
             />
-            <p className="-mt-1.5 font-body text-xs text-ink/50">
+            <p className="-mt-1.5 font-body text-xs font-semibold text-amber-700/80">
               Not in the list? Just type any hop name, alpha acid, weight, and boil time directly below.
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
-            <Input label="Hop" value={row.name} onChange={(value) => updateRow(index, { name: value })} />
+            <Input
+              label="Hop"
+              value={row.name}
+              onChange={(value) => updateRow(index, { name: value })}
+              placeholder="Type any hop name..."
+            />
             <NumberField
               label="Alpha Acid"
               unit="%"
