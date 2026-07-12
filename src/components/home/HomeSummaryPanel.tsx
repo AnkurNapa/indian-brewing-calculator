@@ -1,6 +1,6 @@
 'use client';
 
-import { ComponentType } from 'react';
+import { ComponentType, useState } from 'react';
 import { AppState } from '@/hooks/useWaterProfile';
 import { useShareText } from '@/hooks/useShareText';
 import { FermentationBatch, calculateFermentationStats } from '@/lib/fermentationTracker';
@@ -15,7 +15,7 @@ import { DropletIcon, FlaskIcon, CalculatorIcon, FermenterIcon, StyleCheckIcon, 
 import { buildRecipeShareText } from '@/lib/recipeShareText';
 import { TabDef } from '@/components/ui/Tabs';
 import { predictOriginalGravity } from '@/lib/efficiency';
-import { GravityDisplay } from '@/components/ui/GravityDisplay';
+import { GravityDisplay, GravityUnitToggle, GravityUnit } from '@/components/ui/GravityDisplay';
 
 interface HomeSummaryPanelProps {
   state: AppState;
@@ -30,12 +30,15 @@ function SummarySection({
   icon: Icon,
   tabId,
   onJumpToTab,
+  headerExtra,
   children,
 }: {
   title: string;
   icon: ComponentType<{ className?: string }>;
   tabId: string;
   onJumpToTab: (tabId: string) => void;
+  /** Optional control (e.g. a unit toggle) shown between the title and the Edit button. */
+  headerExtra?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -45,13 +48,16 @@ function SummarySection({
           <Icon className="h-4 w-4 flex-shrink-0 text-teal-700" />
           {title}
         </h3>
-        <button
-          type="button"
-          onClick={() => onJumpToTab(tabId)}
-          className="min-h-[44px] flex-shrink-0 rounded-full border-2 border-teal-300 bg-white px-3 py-2 font-body text-xs font-semibold text-teal-800 shadow-sm hover:bg-teal-50"
-        >
-          Edit
-        </button>
+        <div className="flex flex-shrink-0 items-center gap-2">
+          {headerExtra}
+          <button
+            type="button"
+            onClick={() => onJumpToTab(tabId)}
+            className="flex min-h-[44px] flex-shrink-0 items-center rounded-full border border-teal-300 bg-teal-50 px-3 py-1 font-body text-xs font-semibold text-teal-800 hover:bg-teal-100"
+          >
+            Edit
+          </button>
+        </div>
       </div>
       <div className="mt-2 flex flex-col gap-1 font-body text-sm text-ink">{children}</div>
     </div>
@@ -91,6 +97,7 @@ function DeviationRow({ label, unit, compliance }: { label: string; unit: string
  */
 export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, processSteps }: HomeSummaryPanelProps) {
   const { share, status: shareStatus } = useShareText('Brew Recipe Summary');
+  const [gravityUnit, setGravityUnit] = useState<GravityUnit>('sg');
 
   const targetStyleName = TARGET_STYLE_PROFILES.find((s) => s.id === state.targetStyleId)?.name ?? '--';
   const totalGrainKg = state.grainBill.reduce((sum, row) => sum + (Number.isFinite(row.weightKg) ? row.weightKg : 0), 0);
@@ -218,9 +225,15 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
         <p>Sparge Volume: {state.spargeVolumeL} L</p>
       </SummarySection>
 
-      <SummarySection title="Recipe Gravity" icon={CalculatorIcon} tabId="brewhouse" onJumpToTab={onJumpToTab}>
-        <GravityDisplay label="OG" valueSg={state.ogSg} />
-        <GravityDisplay label="FG" valueSg={state.fgSg} />
+      <SummarySection
+        title="Recipe Gravity"
+        icon={CalculatorIcon}
+        tabId="brewhouse"
+        onJumpToTab={onJumpToTab}
+        headerExtra={<GravityUnitToggle unit={gravityUnit} onChange={setGravityUnit} />}
+      >
+        <GravityDisplay label="OG" valueSg={state.ogSg} unit={gravityUnit} />
+        <GravityDisplay label="FG" valueSg={state.fgSg} unit={gravityUnit} />
         {abvSoFar !== null ? <p>ABV (simple): {abvSoFar}%</p> : null}
       </SummarySection>
 
@@ -248,7 +261,7 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
           <button
             type="button"
             onClick={() => onJumpToTab('style-check')}
-            className="min-h-[44px] flex-shrink-0 rounded-full border-2 border-teal-300 bg-white px-3 py-2 font-body text-xs font-semibold text-teal-800 shadow-sm hover:bg-teal-50"
+            className="flex min-h-[44px] flex-shrink-0 items-center rounded-full border border-teal-300 bg-teal-50 px-3 py-1 font-body text-xs font-semibold text-teal-800 hover:bg-teal-100"
           >
             Change Style
           </button>
