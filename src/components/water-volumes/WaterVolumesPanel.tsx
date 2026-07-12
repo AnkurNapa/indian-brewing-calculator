@@ -3,12 +3,58 @@
 import { useMemo, useState } from 'react';
 import { GrainBillItem } from '@/lib/waterChemistry';
 import { calculateWaterVolumes } from '@/lib/waterVolumes';
+import { calculateVolumeToAddForTargetTemp } from '@/lib/waterTemperature';
 import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { roundForDisplay } from '@/lib/units';
 
 interface WaterVolumesPanelProps {
   grainBill: GrainBillItem[];
+}
+
+function StrikeTemperatureMixCalculator() {
+  const [startVolumeL, setStartVolumeL] = useState(50);
+  const [startTempC, setStartTempC] = useState(40);
+  const [targetTempC, setTargetTempC] = useState(60);
+  const [additionTempC, setAdditionTempC] = useState(100);
+
+  const result = calculateVolumeToAddForTargetTemp(startVolumeL, startTempC, targetTempC, additionTempC);
+
+  return (
+    <section className="flex flex-col gap-4 rounded-lg border-2 border-amber-300 bg-amber-50/60 p-4">
+      <h3 className="font-display text-sm font-bold uppercase tracking-wide text-amber-900">
+        Water Temperature Mixing
+      </h3>
+      <p className="font-body text-sm text-ink">
+        How much hot (or cold) water to add to reach a target temperature -- e.g. raising strike/sparge water, or
+        cooling wort with cold water additions.
+      </p>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <NumberField label="Starting Volume" unit="L" value={startVolumeL} step={1} onChange={setStartVolumeL} />
+        <NumberField label="Starting Temp" unit="°C" value={startTempC} step={1} onChange={setStartTempC} allowNegative />
+        <NumberField label="Target Temp" unit="°C" value={targetTempC} step={1} onChange={setTargetTempC} allowNegative />
+        <NumberField
+          label="Addition Water Temp"
+          unit="°C"
+          value={additionTempC}
+          step={1}
+          onChange={setAdditionTempC}
+          allowNegative
+          helperText="e.g. 100°C for boiling water, or cold tap/ice water to cool down."
+        />
+      </div>
+      <ResultCard
+        title="Water To Add"
+        value={result.infeasible ? '--' : roundForDisplay(result.volumeToAddL, 1).toString()}
+        unit="L"
+        tone={result.infeasible ? 'warning' : 'default'}
+      >
+        {result.infeasible
+          ? result.notes.join(' ')
+          : `Resulting total volume: ${roundForDisplay(result.totalVolumeL, 1)} L at ${targetTempC}°C.`}
+      </ResultCard>
+    </section>
+  );
 }
 
 export function WaterVolumesPanel({ grainBill }: WaterVolumesPanelProps) {
@@ -110,6 +156,8 @@ export function WaterVolumesPanel({ grainBill }: WaterVolumesPanelProps) {
           ))}
         </ul>
       ) : null}
+
+      <StrikeTemperatureMixCalculator />
     </section>
   );
 }

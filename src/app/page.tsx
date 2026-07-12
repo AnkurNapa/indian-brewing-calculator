@@ -103,6 +103,12 @@ export default function Home() {
             napaankur@gmail.com
           </a>
         </p>
+        <p className="max-w-md text-amber-700/60">
+          This app does not collect or transmit your data anywhere. All entries (water reports, grain bills,
+          batch settings) are saved only in your own browser&apos;s local storage on this device. We take no
+          responsibility for the confidentiality or backup of data stored this way -- clearing your browser
+          data will erase it.
+        </p>
       </footer>
     </main>
   );
