@@ -21,6 +21,22 @@ const ION_ROWS: { key: keyof IonProfile; label: string }[] = [
   { key: 'alkalinity', label: 'Alkalinity' },
 ];
 
+/** Within this +/- percent of target counts as "on target" rather than over/under. */
+const ON_TARGET_TOLERANCE_PERCENT = 15;
+
+function compareToTarget(source: number, target: number): { label: string; tone: 'over' | 'under' | 'onTarget' } {
+  if (target <= 0) {
+    return source <= 0 ? { label: 'on target', tone: 'onTarget' } : { label: `+${roundForDisplay(source, 0)}`, tone: 'over' };
+  }
+  const percentOff = ((source - target) / target) * 100;
+  if (Math.abs(percentOff) <= ON_TARGET_TOLERANCE_PERCENT) {
+    return { label: 'on target', tone: 'onTarget' };
+  }
+  return percentOff > 0
+    ? { label: `${roundForDisplay(percentOff, 0)}% over`, tone: 'over' }
+    : { label: `${roundForDisplay(Math.abs(percentOff), 0)}% under`, tone: 'under' };
+}
+
 /**
  * Lets the brewer pick which beer style they're brewing right from Water
  * Report -- before this, the style choice only lived on Mash Adjustment,
@@ -57,17 +73,33 @@ export function TargetStyleReference({ targetStyleId, onTargetStyleChange, sourc
             <tr className="border-b border-teal-200 text-xs uppercase tracking-wide text-teal-700">
               <th className="py-1 pr-2">Ion (mg/L)</th>
               <th className="py-1 pr-2">Your Source</th>
-              <th className="py-1">{style.name.split(' (')[0]} Target</th>
+              <th className="py-1 pr-2">{style.name.split(' (')[0]} Target</th>
+              <th className="py-1">vs Target</th>
             </tr>
           </thead>
           <tbody>
-            {ION_ROWS.map(({ key, label }) => (
-              <tr key={key} className="border-b border-teal-100">
-                <td className="py-1 pr-2">{label}</td>
-                <td className="py-1 pr-2">{roundForDisplay(sourceProfile[key])}</td>
-                <td className="py-1 font-semibold text-teal-800">{roundForDisplay(style.profile[key])}</td>
-              </tr>
-            ))}
+            {ION_ROWS.map(({ key, label }) => {
+              const comparison = compareToTarget(sourceProfile[key], style.profile[key]);
+              return (
+                <tr key={key} className="border-b border-teal-100">
+                  <td className="py-1 pr-2">{label}</td>
+                  <td className="py-1 pr-2">{roundForDisplay(sourceProfile[key])}</td>
+                  <td className="py-1 pr-2 font-semibold text-teal-800">{roundForDisplay(style.profile[key])}</td>
+                  <td
+                    className={`py-1 text-xs font-semibold ${
+                      comparison.tone === 'onTarget'
+                        ? 'text-teal-700'
+                        : comparison.tone === 'over'
+                          ? 'text-red-700'
+                          : 'text-amber-700'
+                    }`}
+                  >
+                    {comparison.tone === 'onTarget' ? '✓ ' : comparison.tone === 'over' ? '↑ ' : '↓ '}
+                    {comparison.label}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
