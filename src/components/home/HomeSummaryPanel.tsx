@@ -129,16 +129,6 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab }: Ho
         Everything entered so far, in brew-day order. Tap Edit on any card to jump back and change it.
       </p>
 
-      <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-3 font-body text-xs text-teal-900">
-        <p>
-          Built by <span className="font-semibold">Ankur Napa</span>. Your data never leaves this device -- this
-          app doesn&apos;t ask for camera, location, contacts, or any other phone permission, and there is no
-          server storing or seeing what you enter. Everything is saved only in this browser&apos;s local storage
-          (see the About tab for full details, or Backup &amp; Sync if you want your own optional Google Sheets
-          copy).
-        </p>
-      </div>
-
       <SummarySection title="Water Source" icon={DropletIcon} tabId="water-report" onJumpToTab={onJumpToTab}>
         <p>
           Calcium {state.sourceProfile.calcium} &middot; Magnesium {state.sourceProfile.magnesium} &middot; Sulfate{' '}
