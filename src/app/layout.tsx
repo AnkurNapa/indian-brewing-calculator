@@ -8,9 +8,17 @@ const brandFont = Archivo({
   variable: '--font-brand',
 });
 
+const APP_TITLE = "Indian Brewer's Calculator";
+const APP_DESCRIPTION =
+  'A metric brewing water chemistry calculator: residual alkalinity, mash pH prediction, salt & acid dosing, sparge adjustment, IBU/SRM/ABV, BJCP style check, and a fermentation tracker.';
+
 export const metadata: Metadata = {
-  title: "Indian Brewer's Calculator",
-  description: 'A metric brewing water chemistry calculator: residual alkalinity, mash pH prediction, salt & acid dosing, sparge adjustment, and water blending.',
+  // Required for openGraph/twitter image URLs to resolve to absolute
+  // addresses -- social platforms (WhatsApp, Twitter/X, iMessage, etc.)
+  // fetch the preview image server-side and ignore relative paths.
+  metadataBase: new URL('https://ankurnapa.github.io/indian-brewing-calculator/'),
+  title: APP_TITLE,
+  description: APP_DESCRIPTION,
   manifest: 'manifest.webmanifest',
   icons: {
     icon: [
@@ -24,6 +32,20 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: 'default',
     title: "Brewer's Calc",
+  },
+  openGraph: {
+    title: APP_TITLE,
+    description: APP_DESCRIPTION,
+    url: '/',
+    siteName: APP_TITLE,
+    images: [{ url: 'og-image.png', width: 1200, height: 630, alt: APP_TITLE }],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: APP_TITLE,
+    description: APP_DESCRIPTION,
+    images: ['og-image.png'],
   },
 };
 
