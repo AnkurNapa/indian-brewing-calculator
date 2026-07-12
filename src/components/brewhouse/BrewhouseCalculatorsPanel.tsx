@@ -414,13 +414,18 @@ export function BrewhouseCalculatorsPanel({
         Day-to-day production math: gravity/ABV, efficiency, carbonation, pitch rate, and bitterness. OG, FG, and
         batch volume are shared with the BJCP Style Check tab.
       </p>
-      <AbvAttenuationCalculator og={og} onOgChange={onOgChange} fg={fg} onFgChange={onFgChange} />
-      <HydrometerCorrectionCalculator />
+      {/* Ordered to match when each reading is actually taken on brew day:
+          mash-out efficiency, then gravity corrections and hop bitterness
+          during the boil, pitch rate at pitching, OG/FG tracking through
+          fermentation, and finally the two packaging-time carbonation
+          methods. */}
       <EfficiencyCalculator />
-      <ForceCarbonationCalculator />
-      <PrimingCalculator batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
-      <PitchRateCalculator og={og} onOgChange={onOgChange} batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
+      <HydrometerCorrectionCalculator />
       <IbuCalculator batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
+      <PitchRateCalculator og={og} onOgChange={onOgChange} batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
+      <AbvAttenuationCalculator og={og} onOgChange={onOgChange} fg={fg} onFgChange={onFgChange} />
+      <PrimingCalculator batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
+      <ForceCarbonationCalculator />
     </section>
   );
 }
