@@ -1,8 +1,10 @@
 'use client';
 
 import { GrainBillItem, MaltCategory, classifyMaltCategory } from '@/lib/waterChemistry';
+import { WEYERMANN_MALTS } from '@/lib/weyermannMalts';
 import { Input } from '@/components/ui/Input';
 import { NumberField } from '@/components/ui/NumberField';
+import { SearchableSelect } from '@/components/ui/SearchableSelect';
 
 interface GrainBillEditorProps {
   grainBill: GrainBillItem[];
@@ -61,8 +63,25 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
         {grainBill.map((row, index) => (
           <div
             key={index}
-            className="grid grid-cols-1 gap-3 rounded-lg border-2 border-amber-200 bg-amber-50/60 p-3 sm:grid-cols-[2fr_1fr_1fr_1.4fr_auto] sm:items-end"
+            className="flex flex-col gap-3 rounded-lg border-2 border-amber-200 bg-amber-50/60 p-3"
           >
+            <SearchableSelect
+              label="Quick-fill from Weyermann malts"
+              placeholder="Search Weyermann malts..."
+              value=""
+              options={WEYERMANN_MALTS.map((malt) => ({ id: malt.id, label: malt.name }))}
+              onChange={(id) => {
+                const malt = WEYERMANN_MALTS.find((m) => m.id === id);
+                if (malt) {
+                  updateRow(index, {
+                    name: malt.name,
+                    colorLovibond: malt.colorLovibond,
+                    category: malt.category,
+                  });
+                }
+              }}
+            />
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[2fr_1fr_1fr_1.4fr_auto] sm:items-end">
             <Input
               label="Grain name"
               value={row.name}
@@ -83,31 +102,16 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
               step={0.5}
               onChange={(value) => updateRow(index, { colorLovibond: value })}
             />
-            <label className="flex flex-col gap-1">
-              <span className="font-body text-sm font-medium text-amber-900">
-                Malt Type
-                {!row.category ? (
-                  <span className="ml-1 font-normal text-amber-700">
-                    ({classifyMaltCategory(row.colorLovibond)})
-                  </span>
-                ) : null}
-              </span>
-              <select
-                className="min-h-[44px] rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-base text-ink"
-                value={row.category ?? ''}
-                onChange={(e) =>
-                  updateRow(index, {
-                    category: (e.target.value || undefined) as MaltCategory | undefined,
-                  })
-                }
-              >
-                {MALT_CATEGORY_OPTIONS.map((opt) => (
-                  <option key={opt.id} value={opt.id}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <SearchableSelect
+              label={
+                !row.category ? `Malt Type (${classifyMaltCategory(row.colorLovibond)})` : 'Malt Type'
+              }
+              value={row.category ?? ''}
+              onChange={(id) =>
+                updateRow(index, { category: (id || undefined) as MaltCategory | undefined })
+              }
+              options={MALT_CATEGORY_OPTIONS.map((opt) => ({ id: opt.id, label: opt.label }))}
+            />
             <button
               type="button"
               onClick={() => removeRow(index)}
@@ -116,6 +120,7 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
             >
               Remove
             </button>
+            </div>
           </div>
         ))}
       </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { ComponentType, useEffect, useState } from 'react';
+import { ComponentType, useEffect, useRef } from 'react';
 
 export interface TabDef {
   id: string;
@@ -16,65 +16,28 @@ interface TabsProps {
   onChange: (id: string) => void;
 }
 
-/** Icon shown for the "More" tab that opens the overflow sheet. */
-function MoreIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.75}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      <circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
-      <circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
 /**
- * How many sections get a permanent, always-visible slot in the phone
- * bottom bar. The rest live behind "More" -- mirrors the iOS/Android
- * pattern (Instagram, Facebook, etc.) of 4-5 primary destinations plus an
- * overflow sheet, rather than cramming every section into one row where
- * labels truncate and targets get too small to tap reliably.
- */
-const PRIMARY_COUNT = 4;
-
-/**
- * App-shell navigation. On phones: a fixed bottom tab bar with up to
- * PRIMARY_COUNT primary destinations plus a "More" tab that opens a full
- * list of the remaining sections as a bottom sheet. On wider screens,
- * every tab is shown as a centered pill row near the top -- there's room,
- * and hiding items behind "More" would only cost clicks. Every tap target
- * is at least 44px.
+ * App-shell navigation. On phones: a single fixed bottom bar that holds
+ * every section as a swipeable, snap-scrolling strip -- short icon +
+ * label chips the user can flick through with a thumb, like a native
+ * app's tab/segment control, with the active one auto-centered so it's
+ * always in view without having to swipe to find it. On wider screens the
+ * same tabs render as a centered wrapping pill row, since there's room
+ * for all of them without scrolling. Every tap target is at least 44px.
  */
 export function Tabs({ tabs, activeId, onChange }: TabsProps) {
-  const [isMoreOpen, setIsMoreOpen] = useState(false);
-  const primaryTabs = tabs.slice(0, PRIMARY_COUNT);
-  const overflowTabs = tabs.slice(PRIMARY_COUNT);
-  const isOverflowActive = overflowTabs.some((tab) => tab.id === activeId);
+  const scrollerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setIsMoreOpen(false);
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const activeButton = scroller.querySelector<HTMLButtonElement>(`[data-tab-id="${activeId}"]`);
+    activeButton?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   }, [activeId]);
-
-  useEffect(() => {
-    if (!isMoreOpen) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsMoreOpen(false);
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [isMoreOpen]);
 
   return (
     <>
-      {/* Desktop: every tab, always visible. */}
+      {/* Desktop: every tab, always visible, no scrolling needed. */}
       <nav
         role="tablist"
         aria-label="Brewing calculator sections"
@@ -85,47 +48,64 @@ export function Tabs({ tabs, activeId, onChange }: TabsProps) {
         ))}
       </nav>
 
-      {/* Mobile: primary tabs + "More" overflow, fixed to the bottom like a native app. */}
-      <nav
-        role="tablist"
-        aria-label="Brewing calculator sections"
-        className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t-2 border-amber-200 bg-parchment/97 pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_10px_rgba(0,0,0,0.06)] backdrop-blur sm:hidden"
-      >
-        {primaryTabs.map((tab) => (
-          <TabButton key={tab.id} tab={tab} isActive={tab.id === activeId} onClick={() => onChange(tab.id)} />
-        ))}
-        <button
-          type="button"
-          aria-haspopup="true"
-          aria-expanded={isMoreOpen}
-          onClick={() => setIsMoreOpen(true)}
-          className={`flex min-h-[54px] flex-1 flex-col items-center justify-center gap-0.5 whitespace-nowrap px-1 py-1.5 font-body text-[0.65rem] font-semibold transition-colors ${
-            isOverflowActive ? 'text-teal-700' : 'text-amber-800/80'
-          }`}
+      {/* Mobile: fixed, swipeable/snap-scrolling bottom bar. */}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t-2 border-amber-200 bg-parchment/97 pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_10px_rgba(0,0,0,0.06)] backdrop-blur sm:hidden">
+        <nav
+          ref={scrollerRef}
+          role="tablist"
+          aria-label="Brewing calculator sections"
+          className="flex snap-x snap-mandatory gap-1 overflow-x-auto scroll-px-4 px-4 py-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          <MoreIcon className={`h-5 w-5 flex-shrink-0 transition-transform ${isOverflowActive ? 'scale-110' : ''}`} />
-          <span className="leading-tight">More</span>
-        </button>
-      </nav>
-
-      {isMoreOpen ? (
-        <MoreSheet tabs={overflowTabs} activeId={activeId} onSelect={onChange} onClose={() => setIsMoreOpen(false)} />
-      ) : null}
+          {tabs.map((tab) => (
+            <TabButton
+              key={tab.id}
+              tab={tab}
+              isActive={tab.id === activeId}
+              onClick={() => onChange(tab.id)}
+              snap
+            />
+          ))}
+        </nav>
+        {/* Edge hint: a soft fade + dots-style scroll affordance so it reads as
+            swipeable rather than as a cut-off list. */}
+        <div className="pointer-events-none flex justify-center gap-1 pb-1">
+          {tabs.map((tab) => (
+            <span
+              key={tab.id}
+              aria-hidden="true"
+              className={`h-1 w-1 rounded-full transition-colors ${tab.id === activeId ? 'bg-teal-700' : 'bg-amber-200'}`}
+            />
+          ))}
+        </div>
+      </div>
     </>
   );
 }
 
-function TabButton({ tab, isActive, onClick }: { tab: TabDef; isActive: boolean; onClick: () => void }) {
+function TabButton({
+  tab,
+  isActive,
+  onClick,
+  snap = false,
+}: {
+  tab: TabDef;
+  isActive: boolean;
+  onClick: () => void;
+  snap?: boolean;
+}) {
   const Icon = tab.icon;
   return (
     <button
+      data-tab-id={tab.id}
       role="tab"
       type="button"
       aria-selected={isActive}
       onClick={onClick}
-      className={`flex min-h-[54px] flex-1 flex-col items-center justify-center gap-0.5 whitespace-nowrap px-1 py-1.5 font-body text-[0.65rem] font-semibold transition-colors sm:min-h-[40px] sm:flex-none sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2 sm:text-sm ${
+      className={`flex min-h-[54px] flex-shrink-0 flex-col items-center justify-center gap-0.5 whitespace-nowrap rounded-xl px-3 py-1.5 font-body text-[0.65rem] font-semibold transition-colors sm:min-h-[40px] sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2 sm:text-sm ${
+        snap ? 'snap-center' : ''
+      } ${
         isActive
-          ? 'text-teal-700 sm:bg-teal-700 sm:text-parchment sm:shadow'
+          ? 'bg-teal-100/70 text-teal-700 sm:bg-teal-700 sm:text-parchment sm:shadow'
           : 'text-amber-800/80 sm:bg-amber-100 sm:text-amber-900 sm:hover:bg-amber-200'
       }`}
     >
@@ -133,61 +113,5 @@ function TabButton({ tab, isActive, onClick }: { tab: TabDef; isActive: boolean;
       <span className="max-w-[4.2rem] truncate leading-tight sm:hidden">{tab.shortLabel ?? tab.label}</span>
       <span className="hidden sm:inline">{tab.label}</span>
     </button>
-  );
-}
-
-function MoreSheet({
-  tabs,
-  activeId,
-  onSelect,
-  onClose,
-}: {
-  tabs: TabDef[];
-  activeId: string;
-  onSelect: (id: string) => void;
-  onClose: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-40 flex flex-col justify-end sm:hidden">
-      <button
-        type="button"
-        aria-label="Close menu"
-        onClick={onClose}
-        className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
-      />
-      <div className="relative rounded-t-2xl border-t-2 border-amber-200 bg-parchment pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_rgba(0,0,0,0.15)]">
-        <div className="mx-auto mt-2 h-1.5 w-10 rounded-full bg-amber-200" aria-hidden="true" />
-        <div className="flex items-center justify-between px-4 pb-2 pt-3">
-          <h2 className="font-display text-sm font-bold uppercase tracking-wide text-amber-900">More Sections</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close menu"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-amber-700 hover:bg-amber-100"
-          >
-            ✕
-          </button>
-        </div>
-        <div className="grid grid-cols-3 gap-1 px-3 pb-6">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = tab.id === activeId;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => onSelect(tab.id)}
-                className={`flex min-h-[76px] flex-col items-center justify-center gap-1.5 rounded-xl px-2 py-3 text-center font-body text-xs font-semibold transition-colors ${
-                  isActive ? 'bg-teal-700 text-parchment shadow' : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
-                }`}
-              >
-                <Icon className="h-6 w-6 flex-shrink-0" />
-                <span className="leading-tight">{tab.shortLabel ?? tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    </div>
   );
 }

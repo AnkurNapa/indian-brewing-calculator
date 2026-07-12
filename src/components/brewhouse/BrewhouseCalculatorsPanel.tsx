@@ -16,6 +16,8 @@ import { NumberField } from '@/components/ui/NumberField';
 import { Input } from '@/components/ui/Input';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
+import { HOP_VARIETIES } from '@/lib/hopVarieties';
+import { YEAST_STRAINS } from '@/lib/yeastStrains';
 import { roundForDisplay } from '@/lib/units';
 
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
@@ -226,6 +228,7 @@ function PrimingCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRec
 
 function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeProps, 'og' | 'onOgChange' | 'batchVolumeL' | 'onBatchVolumeChange'>) {
   const [style, setStyle] = useState<YeastStyle>('ale');
+  const [strainName, setStrainName] = useState('');
 
   const result = calculatePitchRate(og, batchVolumeL, style);
 
@@ -235,20 +238,39 @@ function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange
 
   return (
     <SectionCard title="Yeast Pitch Rate">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <SearchableSelect
+        label="Quick-fill from common yeast strains"
+        placeholder="Search yeast strains..."
+        value=""
+        options={YEAST_STRAINS.map((strain) => ({ id: strain.id, label: strain.name }))}
+        onChange={(id) => {
+          const strain = YEAST_STRAINS.find((s) => s.id === id);
+          if (strain) {
+            setStrainName(strain.name);
+            setStyle(strain.style);
+          }
+        }}
+      />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Input
+          label="Strain (optional)"
+          value={strainName}
+          onChange={setStrainName}
+          placeholder="e.g. US-05, WLP001..."
+        />
+        <SearchableSelect
+          label="Style"
+          value={style}
+          onChange={(id) => setStyle(id as YeastStyle)}
+          options={[
+            { id: 'ale', label: 'Ale' },
+            { id: 'lager', label: 'Lager' },
+          ]}
+        />
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField label="Original Gravity (SG)" value={og} step={0.001} onChange={onOgChange} />
         <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
-        <label className="flex flex-col gap-1">
-          <span className="font-body text-sm font-medium text-amber-900">Style</span>
-          <select
-            className="min-h-[44px] rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-base text-ink"
-            value={style}
-            onChange={(e) => setStyle(e.target.value as YeastStyle)}
-          >
-            <option value="ale">Ale</option>
-            <option value="lager">Lager</option>
-          </select>
-        </label>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <ResultCard title="Target Cells" value={roundForDisplay(result.targetCellsBillion, 0).toString()} unit="billion" />
@@ -356,7 +378,18 @@ function IbuCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeP
       </div>
       <div className="flex flex-col gap-2">
         {hopAdditions.map((row, index) => (
-          <div key={index} className="grid grid-cols-1 gap-3 sm:grid-cols-4">
+          <div key={index} className="flex flex-col gap-3 rounded-md border border-amber-200 bg-amber-50/40 p-2 sm:border-0 sm:bg-transparent sm:p-0">
+            <SearchableSelect
+              label="Quick-fill from common hop varieties"
+              placeholder="Search hop varieties..."
+              value=""
+              options={HOP_VARIETIES.map((hop) => ({ id: hop.id, label: `${hop.name} (~${hop.alphaAcidPercent}% AA)` }))}
+              onChange={(id) => {
+                const hop = HOP_VARIETIES.find((h) => h.id === id);
+                if (hop) updateRow(index, { name: hop.name, alphaAcidPercent: hop.alphaAcidPercent });
+              }}
+            />
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
             <Input label="Hop" value={row.name} onChange={(value) => updateRow(index, { name: value })} />
             <NumberField
               label="Alpha Acid"
@@ -379,6 +412,7 @@ function IbuCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeP
               step={1}
               onChange={(value) => updateRow(index, { boilTimeMinutes: value })}
             />
+            </div>
           </div>
         ))}
         <button
