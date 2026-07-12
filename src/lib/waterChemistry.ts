@@ -133,6 +133,15 @@ export interface GrainBillItem {
    * entry in the Brewhouse Efficiency calculator.
    */
   potentialSg?: number;
+  /**
+   * Optional percent-of-bill (e.g. 80 for 80%), used only by the Grain
+   * Bill editor's "solve by %" mode to remember what the user typed for
+   * this row -- weightKg is still the source of truth everywhere else
+   * in the app (mash pH, SRM, OG prediction); this field just lets the
+   * percent inputs stay populated if the user switches back to percent
+   * mode or reopens the app.
+   */
+  percentOfBill?: number;
 }
 
 /**

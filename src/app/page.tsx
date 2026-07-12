@@ -219,6 +219,8 @@ export default function Home() {
             onTargetStyleChange={(targetStyleId) => setState((prev) => ({ ...prev, targetStyleId }))}
             assumedEfficiencyPercent={state.assumedEfficiencyPercent}
             onAssumedEfficiencyChange={(assumedEfficiencyPercent) => setState((prev) => ({ ...prev, assumedEfficiencyPercent }))}
+            ogSg={state.ogSg}
+            onOgChange={(ogSg) => setState((prev) => ({ ...prev, ogSg }))}
           />
         ) : null}
 

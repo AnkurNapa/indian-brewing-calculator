@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { calculateBrewhouseEfficiency, predictOriginalGravity, sgToPoints, pointsToSg } from '@/lib/efficiency';
+import {
+  calculateBrewhouseEfficiency,
+  predictOriginalGravity,
+  solveGrainWeightsByPercent,
+  sgToPoints,
+  pointsToSg,
+} from '@/lib/efficiency';
 
 describe('sgToPoints / pointsToSg', () => {
   it('round-trips correctly', () => {
@@ -72,5 +78,74 @@ describe('predictOriginalGravity', () => {
     const overOne = predictOriginalGravity(grainBill, 20, 150);
     const atFull = predictOriginalGravity(grainBill, 20, 100);
     expect(overOne).toBeCloseTo(atFull, 5);
+  });
+});
+
+describe('solveGrainWeightsByPercent', () => {
+  it('is the inverse of predictOriginalGravity for a single-malt bill', () => {
+    const weights = solveGrainWeightsByPercent([{ percentOfBill: 100, potentialSg: 1.037 }], 1.05, 20, 75);
+    const predicted = predictOriginalGravity(
+      [{ name: 'Malt', weightKg: weights[0], potentialSg: 1.037 }],
+      20,
+      75,
+    );
+    expect(predicted).toBeCloseTo(1.05, 3);
+  });
+
+  it('splits weight proportionally to percent of bill', () => {
+    const weights = solveGrainWeightsByPercent(
+      [
+        { percentOfBill: 80, potentialSg: 1.037 },
+        { percentOfBill: 20, potentialSg: 1.037 },
+      ],
+      1.05,
+      20,
+      75,
+    );
+    expect(weights[0] / weights[1]).toBeCloseTo(4, 5);
+  });
+
+  it('normalizes percentages that do not sum to 100', () => {
+    const notNormalized = solveGrainWeightsByPercent(
+      [
+        { percentOfBill: 40, potentialSg: 1.037 },
+        { percentOfBill: 40, potentialSg: 1.037 },
+        { percentOfBill: 40, potentialSg: 1.037 },
+      ],
+      1.05,
+      20,
+      75,
+    );
+    const equalThirds = solveGrainWeightsByPercent(
+      [
+        { percentOfBill: 33.333, potentialSg: 1.037 },
+        { percentOfBill: 33.333, potentialSg: 1.037 },
+        { percentOfBill: 33.333, potentialSg: 1.037 },
+      ],
+      1.05,
+      20,
+      75,
+    );
+    expect(notNormalized[0]).toBeCloseTo(equalThirds[0], 2);
+  });
+
+  it('returns 0 for every row when batch volume or target OG is invalid', () => {
+    const items = [{ percentOfBill: 100, potentialSg: 1.037 }];
+    expect(solveGrainWeightsByPercent(items, 1.05, 0, 75)).toEqual([0]);
+    expect(solveGrainWeightsByPercent(items, 1.0, 20, 75)).toEqual([0]);
+  });
+
+  it('returns 0 for a row with no usable potentialSg without failing other rows', () => {
+    const weights = solveGrainWeightsByPercent(
+      [
+        { percentOfBill: 50, potentialSg: 0 },
+        { percentOfBill: 50, potentialSg: 1.037 },
+      ],
+      1.05,
+      20,
+      75,
+    );
+    expect(weights[0]).toBe(0);
+    expect(weights[1]).toBeGreaterThan(0);
   });
 });

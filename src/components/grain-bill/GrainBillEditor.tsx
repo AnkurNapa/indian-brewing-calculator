@@ -1,14 +1,23 @@
 'use client';
 
+import { useState } from 'react';
 import { GrainBillItem, MaltCategory, classifyMaltCategory } from '@/lib/waterChemistry';
 import { WEYERMANN_MALTS } from '@/lib/weyermannMalts';
+import { solveGrainWeightsByPercent } from '@/lib/efficiency';
 import { Input } from '@/components/ui/Input';
 import { NumberField } from '@/components/ui/NumberField';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
+import { GravityField } from '@/components/ui/GravityField';
+import { roundForDisplay } from '@/lib/units';
 
 interface GrainBillEditorProps {
   grainBill: GrainBillItem[];
   onChange: (grainBill: GrainBillItem[]) => void;
+  batchVolumeL: number;
+  targetOgSg: number;
+  onTargetOgChange: (value: number) => void;
+  assumedEfficiencyPercent: number;
+  onAssumedEfficiencyChange: (value: number) => void;
 }
 
 function emptyRow(): GrainBillItem {
@@ -24,7 +33,19 @@ const MALT_CATEGORY_OPTIONS: { id: MaltCategory | ''; label: string }[] = [
   { id: 'acidulated', label: 'Acidulated' },
 ];
 
-export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
+type BillMode = 'weight' | 'percent';
+
+export function GrainBillEditor({
+  grainBill,
+  onChange,
+  batchVolumeL,
+  targetOgSg,
+  onTargetOgChange,
+  assumedEfficiencyPercent,
+  onAssumedEfficiencyChange,
+}: GrainBillEditorProps) {
+  const [mode, setMode] = useState<BillMode>('weight');
+
   const updateRow = (index: number, patch: Partial<GrainBillItem>) => {
     const next = grainBill.map((row, i) => (i === index ? { ...row, ...patch } : row));
     onChange(next);
@@ -39,6 +60,42 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
   };
 
   const totalWeightKg = grainBill.reduce((sum, row) => sum + (Number.isFinite(row.weightKg) ? row.weightKg : 0), 0);
+  const percentSum = grainBill.reduce((sum, row) => sum + (Number.isFinite(row.percentOfBill) ? (row.percentOfBill as number) : 0), 0);
+  const percentIsBalanced = Math.abs(percentSum - 100) < 0.1;
+
+  /** Recompute every row's weightKg from its (possibly un-normalized) percentOfBill, target OG, batch volume, and efficiency. */
+  const resolveWeightsFromPercent = (rows: GrainBillItem[]): GrainBillItem[] => {
+    const weights = solveGrainWeightsByPercent(
+      rows.map((row) => ({ percentOfBill: row.percentOfBill ?? 0, potentialSg: row.potentialSg ?? 0 })),
+      targetOgSg,
+      batchVolumeL,
+      assumedEfficiencyPercent,
+    );
+    return rows.map((row, i) => ({ ...row, weightKg: roundForDisplay(weights[i], 3) }));
+  };
+
+  const updatePercentRow = (index: number, percentOfBill: number) => {
+    const next = grainBill.map((row, i) => (i === index ? { ...row, percentOfBill } : row));
+    onChange(resolveWeightsFromPercent(next));
+  };
+
+  const normalizeToHundred = () => {
+    if (percentSum <= 0) return;
+    const next = grainBill.map((row) => ({
+      ...row,
+      percentOfBill: roundForDisplay(((row.percentOfBill ?? 0) / percentSum) * 100, 1),
+    }));
+    onChange(resolveWeightsFromPercent(next));
+  };
+
+  const handleModeChange = (next: BillMode) => {
+    setMode(next);
+    if (next === 'percent') {
+      // Re-solve immediately so switching into percent mode shows real
+      // computed weights right away instead of stale by-weight values.
+      onChange(resolveWeightsFromPercent(grainBill));
+    }
+  };
 
   return (
     <section className="flex flex-col gap-4">
@@ -52,6 +109,68 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
           + Add Grain
         </button>
       </div>
+
+      <div className="flex items-center justify-between gap-2 rounded-lg border-2 border-amber-200 bg-amber-50/40 p-3">
+        <span className="font-body text-sm font-medium text-amber-900">Enter grain bill by</span>
+        <div className="flex flex-shrink-0 gap-0.5 rounded-full border border-amber-200 bg-white p-0.5">
+          {(
+            [
+              { id: 'weight', label: 'Weight' },
+              { id: 'percent', label: '% of Bill' },
+            ] as { id: BillMode; label: string }[]
+          ).map((opt) => (
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => handleModeChange(opt.id)}
+              className={`min-h-[32px] rounded-full px-3 font-body text-xs font-semibold transition-colors ${
+                mode === opt.id ? 'bg-teal-700 text-parchment' : 'text-amber-800 hover:bg-amber-100'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {mode === 'percent' ? (
+        <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-3">
+          <p className="font-body text-xs text-ink/70">
+            Set your target OG and each malt&apos;s share of the bill (base vs. specialty) -- weights are solved
+            for you using batch volume ({batchVolumeL} L) and assumed efficiency.
+          </p>
+          <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <GravityField label="Target OG" value={targetOgSg} onChange={onTargetOgChange} />
+            <NumberField
+              label="Assumed Efficiency"
+              unit="%"
+              value={assumedEfficiencyPercent}
+              step={1}
+              max={100}
+              onChange={onAssumedEfficiencyChange}
+            />
+          </div>
+          <div
+            className={`mt-3 flex items-center justify-between gap-2 rounded-md border px-3 py-2 text-sm ${
+              percentIsBalanced ? 'border-teal-300 bg-teal-50 text-teal-800' : 'border-amber-400 bg-amber-50 text-amber-800'
+            }`}
+          >
+            <span>
+              {percentIsBalanced ? '✓' : '⚠'} Total: {roundForDisplay(percentSum, 1)}%{' '}
+              {percentIsBalanced ? '(balanced)' : '(should sum to 100%)'}
+            </span>
+            {!percentIsBalanced && percentSum > 0 ? (
+              <button
+                type="button"
+                onClick={normalizeToHundred}
+                className="min-h-[32px] flex-shrink-0 rounded-full border border-amber-400 bg-white px-3 font-body text-xs font-semibold text-amber-800 hover:bg-amber-100"
+              >
+                Normalize to 100%
+              </button>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
 
       {grainBill.length === 0 ? (
         <p className="rounded-md border-2 border-dashed border-amber-300 bg-amber-50 p-4 text-center font-body text-sm text-amber-800">
@@ -92,13 +211,24 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
               onChange={(value) => updateRow(index, { name: value })}
               placeholder="Type any grain name..."
             />
-            <NumberField
-              label="Weight"
-              unit="kg"
-              value={row.weightKg}
-              step={0.1}
-              onChange={(value) => updateRow(index, { weightKg: value })}
-            />
+            {mode === 'weight' ? (
+              <NumberField
+                label="Weight"
+                unit="kg"
+                value={row.weightKg}
+                step={0.1}
+                onChange={(value) => updateRow(index, { weightKg: value })}
+              />
+            ) : (
+              <NumberField
+                label="% of Bill"
+                unit="%"
+                value={row.percentOfBill ?? 0}
+                step={1}
+                onChange={(value) => updatePercentRow(index, value)}
+                helperText={`= ${roundForDisplay(row.weightKg, 3)} kg`}
+              />
+            )}
             <NumberField
               label="Color"
               unit="°L"
@@ -123,8 +253,12 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
               unit="SG"
               value={row.potentialSg ?? 0}
               step={0.001}
-              onChange={(value) => updateRow(index, { potentialSg: value || undefined })}
-              helperText="Maltster spec, typically 1.026-1.038. Used for OG planning in Brewhouse Efficiency."
+              onChange={(value) => {
+                const patch: Partial<GrainBillItem> = { potentialSg: value || undefined };
+                const next = grainBill.map((r, i) => (i === index ? { ...r, ...patch } : r));
+                onChange(mode === 'percent' ? resolveWeightsFromPercent(next) : next);
+              }}
+              helperText="Maltster spec, typically 1.026-1.038. Used for OG planning."
             />
             <button
               type="button"

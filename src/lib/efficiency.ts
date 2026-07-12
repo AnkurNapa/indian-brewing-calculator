@@ -120,3 +120,63 @@ export function predictOriginalGravity(
 
   return pointsToSg(predictedPoints);
 }
+
+export interface GrainPercentItem {
+  /** Percent of the total grist by weight, e.g. 80 for 80%. Rows should sum to 100 across the bill. */
+  percentOfBill: number;
+  potentialSg: number;
+}
+
+/**
+ * Solve grain weights (kg) from a target OG, batch volume, assumed
+ * efficiency, and each malt's percent-of-bill -- the inverse of
+ * `predictOriginalGravity`, for planning a recipe backward from "I want
+ * this OG, using roughly this base/specialty malt ratio" instead of
+ * guessing weights and checking the resulting OG.
+ *
+ *   totalPoints = (targetOG - 1) * 1000 * batchVolumeL
+ *   maltPoints_i = totalPoints * (percentOfBill_i / 100)
+ *   maltWeightKg_i = maltPoints_i / (sgToPoints(potentialSg_i) * efficiencyDecimal)
+ *
+ * Percentages are NOT required to already sum to 100 -- each row's
+ * effective share is normalized against the actual sum, so entering
+ * 40/40/40 (120 total) is treated the same as 33.3/33.3/33.3, rather
+ * than silently producing a grist 20% too big. Callers that want a
+ * strict validation error instead of silent normalization should check
+ * the sum themselves before calling.
+ *
+ * Edge cases handled:
+ *  - Non-positive batch volume, target OG <= 1.0, or a percent sum of
+ *    0: every row returns 0 kg rather than dividing by zero.
+ *  - A row with a non-positive potentialSg contributes 0 kg for that
+ *    row specifically (can't solve a weight for an unknown-potential
+ *    malt), without failing the other rows.
+ */
+export function solveGrainWeightsByPercent(
+  items: GrainPercentItem[],
+  targetOgSg: number,
+  batchVolumeL: number,
+  assumedEfficiencyPercent: number,
+): number[] {
+  const safeVolume = safePositive(batchVolumeL);
+  const safeEfficiency = Math.max(0, Math.min(100, Number.isFinite(assumedEfficiencyPercent) ? assumedEfficiencyPercent : 0));
+  const efficiencyDecimal = safeEfficiency / 100;
+
+  const percentSum = items.reduce((sum, item) => sum + (Number.isFinite(item.percentOfBill) && item.percentOfBill > 0 ? item.percentOfBill : 0), 0);
+
+  if (safeVolume <= 0 || targetOgSg <= 1.0 || percentSum <= 0 || efficiencyDecimal <= 0) {
+    return items.map(() => 0);
+  }
+
+  const totalPoints = sgToPoints(targetOgSg) * safeVolume;
+
+  return items.map((item) => {
+    const rawPercent = Number.isFinite(item.percentOfBill) && item.percentOfBill > 0 ? item.percentOfBill : 0;
+    const normalizedPercent = rawPercent / percentSum;
+    const potentialPoints = Number.isFinite(item.potentialSg) && item.potentialSg > 1 ? sgToPoints(item.potentialSg) : 0;
+    if (potentialPoints <= 0) return 0;
+
+    const maltPoints = totalPoints * normalizedPercent;
+    return maltPoints / (potentialPoints * efficiencyDecimal);
+  });
+}

@@ -31,6 +31,8 @@ interface MashAdjustmentPanelProps {
   onTargetStyleChange: (id: string) => void;
   assumedEfficiencyPercent: number;
   onAssumedEfficiencyChange: (value: number) => void;
+  ogSg: number;
+  onOgChange: (value: number) => void;
 }
 
 export function MashAdjustmentPanel({
@@ -43,6 +45,8 @@ export function MashAdjustmentPanel({
   onTargetStyleChange,
   assumedEfficiencyPercent,
   onAssumedEfficiencyChange,
+  ogSg,
+  onOgChange,
 }: MashAdjustmentPanelProps) {
   const [targetMashPh, setTargetMashPh] = useState(5.4);
   const [acidId, setAcidId] = useState(ACID_TYPES[0].id);
@@ -100,7 +104,7 @@ export function MashAdjustmentPanel({
           },
           {
             lead: '2. Build your Grain Bill here.',
-            body: 'Add each grain with weight, color, and extract potential -- this grist drives Predicted Mash pH below, and is shared with SRM color, Water Volumes, Style Check, and Home.',
+            body: 'Enter each grain by weight, or switch to "% of Bill" to set a target OG and each malt\'s share -- weights are solved for you. This grist drives Predicted Mash pH below, and is shared with SRM color, Water Volumes, Style Check, and Home.',
           },
           {
             lead: '3. Check Predicted Mash pH.',
@@ -134,7 +138,15 @@ export function MashAdjustmentPanel({
         />
       </div>
 
-      <GrainBillEditor grainBill={grainBill} onChange={onGrainBillChange} />
+      <GrainBillEditor
+        grainBill={grainBill}
+        onChange={onGrainBillChange}
+        batchVolumeL={batchVolumeL}
+        targetOgSg={ogSg}
+        onTargetOgChange={onOgChange}
+        assumedEfficiencyPercent={assumedEfficiencyPercent}
+        onAssumedEfficiencyChange={onAssumedEfficiencyChange}
+      />
 
       <OgEstimateCard
         grainBill={grainBill}
