@@ -2,11 +2,14 @@
 
 import { useMemo, useState } from 'react';
 import { useFermentationBatches } from '@/hooks/useFermentationBatches';
+import { useShareText } from '@/hooks/useShareText';
 import { FermentationEntry, calculateFermentationStats, sortEntriesByTime } from '@/lib/fermentationTracker';
+import { buildFermentationShareText } from '@/lib/fermentationShareText';
 import { NumberField } from '@/components/ui/NumberField';
 import { GravityField } from '@/components/ui/GravityField';
 import { Input } from '@/components/ui/Input';
 import { ResultCard } from '@/components/ui/ResultCard';
+import { ShareIcon } from '@/components/ui/icons';
 import { roundForDisplay } from '@/lib/units';
 
 function generateId(): string {
@@ -95,6 +98,12 @@ export function FermentationTrackerPanel() {
     () => batches.find((b) => b.id === activeBatchId) ?? null,
     [batches, activeBatchId],
   );
+
+  const { share, status: shareStatus } = useShareText('Fermentation Log');
+  const handleShareBatch = () => {
+    if (!activeBatch) return;
+    share(buildFermentationShareText(activeBatch));
+  };
 
   const stats = calculateFermentationStats(activeBatch?.entries ?? []);
   const entriesNewestFirst = activeBatch ? [...sortEntriesByTime(activeBatch.entries)].reverse() : [];
@@ -248,6 +257,26 @@ export function FermentationTrackerPanel() {
             >
               {stats.likelyComplete ? 'Gravity stable for 24h+ -- likely finished.' : null}
             </ResultCard>
+          </div>
+
+          <div>
+            <button
+              type="button"
+              onClick={handleShareBatch}
+              className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-md border-2 border-teal-300 px-4 py-2 font-body text-sm font-semibold text-teal-800 hover:bg-teal-50 sm:w-auto"
+            >
+              <ShareIcon className="h-4 w-4 flex-shrink-0" />
+              Share This Batch&apos;s Log
+            </button>
+            <p className="mt-1 font-body text-xs text-amber-700" role="status" aria-live="polite">
+              {shareStatus === 'shared'
+                ? 'Shared.'
+                : shareStatus === 'copied'
+                  ? 'Copied to clipboard -- paste into any app.'
+                  : shareStatus === 'error'
+                    ? 'Sharing not supported on this browser.'
+                    : ''}
+            </p>
           </div>
 
           <div className="flex flex-col gap-2">

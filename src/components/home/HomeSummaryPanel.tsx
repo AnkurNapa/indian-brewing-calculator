@@ -1,7 +1,8 @@
 'use client';
 
-import { ComponentType, useEffect, useState } from 'react';
+import { ComponentType } from 'react';
 import { AppState } from '@/hooks/useWaterProfile';
+import { useShareText } from '@/hooks/useShareText';
 import { FermentationBatch, calculateFermentationStats } from '@/lib/fermentationTracker';
 import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
 import { BJCP_STYLES } from '@/lib/bjcpStyles';
@@ -84,13 +85,7 @@ function DeviationRow({ label, unit, compliance }: { label: string; unit: string
  * session at a glance, instead of re-visiting every tab one by one.
  */
 export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab }: HomeSummaryPanelProps) {
-  const [shareStatus, setShareStatus] = useState<'idle' | 'shared' | 'copied' | 'error'>('idle');
-
-  useEffect(() => {
-    if (shareStatus === 'idle') return;
-    const timer = setTimeout(() => setShareStatus('idle'), 2500);
-    return () => clearTimeout(timer);
-  }, [shareStatus]);
+  const { share, status: shareStatus } = useShareText('Brew Recipe Summary');
 
   const targetStyleName = TARGET_STYLE_PROFILES.find((s) => s.id === state.targetStyleId)?.name ?? '--';
   const totalGrainKg = state.grainBill.reduce((sum, row) => sum + (Number.isFinite(row.weightKg) ? row.weightKg : 0), 0);
@@ -124,19 +119,7 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab }: Ho
         };
       }),
     });
-    try {
-      if (typeof navigator !== 'undefined' && navigator.share) {
-        await navigator.share({ title: 'Brew Recipe Summary', text });
-        setShareStatus('shared');
-      } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        await navigator.clipboard.writeText(text);
-        setShareStatus('copied');
-      } else {
-        setShareStatus('error');
-      }
-    } catch {
-      // User cancelled the native share sheet, or clipboard write was denied -- not an error worth surfacing.
-    }
+    await share(text);
   };
 
   return (
@@ -145,6 +128,16 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab }: Ho
       <p className="font-body text-sm text-amber-800">
         Everything entered so far, in brew-day order. Tap Edit on any card to jump back and change it.
       </p>
+
+      <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-3 font-body text-xs text-teal-900">
+        <p>
+          Built by <span className="font-semibold">Ankur Napa</span>. Your data never leaves this device -- this
+          app doesn&apos;t ask for camera, location, contacts, or any other phone permission, and there is no
+          server storing or seeing what you enter. Everything is saved only in this browser&apos;s local storage
+          (see the About tab for full details, or Backup &amp; Sync if you want your own optional Google Sheets
+          copy).
+        </p>
+      </div>
 
       <SummarySection title="Water Source" icon={DropletIcon} tabId="water-report" onJumpToTab={onJumpToTab}>
         <p>
