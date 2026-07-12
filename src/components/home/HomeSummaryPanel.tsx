@@ -11,7 +11,7 @@ import { calculateSrm } from '@/lib/srm';
 import { calculateIbu, IBU_FORMULAS } from '@/lib/ibu';
 import { calculateAbvAdvanced } from '@/lib/fermentation';
 import { roundForDisplay } from '@/lib/units';
-import { DropletIcon, FlaskIcon, CalculatorIcon, FermenterIcon, StyleCheckIcon, ShareIcon } from '@/components/ui/icons';
+import { DropletIcon, FlaskIcon, CalculatorIcon, FermenterIcon, StyleCheckIcon, ShareIcon, BookmarkIcon } from '@/components/ui/icons';
 import { buildRecipeShareText } from '@/lib/recipeShareText';
 import { TabDef } from '@/components/ui/Tabs';
 import { predictOriginalGravity } from '@/lib/efficiency';
@@ -328,6 +328,14 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
                 ? 'Sharing not supported on this browser -- try the Print/Save as PDF option in your browser menu.'
                 : "Opens your device's share sheet (WhatsApp, Email, etc.), or copies a text summary if sharing isn't available. For a PDF, use your browser's Print -> Save as PDF."}
         </p>
+        <button
+          type="button"
+          onClick={() => onJumpToTab('recipes')}
+          className="mt-2 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-md border border-teal-300 bg-teal-50 px-4 py-2 font-body text-sm font-semibold text-teal-800 hover:bg-teal-100"
+        >
+          <BookmarkIcon className="h-4 w-4 flex-shrink-0" />
+          Lock This Recipe
+        </button>
       </div>
     </section>
   );

@@ -131,6 +131,15 @@ export function HomeIcon({ className }: IconProps) {
   );
 }
 
+/** Bookmark ribbon -- Locked/saved Recipes. */
+export function BookmarkIcon({ className }: IconProps) {
+  return (
+    <svg {...commonProps} className={className} aria-hidden="true">
+      <path d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4.5L5 21V4.5a1 1 0 0 1 1-1Z" />
+    </svg>
+  );
+}
+
 /** Upward arrow out of a tray -- Share / Export. */
 export function ShareIcon({ className }: IconProps) {
   return (

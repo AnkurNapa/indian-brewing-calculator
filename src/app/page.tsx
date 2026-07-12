@@ -19,8 +19,10 @@ import { StyleCheckPanel } from '@/components/style-check/StyleCheckPanel';
 import { AboutPanel } from '@/components/about/AboutPanel';
 import { BackupPanel } from '@/components/backup/BackupPanel';
 import { HomeSummaryPanel } from '@/components/home/HomeSummaryPanel';
+import { RecipeSnapshotsPanel } from '@/components/recipes/RecipeSnapshotsPanel';
 import { useWaterProfile } from '@/hooks/useWaterProfile';
 import { useFermentationBatches } from '@/hooks/useFermentationBatches';
+import { useRecipeSnapshots } from '@/hooks/useRecipeSnapshots';
 import {
   HomeIcon,
   DropletIcon,
@@ -34,6 +36,7 @@ import {
   StyleCheckIcon,
   InfoIcon,
   CloudSyncIcon,
+  BookmarkIcon,
 } from '@/components/ui/icons';
 
 /**
@@ -53,6 +56,7 @@ const TABS: TabDef[] = [
   { id: 'fermentation-tracker', label: 'Fermentation Tracker', shortLabel: 'Ferment', icon: FermenterIcon },
   { id: 'style-check', label: 'BJCP Style Check', shortLabel: 'Style', icon: StyleCheckIcon },
   { id: 'blending', label: 'Blending', shortLabel: 'Blend', icon: BlendIcon },
+  { id: 'recipes', label: 'Recipes', shortLabel: 'Recipes', icon: BookmarkIcon },
   { id: 'backup', label: 'Backup & Sync', shortLabel: 'Backup', icon: CloudSyncIcon },
   { id: 'about', label: 'About', shortLabel: 'About', icon: InfoIcon },
 ];
@@ -63,6 +67,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('home');
   const { state, setState } = useWaterProfile();
   const { batches: fermentationBatches } = useFermentationBatches();
+  const { snapshots: recipeSnapshots, addSnapshot: addRecipeSnapshot, deleteSnapshot: deleteRecipeSnapshot } = useRecipeSnapshots();
   const activeTabDef = TAB_BY_ID.get(activeTab) ?? TABS[0];
 
   const targetStyleName = TARGET_STYLE_PROFILES.find((s) => s.id === state.targetStyleId)?.name ?? '--';
@@ -102,6 +107,7 @@ export default function Home() {
       { label: 'FG', value: roundForDisplay(state.fgSg, 3).toString() },
     ],
     blending: [],
+    recipes: [],
     backup: [],
     about: [],
   };
@@ -169,7 +175,7 @@ export default function Home() {
             state={state}
             fermentationBatches={fermentationBatches}
             onJumpToTab={setActiveTab}
-            processSteps={TABS.filter((tab) => tab.id !== 'home' && tab.id !== 'backup' && tab.id !== 'about')}
+            processSteps={TABS.filter((tab) => tab.id !== 'home' && tab.id !== 'backup' && tab.id !== 'about' && tab.id !== 'recipes')}
           />
         ) : null}
 
@@ -287,6 +293,16 @@ export default function Home() {
             onIbuFormulaChange={(ibuFormula) => setState((prev) => ({ ...prev, ibuFormula }))}
             garetzExtras={state.garetzExtras}
             onGaretzExtrasChange={(garetzExtras) => setState((prev) => ({ ...prev, garetzExtras }))}
+          />
+        ) : null}
+
+        {activeTab === 'recipes' ? (
+          <RecipeSnapshotsPanel
+            currentState={state}
+            snapshots={recipeSnapshots}
+            onAddSnapshot={addRecipeSnapshot}
+            onDeleteSnapshot={deleteRecipeSnapshot}
+            onLoadSnapshot={(loadedState) => setState(loadedState)}
           />
         ) : null}
 
