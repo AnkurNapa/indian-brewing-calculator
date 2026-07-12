@@ -162,7 +162,12 @@ export default function Home() {
 
       <div className="rounded-2xl border border-[#e2e6ea] bg-white p-4 shadow-sm sm:p-6">
         {activeTab === 'home' ? (
-          <HomeSummaryPanel state={state} fermentationBatches={fermentationBatches} onJumpToTab={setActiveTab} />
+          <HomeSummaryPanel
+            state={state}
+            fermentationBatches={fermentationBatches}
+            onJumpToTab={setActiveTab}
+            processSteps={TABS.filter((tab) => tab.id !== 'home' && tab.id !== 'backup' && tab.id !== 'about')}
+          />
         ) : null}
 
         {activeTab === 'water-report' ? (

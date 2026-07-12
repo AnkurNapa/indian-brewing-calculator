@@ -13,11 +13,14 @@ import { calculateAbvAdvanced } from '@/lib/fermentation';
 import { roundForDisplay } from '@/lib/units';
 import { DropletIcon, FlaskIcon, CalculatorIcon, FermenterIcon, StyleCheckIcon, ShareIcon } from '@/components/ui/icons';
 import { buildRecipeShareText } from '@/lib/recipeShareText';
+import { TabDef } from '@/components/ui/Tabs';
 
 interface HomeSummaryPanelProps {
   state: AppState;
   fermentationBatches: FermentationBatch[];
   onJumpToTab: (tabId: string) => void;
+  /** The brew-day tab sequence (excluding Home/Backup/About), rendered as a visual process flow. */
+  processSteps: TabDef[];
 }
 
 function SummarySection({
@@ -84,7 +87,7 @@ function DeviationRow({ label, unit, compliance }: { label: string; unit: string
  * batch volume to again?") or at the end of the day to review the whole
  * session at a glance, instead of re-visiting every tab one by one.
  */
-export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab }: HomeSummaryPanelProps) {
+export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, processSteps }: HomeSummaryPanelProps) {
   const { share, status: shareStatus } = useShareText('Brew Recipe Summary');
 
   const targetStyleName = TARGET_STYLE_PROFILES.find((s) => s.id === state.targetStyleId)?.name ?? '--';
@@ -128,6 +131,31 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab }: Ho
       <p className="font-body text-sm text-amber-800">
         Everything entered so far, in brew-day order. Tap Edit on any card to jump back and change it.
       </p>
+
+      <div className="rounded-lg border-2 border-amber-200 bg-amber-50/40 p-3">
+        <h3 className="font-display text-xs font-bold uppercase tracking-wide text-amber-900">Brew Day Flow</h3>
+        <div className="mt-2 flex items-stretch gap-1 overflow-x-auto pb-1">
+          {processSteps.map((step, i) => (
+            <div key={step.id} className="flex flex-shrink-0 items-center">
+              {i > 0 ? (
+                <span aria-hidden="true" className="mx-1 flex-shrink-0 text-amber-400">
+                  →
+                </span>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => onJumpToTab(step.id)}
+                className="flex min-h-[64px] w-20 flex-shrink-0 flex-col items-center justify-center gap-1 rounded-lg border-2 border-teal-200 bg-white px-1 py-2 text-center hover:border-teal-400 hover:bg-teal-50"
+              >
+                <step.icon className="h-5 w-5 flex-shrink-0 text-teal-700" />
+                <span className="font-body text-[0.65rem] font-semibold leading-tight text-ink">
+                  {step.shortLabel ?? step.label}
+                </span>
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <SummarySection title="Water Source" icon={DropletIcon} tabId="water-report" onJumpToTab={onJumpToTab}>
         <p>
