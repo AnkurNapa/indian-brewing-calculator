@@ -14,6 +14,8 @@ import { roundForDisplay } from '@/lib/units';
 import { DropletIcon, FlaskIcon, CalculatorIcon, FermenterIcon, StyleCheckIcon, ShareIcon } from '@/components/ui/icons';
 import { buildRecipeShareText } from '@/lib/recipeShareText';
 import { TabDef } from '@/components/ui/Tabs';
+import { predictOriginalGravity } from '@/lib/efficiency';
+import { GravityDisplay } from '@/components/ui/GravityDisplay';
 
 interface HomeSummaryPanelProps {
   state: AppState;
@@ -46,7 +48,7 @@ function SummarySection({
         <button
           type="button"
           onClick={() => onJumpToTab(tabId)}
-          className="min-h-[44px] flex-shrink-0 rounded-full border-2 border-teal-300 px-3 py-2 font-body text-xs font-semibold text-teal-800 hover:bg-teal-50"
+          className="min-h-[44px] flex-shrink-0 rounded-full border-2 border-teal-300 bg-white px-3 py-2 font-body text-xs font-semibold text-teal-800 shadow-sm hover:bg-teal-50"
         >
           Edit
         </button>
@@ -93,6 +95,12 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
   const targetStyleName = TARGET_STYLE_PROFILES.find((s) => s.id === state.targetStyleId)?.name ?? '--';
   const totalGrainKg = state.grainBill.reduce((sum, row) => sum + (Number.isFinite(row.weightKg) ? row.weightKg : 0), 0);
   const srm = state.grainBill.length > 0 ? calculateSrm(state.grainBill, state.batchVolumeL) : null;
+  const hasPotential = state.grainBill.some((row) => row.weightKg > 0 && (row.potentialSg ?? 0) > 1);
+  const predictedOg = predictOriginalGravity(
+    state.grainBill.map((row) => ({ name: row.name, weightKg: row.weightKg, potentialSg: row.potentialSg ?? 0 })),
+    state.batchVolumeL,
+    state.assumedEfficiencyPercent,
+  );
   const abvSoFar = state.fgSg > 0 && state.ogSg > 0 ? ((state.ogSg - state.fgSg) * 131.25).toFixed(2) : null;
 
   const bjcpStyle = BJCP_STYLES.find((s) => s.id === state.bjcpStyleId) ?? BJCP_STYLES[0];
@@ -133,27 +141,39 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
       </p>
 
       <div className="rounded-lg border-2 border-amber-200 bg-amber-50/40 p-3">
-        <h3 className="font-display text-xs font-bold uppercase tracking-wide text-amber-900">Brew Day Flow</h3>
-        <div className="mt-2 flex items-stretch gap-1 overflow-x-auto pb-1">
-          {processSteps.map((step, i) => (
-            <div key={step.id} className="flex flex-shrink-0 items-center">
-              {i > 0 ? (
-                <span aria-hidden="true" className="mx-1 flex-shrink-0 text-amber-400">
-                  →
-                </span>
-              ) : null}
-              <button
-                type="button"
-                onClick={() => onJumpToTab(step.id)}
-                className="flex min-h-[64px] w-20 flex-shrink-0 flex-col items-center justify-center gap-1 rounded-lg border-2 border-teal-200 bg-white px-1 py-2 text-center hover:border-teal-400 hover:bg-teal-50"
-              >
-                <step.icon className="h-5 w-5 flex-shrink-0 text-teal-700" />
-                <span className="font-body text-[0.65rem] font-semibold leading-tight text-ink">
-                  {step.shortLabel ?? step.label}
-                </span>
-              </button>
-            </div>
-          ))}
+        <div className="flex items-center justify-between">
+          <h3 className="font-display text-xs font-bold uppercase tracking-wide text-amber-900">Brew Day Flow</h3>
+          <span className="flex items-center gap-1 font-body text-[0.65rem] font-semibold text-amber-600">
+            Scroll for more <span aria-hidden="true">→</span>
+          </span>
+        </div>
+        <div className="relative mt-2">
+          <div className="flex items-stretch gap-1 overflow-x-auto pb-1">
+            {processSteps.map((step, i) => (
+              <div key={step.id} className="flex flex-shrink-0 items-center">
+                {i > 0 ? (
+                  <span aria-hidden="true" className="mx-1 flex-shrink-0 text-amber-400">
+                    →
+                  </span>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => onJumpToTab(step.id)}
+                  className="flex min-h-[64px] w-20 flex-shrink-0 flex-col items-center justify-center gap-1 rounded-lg border-2 border-teal-200 bg-white px-1 py-2 text-center hover:border-teal-400 hover:bg-teal-50"
+                >
+                  <step.icon className="h-5 w-5 flex-shrink-0 text-teal-700" />
+                  <span className="font-body text-[0.65rem] font-semibold leading-tight text-ink">
+                    {step.shortLabel ?? step.label}
+                  </span>
+                </button>
+              </div>
+            ))}
+          </div>
+          {/* Fade hint on the right edge so the strip visibly continues off-screen, not just relying on the "Scroll for more" label. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-amber-50 to-transparent"
+          />
         </div>
       </div>
 
@@ -164,7 +184,7 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
         </p>
       </SummarySection>
 
-      <SummarySection title="Grain Bill" icon={DropletIcon} tabId="water-report" onJumpToTab={onJumpToTab}>
+      <SummarySection title="Grain Bill" icon={DropletIcon} tabId="mash-adjustment" onJumpToTab={onJumpToTab}>
         {state.grainBill.length === 0 ? (
           <p className="text-amber-700">No grains added yet.</p>
         ) : (
@@ -182,6 +202,12 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
             <p className="mt-1 font-semibold">
               Total: {totalGrainKg.toFixed(2)} kg {srm !== null ? `-- ~${roundForDisplay(srm, 1)} SRM` : ''}
             </p>
+            {hasPotential ? (
+              <p className="mt-1 font-semibold text-teal-800">
+                Estimated OG: {roundForDisplay(predictedOg, 3)} SG (at {state.assumedEfficiencyPercent}% assumed
+                efficiency)
+              </p>
+            ) : null}
           </>
         )}
       </SummarySection>
@@ -193,8 +219,8 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
       </SummarySection>
 
       <SummarySection title="Recipe Gravity" icon={CalculatorIcon} tabId="brewhouse" onJumpToTab={onJumpToTab}>
-        <p>OG: {roundForDisplay(state.ogSg, 3)}</p>
-        <p>FG: {roundForDisplay(state.fgSg, 3)}</p>
+        <GravityDisplay label="OG" valueSg={state.ogSg} />
+        <GravityDisplay label="FG" valueSg={state.fgSg} />
         {abvSoFar !== null ? <p>ABV (simple): {abvSoFar}%</p> : null}
       </SummarySection>
 
@@ -222,7 +248,7 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
           <button
             type="button"
             onClick={() => onJumpToTab('style-check')}
-            className="min-h-[44px] flex-shrink-0 rounded-full border-2 border-teal-300 px-3 py-2 font-body text-xs font-semibold text-teal-800 hover:bg-teal-50"
+            className="min-h-[44px] flex-shrink-0 rounded-full border-2 border-teal-300 bg-white px-3 py-2 font-body text-xs font-semibold text-teal-800 shadow-sm hover:bg-teal-50"
           >
             Change Style
           </button>

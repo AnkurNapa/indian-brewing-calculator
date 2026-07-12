@@ -85,3 +85,38 @@ export function calculateBrewhouseEfficiency(
 
   return { maxTheoreticalPoints, actualPoints, efficiencyPercent };
 }
+
+/**
+ * Predict OG from a grain bill's extract potential, an assumed brewhouse
+ * efficiency, and the batch volume -- the inverse of
+ * calculateBrewhouseEfficiency, useful before brew day when there's no
+ * measured gravity yet, just a planned grist and a target volume.
+ *
+ * Grist rows without a potentialSg are silently skipped (contribute 0
+ * points) rather than treated as an error, since potentialSg is optional
+ * on GrainBillItem -- a partially-specified grain bill still gets a
+ * partial-but-honest estimate instead of failing outright.
+ */
+export function predictOriginalGravity(
+  grainBill: GrainPotentialItem[],
+  batchVolumeL: number,
+  assumedEfficiencyPercent: number,
+): number {
+  const safeVolume = safePositive(batchVolumeL);
+  const safeEfficiency = Math.max(0, Math.min(100, Number.isFinite(assumedEfficiencyPercent) ? assumedEfficiencyPercent : 0));
+
+  const validItems = grainBill.filter(
+    (item) => Number.isFinite(item.weightKg) && item.weightKg > 0 && Number.isFinite(item.potentialSg) && item.potentialSg > 1,
+  );
+  const totalPotentialPointsPerLiter = validItems.reduce(
+    (sum, item) => sum + sgToPoints(item.potentialSg) * item.weightKg,
+    0,
+  );
+
+  if (safeVolume <= 0 || totalPotentialPointsPerLiter <= 0) return 1.0;
+
+  const maxTheoreticalPoints = totalPotentialPointsPerLiter / safeVolume;
+  const predictedPoints = maxTheoreticalPoints * (safeEfficiency / 100);
+
+  return pointsToSg(predictedPoints);
+}

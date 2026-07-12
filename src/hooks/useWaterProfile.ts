@@ -23,6 +23,8 @@ export interface AppState {
   wortGravitySg: number;
   /** Selected BJCP style (for numeric-range compliance), separate from the water-chemistry targetStyleId. */
   bjcpStyleId: string;
+  /** Assumed brewhouse efficiency %, used to predict OG from the grain bill before brew day. */
+  assumedEfficiencyPercent: number;
 }
 
 export const DEFAULT_APP_STATE: AppState = {
@@ -38,6 +40,7 @@ export const DEFAULT_APP_STATE: AppState = {
   hopAdditions: [{ name: 'Bittering Hop', alphaAcidPercent: 12, weightG: 20, boilTimeMinutes: 60 }],
   wortGravitySg: 1.05,
   bjcpStyleId: BJCP_STYLES[0].id,
+  assumedEfficiencyPercent: 72,
 };
 
 function isValidAppState(value: unknown): value is AppState {

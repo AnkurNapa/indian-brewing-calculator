@@ -8,7 +8,6 @@ import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
 import { roundForDisplay } from '@/lib/units';
 import { WaterReportForm } from '@/components/water-report/WaterReportForm';
 import { TargetStyleReference } from '@/components/water-report/TargetStyleReference';
-import { GrainBillEditor } from '@/components/grain-bill/GrainBillEditor';
 import { MashAdjustmentPanel } from '@/components/mash-adjustment/MashAdjustmentPanel';
 import { SpargeAdjustmentPanel } from '@/components/sparge-adjustment/SpargeAdjustmentPanel';
 import { BlendingPanel } from '@/components/blending/BlendingPanel';
@@ -192,8 +191,8 @@ export default function Home() {
                   body: 'Higher RA pushes mash pH up; very low or negative RA (like RO water) lets dark malt acidity dominate -- this feeds directly into Mash Adjustment.',
                 },
                 {
-                  lead: '4. Build your Grain Bill.',
-                  body: 'Add each grain with weight and color, quick-filling from Weyermann malts or typing your own. This grain bill is shared everywhere: mash pH, SRM color, water volumes, and Home.',
+                  lead: '4. Build your Grain Bill on Mash Adjustment.',
+                  body: 'The Grain Bill editor lives on the Mash Adjustment tab, right next to Predicted Mash pH, since grist is what actually drives that number.',
                 },
               ]}
             />
@@ -206,10 +205,6 @@ export default function Home() {
               profile={state.sourceProfile}
               onChange={(sourceProfile) => setState((prev) => ({ ...prev, sourceProfile }))}
             />
-            <GrainBillEditor
-              grainBill={state.grainBill}
-              onChange={(grainBill) => setState((prev) => ({ ...prev, grainBill }))}
-            />
           </div>
         ) : null}
 
@@ -217,10 +212,13 @@ export default function Home() {
           <MashAdjustmentPanel
             sourceProfile={state.sourceProfile}
             grainBill={state.grainBill}
+            onGrainBillChange={(grainBill) => setState((prev) => ({ ...prev, grainBill }))}
             batchVolumeL={state.batchVolumeL}
             onBatchVolumeChange={(batchVolumeL) => setState((prev) => ({ ...prev, batchVolumeL }))}
             targetStyleId={state.targetStyleId}
             onTargetStyleChange={(targetStyleId) => setState((prev) => ({ ...prev, targetStyleId }))}
+            assumedEfficiencyPercent={state.assumedEfficiencyPercent}
+            onAssumedEfficiencyChange={(assumedEfficiencyPercent) => setState((prev) => ({ ...prev, assumedEfficiencyPercent }))}
           />
         ) : null}
 

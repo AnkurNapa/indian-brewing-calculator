@@ -17,24 +17,32 @@ import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
+import { OgEstimateCard } from '@/components/ui/OgEstimateCard';
+import { GrainBillEditor } from '@/components/grain-bill/GrainBillEditor';
 import { roundForDisplay } from '@/lib/units';
 
 interface MashAdjustmentPanelProps {
   sourceProfile: IonProfile;
   grainBill: GrainBillItem[];
+  onGrainBillChange: (grainBill: GrainBillItem[]) => void;
   batchVolumeL: number;
   onBatchVolumeChange: (value: number) => void;
   targetStyleId: string;
   onTargetStyleChange: (id: string) => void;
+  assumedEfficiencyPercent: number;
+  onAssumedEfficiencyChange: (value: number) => void;
 }
 
 export function MashAdjustmentPanel({
   sourceProfile,
   grainBill,
+  onGrainBillChange,
   batchVolumeL,
   onBatchVolumeChange,
   targetStyleId,
   onTargetStyleChange,
+  assumedEfficiencyPercent,
+  onAssumedEfficiencyChange,
 }: MashAdjustmentPanelProps) {
   const [targetMashPh, setTargetMashPh] = useState(5.4);
   const [acidId, setAcidId] = useState(ACID_TYPES[0].id);
@@ -91,15 +99,19 @@ export function MashAdjustmentPanel({
             body: 'Batch volume is shared across the app; target style picks the salt-addition targets for Predicted Mash pH and Salt Additions below.',
           },
           {
-            lead: '2. Check Predicted Mash pH.',
-            body: 'Computed from your Water Report source water and Grain Bill -- add grains on the Water Report tab first if this looks like a fallback value.',
+            lead: '2. Build your Grain Bill here.',
+            body: 'Add each grain with weight, color, and extract potential -- this grist drives Predicted Mash pH below, and is shared with SRM color, Water Volumes, Style Check, and Home.',
           },
           {
-            lead: '3. Add the suggested salts.',
+            lead: '3. Check Predicted Mash pH.',
+            body: 'Computed from your Water Report source water and the Grain Bill above.',
+          },
+          {
+            lead: '4. Add the suggested salts.',
             body: 'These move your water toward the target style profile; dilution guidance appears automatically if salts alone can\'t reach the target.',
           },
           {
-            lead: '4. Dose acid only if needed.',
+            lead: '5. Dose acid only if needed.',
             body: 'Set a Target Mash pH and pick an acid type -- the dose is calculated against your estimated mash water volume, not the full batch volume.',
           },
         ]}
@@ -121,6 +133,15 @@ export function MashAdjustmentPanel({
           options={TARGET_STYLE_PROFILES.map((style) => ({ id: style.id, label: style.name }))}
         />
       </div>
+
+      <GrainBillEditor grainBill={grainBill} onChange={onGrainBillChange} />
+
+      <OgEstimateCard
+        grainBill={grainBill}
+        batchVolumeL={batchVolumeL}
+        assumedEfficiencyPercent={assumedEfficiencyPercent}
+        onAssumedEfficiencyChange={onAssumedEfficiencyChange}
+      />
 
       <ResultCard
         title="Predicted Mash pH"

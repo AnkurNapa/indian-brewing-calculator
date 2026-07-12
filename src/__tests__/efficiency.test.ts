@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateBrewhouseEfficiency, sgToPoints, pointsToSg } from '@/lib/efficiency';
+import { calculateBrewhouseEfficiency, predictOriginalGravity, sgToPoints, pointsToSg } from '@/lib/efficiency';
 
 describe('sgToPoints / pointsToSg', () => {
   it('round-trips correctly', () => {
@@ -47,5 +47,30 @@ describe('calculateBrewhouseEfficiency', () => {
       20,
     );
     expect(result.efficiencyPercent).toBeCloseTo(100, 1);
+  });
+});
+
+describe('predictOriginalGravity', () => {
+  it('is the inverse of calculateBrewhouseEfficiency at a given efficiency', () => {
+    const grainBill = [{ name: 'Pale Malt', weightKg: 5, potentialSg: 1.037 }];
+    const predicted = predictOriginalGravity(grainBill, 20, 75);
+    const backCalculated = calculateBrewhouseEfficiency(grainBill, predicted, 20);
+    expect(backCalculated.efficiencyPercent).toBeCloseTo(75, 1);
+  });
+
+  it('returns 1.0 for an empty grain bill', () => {
+    expect(predictOriginalGravity([], 20, 75)).toBe(1.0);
+  });
+
+  it('skips rows without a usable potentialSg', () => {
+    const grainBill = [{ name: 'No Potential', weightKg: 5, potentialSg: 0 }];
+    expect(predictOriginalGravity(grainBill, 20, 75)).toBe(1.0);
+  });
+
+  it('clamps efficiency to 0-100%', () => {
+    const grainBill = [{ name: 'Pale Malt', weightKg: 5, potentialSg: 1.037 }];
+    const overOne = predictOriginalGravity(grainBill, 20, 150);
+    const atFull = predictOriginalGravity(grainBill, 20, 100);
+    expect(overOne).toBeCloseTo(atFull, 5);
   });
 });
