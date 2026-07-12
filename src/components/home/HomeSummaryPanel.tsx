@@ -10,7 +10,7 @@ import { calculateSrm } from '@/lib/srm';
 import { calculateIbu } from '@/lib/ibu';
 import { calculateAbvAdvanced } from '@/lib/fermentation';
 import { roundForDisplay } from '@/lib/units';
-import { DropletIcon, FlaskIcon, CalculatorIcon, FermenterIcon, StyleCheckIcon } from '@/components/ui/icons';
+import { DropletIcon, FlaskIcon, CalculatorIcon, FermenterIcon, StyleCheckIcon, ShareIcon } from '@/components/ui/icons';
 import { buildRecipeShareText } from '@/lib/recipeShareText';
 
 interface HomeSummaryPanelProps {
@@ -243,7 +243,7 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab }: Ho
           onClick={handleShare}
           className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-teal-700 px-4 py-3 font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800 active:bg-teal-900"
         >
-          <span aria-hidden="true">📤</span>
+          <ShareIcon className="h-5 w-5 flex-shrink-0" />
           Share / Export Recipe
         </button>
         <p className="mt-2 text-center font-body text-xs text-amber-700" role="status" aria-live="polite">

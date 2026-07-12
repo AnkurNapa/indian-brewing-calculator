@@ -131,6 +131,17 @@ export function HomeIcon({ className }: IconProps) {
   );
 }
 
+/** Upward arrow out of a tray -- Share / Export. */
+export function ShareIcon({ className }: IconProps) {
+  return (
+    <svg {...commonProps} className={className} aria-hidden="true">
+      <path d="M12 15V3.5" />
+      <path d="M7.5 8 12 3.5 16.5 8" />
+      <path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7" />
+    </svg>
+  );
+}
+
 /** Cloud with sync arrows -- Google Sync. */
 export function CloudSyncIcon({ className }: IconProps) {
   return (
