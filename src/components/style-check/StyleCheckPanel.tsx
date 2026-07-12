@@ -15,6 +15,10 @@ import { roundForDisplay } from '@/lib/units';
 interface StyleCheckPanelProps {
   grainBill: GrainBillItem[];
   batchVolumeL: number;
+  og: number;
+  onOgChange: (value: number) => void;
+  fg: number;
+  onFgChange: (value: number) => void;
 }
 
 function ParameterRow({ label, unit, compliance }: { label: string; unit: string; compliance: ParameterCompliance }) {
@@ -35,10 +39,8 @@ function ParameterRow({ label, unit, compliance }: { label: string; unit: string
   );
 }
 
-export function StyleCheckPanel({ grainBill, batchVolumeL }: StyleCheckPanelProps) {
+export function StyleCheckPanel({ grainBill, batchVolumeL, og, onOgChange, fg, onFgChange }: StyleCheckPanelProps) {
   const [styleId, setStyleId] = useState(BJCP_STYLES[0].id);
-  const [og, setOg] = useState(1.06);
-  const [fg, setFg] = useState(1.012);
   const [wortGravity, setWortGravity] = useState(1.06);
   const [hopAdditions, setHopAdditions] = useState<HopAddition[]>([
     { name: 'Bittering Hop', alphaAcidPercent: 12, weightG: 25, boilTimeMinutes: 60 },
@@ -86,10 +88,12 @@ export function StyleCheckPanel({ grainBill, batchVolumeL }: StyleCheckPanelProp
 
       <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
         <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">Gravity & ABV</h3>
-        <p className="mt-1 font-body text-xs text-ink/70">Batch volume ({batchVolumeL} L) comes from Mash Adjustment.</p>
+        <p className="mt-1 font-body text-xs text-ink/70">
+          Batch volume ({batchVolumeL} L) comes from Mash Adjustment; OG/FG are shared with Brewhouse Calculators.
+        </p>
         <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <NumberField label="Original Gravity (SG)" value={og} step={0.001} onChange={setOg} />
-          <NumberField label="Final Gravity (SG)" value={fg} step={0.001} onChange={setFg} />
+          <NumberField label="Original Gravity (SG)" value={og} step={0.001} onChange={onOgChange} />
+          <NumberField label="Final Gravity (SG)" value={fg} step={0.001} onChange={onFgChange} />
         </div>
       </div>
 

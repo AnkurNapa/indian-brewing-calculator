@@ -11,6 +11,10 @@ export interface AppState {
   spargeVolumeL: number;
   blendPercentA: number;
   targetStyleId: string;
+  /** Shared recipe original gravity, used by ABV, pitch rate, and BJCP style check panels. */
+  ogSg: number;
+  /** Shared recipe final/current gravity, used by ABV and BJCP style check panels. */
+  fgSg: number;
 }
 
 export const DEFAULT_APP_STATE: AppState = {
@@ -21,6 +25,8 @@ export const DEFAULT_APP_STATE: AppState = {
   spargeVolumeL: 10,
   blendPercentA: 100,
   targetStyleId: 'pale-ale',
+  ogSg: 1.05,
+  fgSg: 1.012,
 };
 
 function isValidAppState(value: unknown): value is AppState {
@@ -33,7 +39,9 @@ function isValidAppState(value: unknown): value is AppState {
     typeof v.batchVolumeL === 'number' &&
     typeof v.spargeVolumeL === 'number' &&
     typeof v.blendPercentA === 'number' &&
-    typeof v.targetStyleId === 'string'
+    typeof v.targetStyleId === 'string' &&
+    typeof v.ogSg === 'number' &&
+    typeof v.fgSg === 'number'
   );
 }
 

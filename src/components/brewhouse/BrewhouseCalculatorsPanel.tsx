@@ -26,19 +26,26 @@ function SectionCard({ title, children }: { title: string; children: React.React
   );
 }
 
-function AbvAttenuationCalculator() {
-  const [og, setOg] = useState(1.05);
-  const [fg, setFg] = useState(1.01);
+interface SharedRecipeProps {
+  og: number;
+  onOgChange: (value: number) => void;
+  fg: number;
+  onFgChange: (value: number) => void;
+  batchVolumeL: number;
+  onBatchVolumeChange: (value: number) => void;
+}
 
+function AbvAttenuationCalculator({ og, onOgChange, fg, onFgChange }: Pick<SharedRecipeProps, 'og' | 'onOgChange' | 'fg' | 'onFgChange'>) {
   const abvSimple = calculateAbvSimple(og, fg);
   const abvAdvanced = calculateAbvAdvanced(og, fg);
   const attenuation = calculateAttenuation(og, fg);
 
   return (
     <SectionCard title="OG / FG - ABV & Attenuation">
+      <p className="-mt-2 font-body text-xs text-ink/60">Shared with Pitch Rate and BJCP Style Check.</p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <NumberField label="Original Gravity (SG)" value={og} step={0.001} onChange={setOg} allowNegative={false} />
-        <NumberField label="Final Gravity (SG)" value={fg} step={0.001} onChange={setFg} allowNegative={false} />
+        <NumberField label="Original Gravity (SG)" value={og} step={0.001} onChange={onOgChange} allowNegative={false} />
+        <NumberField label="Final Gravity (SG)" value={fg} step={0.001} onChange={onFgChange} allowNegative={false} />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <ResultCard title="ABV (Simple)" value={roundForDisplay(abvSimple, 2).toString()} unit="%" />
@@ -171,10 +178,9 @@ function ForceCarbonationCalculator() {
   );
 }
 
-function PrimingCalculator() {
+function PrimingCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeProps, 'batchVolumeL' | 'onBatchVolumeChange'>) {
   const [targetCo2Volumes, setTargetCo2Volumes] = useState(2.4);
   const [temperatureC, setTemperatureC] = useState(20);
-  const [batchVolumeL, setBatchVolumeL] = useState(20);
   const [sugarId, setSugarId] = useState(PRIMING_SUGARS[0].id);
 
   const sugar = PRIMING_SUGARS.find((s) => s.id === sugarId) ?? PRIMING_SUGARS[0];
@@ -182,6 +188,7 @@ function PrimingCalculator() {
 
   return (
     <SectionCard title="Priming Sugar (Bottle Conditioning)">
+      <p className="-mt-2 font-body text-xs text-ink/60">Batch volume is shared across every calculator below.</p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField
           label="Target CO2"
@@ -197,7 +204,7 @@ function PrimingCalculator() {
           step={1}
           onChange={setTemperatureC}
         />
-        <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={setBatchVolumeL} />
+        <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
         <label className="flex flex-col gap-1">
           <span className="font-body text-sm font-medium text-amber-900">Priming Sugar</span>
           <select
@@ -224,9 +231,7 @@ function PrimingCalculator() {
   );
 }
 
-function PitchRateCalculator() {
-  const [og, setOg] = useState(1.05);
-  const [batchVolumeL, setBatchVolumeL] = useState(20);
+function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeProps, 'og' | 'onOgChange' | 'batchVolumeL' | 'onBatchVolumeChange'>) {
   const [style, setStyle] = useState<YeastStyle>('ale');
 
   const result = calculatePitchRate(og, batchVolumeL, style);
@@ -238,8 +243,8 @@ function PitchRateCalculator() {
   return (
     <SectionCard title="Yeast Pitch Rate">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <NumberField label="Original Gravity (SG)" value={og} step={0.001} onChange={setOg} />
-        <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={setBatchVolumeL} />
+        <NumberField label="Original Gravity (SG)" value={og} step={0.001} onChange={onOgChange} />
+        <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
         <label className="flex flex-col gap-1">
           <span className="font-body text-sm font-medium text-amber-900">Style</span>
           <select
@@ -337,9 +342,8 @@ function DryHopCalculator({ batchVolumeL }: { batchVolumeL: number }) {
   );
 }
 
-function IbuCalculator() {
+function IbuCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeProps, 'batchVolumeL' | 'onBatchVolumeChange'>) {
   const [wortGravity, setWortGravity] = useState(1.05);
-  const [batchVolumeL, setBatchVolumeL] = useState(20);
   const [hopAdditions, setHopAdditions] = useState<HopAddition[]>([
     { name: 'Bittering Hop', alphaAcidPercent: 12, weightG: 20, boilTimeMinutes: 60 },
   ]);
@@ -352,9 +356,10 @@ function IbuCalculator() {
 
   return (
     <SectionCard title="IBU (Tinseth)">
+      <p className="-mt-2 font-body text-xs text-ink/60">Batch volume is shared; wort/boil gravity is kept separate from OG since it can differ.</p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField label="Wort Gravity (SG)" value={wortGravity} step={0.001} onChange={setWortGravity} />
-        <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={setBatchVolumeL} />
+        <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
       </div>
       <div className="flex flex-col gap-2">
         {hopAdditions.map((row, index) => (
@@ -401,20 +406,28 @@ function IbuCalculator() {
   );
 }
 
-export function BrewhouseCalculatorsPanel() {
+export function BrewhouseCalculatorsPanel({
+  og,
+  onOgChange,
+  fg,
+  onFgChange,
+  batchVolumeL,
+  onBatchVolumeChange,
+}: SharedRecipeProps) {
   return (
     <section className="flex flex-col gap-4">
       <h2 className="font-display text-xl font-bold text-ink">Brewhouse Calculators</h2>
       <p className="font-body text-sm text-amber-800">
-        Day-to-day production math: gravity/ABV, efficiency, carbonation, pitch rate, and bitterness.
+        Day-to-day production math: gravity/ABV, efficiency, carbonation, pitch rate, and bitterness. OG, FG, and
+        batch volume are shared with the BJCP Style Check tab.
       </p>
-      <AbvAttenuationCalculator />
+      <AbvAttenuationCalculator og={og} onOgChange={onOgChange} fg={fg} onFgChange={onFgChange} />
       <HydrometerCorrectionCalculator />
       <EfficiencyCalculator />
       <ForceCarbonationCalculator />
-      <PrimingCalculator />
-      <PitchRateCalculator />
-      <IbuCalculator />
+      <PrimingCalculator batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
+      <PitchRateCalculator og={og} onOgChange={onOgChange} batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
+      <IbuCalculator batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
     </section>
   );
 }

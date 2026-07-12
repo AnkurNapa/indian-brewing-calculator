@@ -104,10 +104,26 @@ export default function Home() {
 
         {activeTab === 'fermentation-tracker' ? <FermentationTrackerPanel /> : null}
 
-        {activeTab === 'brewhouse' ? <BrewhouseCalculatorsPanel /> : null}
+        {activeTab === 'brewhouse' ? (
+          <BrewhouseCalculatorsPanel
+            og={state.ogSg}
+            onOgChange={(ogSg) => setState((prev) => ({ ...prev, ogSg }))}
+            fg={state.fgSg}
+            onFgChange={(fgSg) => setState((prev) => ({ ...prev, fgSg }))}
+            batchVolumeL={state.batchVolumeL}
+            onBatchVolumeChange={(batchVolumeL) => setState((prev) => ({ ...prev, batchVolumeL }))}
+          />
+        ) : null}
 
         {activeTab === 'style-check' ? (
-          <StyleCheckPanel grainBill={state.grainBill} batchVolumeL={state.batchVolumeL} />
+          <StyleCheckPanel
+            grainBill={state.grainBill}
+            batchVolumeL={state.batchVolumeL}
+            og={state.ogSg}
+            onOgChange={(ogSg) => setState((prev) => ({ ...prev, ogSg }))}
+            fg={state.fgSg}
+            onFgChange={(fgSg) => setState((prev) => ({ ...prev, fgSg }))}
+          />
         ) : null}
       </div>
 
