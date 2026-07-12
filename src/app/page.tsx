@@ -7,6 +7,7 @@ import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
 import { roundForDisplay } from '@/lib/units';
 import { WaterReportForm } from '@/components/water-report/WaterReportForm';
+import { TargetStyleReference } from '@/components/water-report/TargetStyleReference';
 import { GrainBillEditor } from '@/components/grain-bill/GrainBillEditor';
 import { MashAdjustmentPanel } from '@/components/mash-adjustment/MashAdjustmentPanel';
 import { SpargeAdjustmentPanel } from '@/components/sparge-adjustment/SpargeAdjustmentPanel';
@@ -76,7 +77,10 @@ export default function Home() {
    */
   const summaryItemsByTab: Record<string, { label: string; value: string }[]> = {
     home: [],
-    'water-report': totalGrainKg > 0 ? [{ label: 'Grain Bill', value: `${totalGrainKg.toFixed(2)} kg` }] : [],
+    'water-report': [
+      { label: 'Target Style', value: targetStyleName },
+      ...(totalGrainKg > 0 ? [{ label: 'Grain Bill', value: `${totalGrainKg.toFixed(2)} kg` }] : []),
+    ],
     'mash-adjustment': [
       { label: 'Batch Volume', value: `${state.batchVolumeL} L` },
       { label: 'Target Style', value: targetStyleName },
@@ -176,18 +180,27 @@ export default function Home() {
               title="How to use Water Report"
               steps={[
                 {
-                  lead: '1. Quick-fill or enter your source water.',
+                  lead: '1. Pick which style you\'re brewing.',
+                  body: 'This shows a matching target water profile right away, and sets the same target Mash Adjustment uses for salt additions.',
+                },
+                {
+                  lead: '2. Quick-fill or enter your source water.',
                   body: 'Pick a known water type from the preset, or type your own ion values (Ca, Mg, Na, SO4, Cl, HCO3, alkalinity) from a water report/COA.',
                 },
                 {
-                  lead: '2. Check Residual Alkalinity.',
+                  lead: '3. Check Residual Alkalinity.',
                   body: 'Higher RA pushes mash pH up; very low or negative RA (like RO water) lets dark malt acidity dominate -- this feeds directly into Mash Adjustment.',
                 },
                 {
-                  lead: '3. Build your Grain Bill.',
+                  lead: '4. Build your Grain Bill.',
                   body: 'Add each grain with weight and color, quick-filling from Weyermann malts or typing your own. This grain bill is shared everywhere: mash pH, SRM color, water volumes, and Home.',
                 },
               ]}
+            />
+            <TargetStyleReference
+              targetStyleId={state.targetStyleId}
+              onTargetStyleChange={(targetStyleId) => setState((prev) => ({ ...prev, targetStyleId }))}
+              sourceProfile={state.sourceProfile}
             />
             <WaterReportForm
               profile={state.sourceProfile}
