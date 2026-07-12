@@ -2,7 +2,7 @@
 
 import { useLocalStorageState } from './useLocalStorageState';
 import { EMPTY_ION_PROFILE, GrainBillItem, IonProfile } from '@/lib/waterChemistry';
-import { HopAddition } from '@/lib/ibu';
+import { HopAddition, IbuFormula, GaretzExtras, DEFAULT_GARETZ_EXTRAS } from '@/lib/ibu';
 import { BJCP_STYLES } from '@/lib/bjcpStyles';
 
 export interface AppState {
@@ -25,6 +25,10 @@ export interface AppState {
   bjcpStyleId: string;
   /** Assumed brewhouse efficiency %, used to predict OG from the grain bill before brew day. */
   assumedEfficiencyPercent: number;
+  /** Selected IBU formula (Tinseth/Rager/Garetz) -- stored per recipe, not global, since a locked recipe should keep whichever formula it was calculated with. */
+  ibuFormula: IbuFormula;
+  /** Extra inputs only the Garetz formula uses (altitude, hop freshness, boil volume). */
+  garetzExtras: GaretzExtras;
 }
 
 export const DEFAULT_APP_STATE: AppState = {
@@ -41,6 +45,8 @@ export const DEFAULT_APP_STATE: AppState = {
   wortGravitySg: 1.05,
   bjcpStyleId: BJCP_STYLES[0].id,
   assumedEfficiencyPercent: 72,
+  ibuFormula: 'tinseth',
+  garetzExtras: { ...DEFAULT_GARETZ_EXTRAS },
 };
 
 function isValidAppState(value: unknown): value is AppState {

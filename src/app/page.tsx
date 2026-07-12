@@ -260,6 +260,10 @@ export default function Home() {
             onWortGravityChange={(wortGravitySg) => setState((prev) => ({ ...prev, wortGravitySg }))}
             hopAdditions={state.hopAdditions}
             onHopAdditionsChange={(hopAdditions) => setState((prev) => ({ ...prev, hopAdditions }))}
+            ibuFormula={state.ibuFormula}
+            onIbuFormulaChange={(ibuFormula) => setState((prev) => ({ ...prev, ibuFormula }))}
+            garetzExtras={state.garetzExtras}
+            onGaretzExtrasChange={(garetzExtras) => setState((prev) => ({ ...prev, garetzExtras }))}
           />
         ) : null}
 
@@ -277,6 +281,10 @@ export default function Home() {
             onWortGravityChange={(wortGravitySg) => setState((prev) => ({ ...prev, wortGravitySg }))}
             hopAdditions={state.hopAdditions}
             onHopAdditionsChange={(hopAdditions) => setState((prev) => ({ ...prev, hopAdditions }))}
+            ibuFormula={state.ibuFormula}
+            onIbuFormulaChange={(ibuFormula) => setState((prev) => ({ ...prev, ibuFormula }))}
+            garetzExtras={state.garetzExtras}
+            onGaretzExtrasChange={(garetzExtras) => setState((prev) => ({ ...prev, garetzExtras }))}
           />
         ) : null}
 

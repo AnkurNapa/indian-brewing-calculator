@@ -8,7 +8,7 @@ import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
 import { BJCP_STYLES } from '@/lib/bjcpStyles';
 import { checkStyleCompliance, ParameterCompliance } from '@/lib/styleCompliance';
 import { calculateSrm } from '@/lib/srm';
-import { calculateIbu } from '@/lib/ibu';
+import { calculateIbu, IBU_FORMULAS } from '@/lib/ibu';
 import { calculateAbvAdvanced } from '@/lib/fermentation';
 import { roundForDisplay } from '@/lib/units';
 import { DropletIcon, FlaskIcon, CalculatorIcon, FermenterIcon, StyleCheckIcon, ShareIcon } from '@/components/ui/icons';
@@ -111,7 +111,14 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
   const abvSoFar = state.fgSg > 0 && state.ogSg > 0 ? ((state.ogSg - state.fgSg) * 131.25).toFixed(2) : null;
 
   const bjcpStyle = BJCP_STYLES.find((s) => s.id === state.bjcpStyleId) ?? BJCP_STYLES[0];
-  const ibuResult = calculateIbu(state.hopAdditions, state.wortGravitySg, state.batchVolumeL);
+  const ibuResult = calculateIbu(
+    state.hopAdditions,
+    state.wortGravitySg,
+    state.batchVolumeL,
+    state.ibuFormula,
+    state.garetzExtras,
+  );
+  const ibuFormulaLabel = IBU_FORMULAS.find((f) => f.id === state.ibuFormula)?.label ?? 'Tinseth';
   const advancedAbv = calculateAbvAdvanced(state.ogSg, state.fgSg);
   const compliance = checkStyleCompliance(
     { og: state.ogSg, fg: state.fgSg, ibu: ibuResult.totalIbu, srm: srm ?? 0, abvPercent: advancedAbv },
@@ -249,7 +256,9 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
             ))}
           </ul>
         )}
-        <p className="mt-1 font-semibold">Total IBU: {roundForDisplay(ibuResult.totalIbu, 1)}</p>
+        <p className="mt-1 font-semibold">
+          Total IBU: {roundForDisplay(ibuResult.totalIbu, 1)} <span className="font-normal text-ink/60">({ibuFormulaLabel})</span>
+        </p>
       </SummarySection>
 
       <div className="rounded-lg border-2 border-teal-300 bg-teal-50/60 p-4">

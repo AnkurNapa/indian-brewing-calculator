@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { GrainBillItem } from '@/lib/waterChemistry';
 import { calculateSrm } from '@/lib/srm';
 import { calculateAbvAdvanced } from '@/lib/fermentation';
-import { calculateIbu, HopAddition } from '@/lib/ibu';
+import { calculateIbu, HopAddition, IbuFormula, GaretzExtras } from '@/lib/ibu';
 import { BJCP_STYLES } from '@/lib/bjcpStyles';
 import { checkStyleCompliance, ParameterCompliance } from '@/lib/styleCompliance';
 import { NumberField } from '@/components/ui/NumberField';
@@ -12,6 +12,7 @@ import { GravityField } from '@/components/ui/GravityField';
 import { Input } from '@/components/ui/Input';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
+import { IbuFormulaSelector } from '@/components/ui/IbuFormulaSelector';
 import { roundForDisplay } from '@/lib/units';
 
 interface StyleCheckPanelProps {
@@ -27,6 +28,10 @@ interface StyleCheckPanelProps {
   onWortGravityChange: (value: number) => void;
   hopAdditions: HopAddition[];
   onHopAdditionsChange: (hops: HopAddition[]) => void;
+  ibuFormula: IbuFormula;
+  onIbuFormulaChange: (formula: IbuFormula) => void;
+  garetzExtras: GaretzExtras;
+  onGaretzExtrasChange: (extras: GaretzExtras) => void;
 }
 
 function ParameterRow({ label, unit, compliance }: { label: string; unit: string; compliance: ParameterCompliance }) {
@@ -60,6 +65,10 @@ export function StyleCheckPanel({
   onWortGravityChange,
   hopAdditions,
   onHopAdditionsChange,
+  ibuFormula,
+  onIbuFormulaChange,
+  garetzExtras,
+  onGaretzExtrasChange,
 }: StyleCheckPanelProps) {
   const [styleSearch, setStyleSearch] = useState('');
   // Briefly pulses the "Selected" confirmation so picking a style from the
@@ -85,7 +94,7 @@ export function StyleCheckPanel({
 
   const srm = useMemo(() => calculateSrm(grainBill, batchVolumeL), [grainBill, batchVolumeL]);
   const abvPercent = calculateAbvAdvanced(og, fg);
-  const ibuResult = calculateIbu(hopAdditions, wortGravitySg, batchVolumeL);
+  const ibuResult = calculateIbu(hopAdditions, wortGravitySg, batchVolumeL, ibuFormula, garetzExtras);
 
   const compliance = checkStyleCompliance(
     { og, fg, ibu: ibuResult.totalIbu, srm, abvPercent },
@@ -190,6 +199,14 @@ export function StyleCheckPanel({
 
       <div className="rounded-lg border-2 border-amber-300 bg-amber-50/60 p-4">
         <h3 className="font-display text-sm font-bold uppercase tracking-wide text-amber-900">Hops (for IBU)</h3>
+        <div className="mt-3">
+          <IbuFormulaSelector
+            formula={ibuFormula}
+            onFormulaChange={onIbuFormulaChange}
+            garetzExtras={garetzExtras}
+            onGaretzExtrasChange={onGaretzExtrasChange}
+          />
+        </div>
         <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <NumberField label="Wort Gravity (SG)" value={wortGravitySg} step={0.001} onChange={onWortGravityChange} />
         </div>

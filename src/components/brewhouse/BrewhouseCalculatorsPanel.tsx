@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   calculateAbvSimple,
   calculateAbvAdvanced,
@@ -11,7 +11,15 @@ import { calculateBrewhouseEfficiency, pointsToSg, GrainPotentialItem } from '@/
 import { calculatePrimingDose, PRIMING_SUGARS } from '@/lib/priming';
 import { calculateForceCarbonationPressure } from '@/lib/forceCarbonation';
 import { calculatePitchRate, calculateRepitchSlurryVolume, YeastStyle } from '@/lib/pitchRate';
-import { calculateIbu, calculateHopWeightForTargetIbu, calculateDryHopWeight, HopAddition } from '@/lib/ibu';
+import {
+  calculateIbu,
+  calculateHopWeightForTargetIbu,
+  calculateDryHopWeight,
+  HopAddition,
+  IbuFormula,
+  GaretzExtras,
+  IBU_FORMULAS,
+} from '@/lib/ibu';
 import { calculateSrm, srmToApproxHex } from '@/lib/srm';
 import { GrainBillItem } from '@/lib/waterChemistry';
 import { NumberField } from '@/components/ui/NumberField';
@@ -20,6 +28,7 @@ import { Input } from '@/components/ui/Input';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
+import { IbuFormulaSelector } from '@/components/ui/IbuFormulaSelector';
 import { HOP_VARIETIES } from '@/lib/hopVarieties';
 import { YEAST_STRAINS } from '@/lib/yeastStrains';
 import { roundForDisplay } from '@/lib/units';
@@ -45,6 +54,10 @@ interface SharedRecipeProps {
   onWortGravityChange: (value: number) => void;
   hopAdditions: HopAddition[];
   onHopAdditionsChange: (hops: HopAddition[]) => void;
+  ibuFormula: IbuFormula;
+  onIbuFormulaChange: (formula: IbuFormula) => void;
+  garetzExtras: GaretzExtras;
+  onGaretzExtrasChange: (extras: GaretzExtras) => void;
 }
 
 function AbvAttenuationCalculator({ og, onOgChange, fg, onFgChange }: Pick<SharedRecipeProps, 'og' | 'onOgChange' | 'fg' | 'onFgChange'>) {
@@ -321,12 +334,30 @@ function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange
   );
 }
 
-function HopWeightForTargetIbuCalculator({ wortGravity, batchVolumeL }: { wortGravity: number; batchVolumeL: number }) {
+function HopWeightForTargetIbuCalculator({
+  wortGravity,
+  batchVolumeL,
+  ibuFormula,
+  garetzExtras,
+}: {
+  wortGravity: number;
+  batchVolumeL: number;
+  ibuFormula: IbuFormula;
+  garetzExtras: GaretzExtras;
+}) {
   const [targetIbu, setTargetIbu] = useState(40);
   const [alphaAcidPercent, setAlphaAcidPercent] = useState(12);
   const [boilTimeMinutes, setBoilTimeMinutes] = useState(60);
 
-  const grams = calculateHopWeightForTargetIbu(targetIbu, alphaAcidPercent, boilTimeMinutes, wortGravity, batchVolumeL);
+  const grams = calculateHopWeightForTargetIbu(
+    targetIbu,
+    alphaAcidPercent,
+    boilTimeMinutes,
+    wortGravity,
+    batchVolumeL,
+    ibuFormula,
+    garetzExtras,
+  );
 
   return (
     <div className="rounded-md border border-teal-300 bg-teal-100/40 p-3">
@@ -376,18 +407,53 @@ function IbuCalculator({
   onWortGravityChange,
   hopAdditions,
   onHopAdditionsChange,
-}: Pick<SharedRecipeProps, 'batchVolumeL' | 'onBatchVolumeChange' | 'wortGravitySg' | 'onWortGravityChange' | 'hopAdditions' | 'onHopAdditionsChange'>) {
-  const result = calculateIbu(hopAdditions, wortGravitySg, batchVolumeL);
+  ibuFormula,
+  onIbuFormulaChange,
+  garetzExtras,
+  onGaretzExtrasChange,
+}: Pick<
+  SharedRecipeProps,
+  | 'batchVolumeL'
+  | 'onBatchVolumeChange'
+  | 'wortGravitySg'
+  | 'onWortGravityChange'
+  | 'hopAdditions'
+  | 'onHopAdditionsChange'
+  | 'ibuFormula'
+  | 'onIbuFormulaChange'
+  | 'garetzExtras'
+  | 'onGaretzExtrasChange'
+>) {
+  const result = calculateIbu(hopAdditions, wortGravitySg, batchVolumeL, ibuFormula, garetzExtras);
+  const formulaLabel = IBU_FORMULAS.find((f) => f.id === ibuFormula)?.label ?? 'Tinseth';
+
+  // Briefly highlight the Total IBU card whenever the formula changes, so
+  // the resulting jump in the number (e.g. Tinseth -> Rager can shift IBU
+  // noticeably) doesn't slip by unnoticed.
+  const [justChangedFormula, setJustChangedFormula] = useState(false);
+  useEffect(() => {
+    setJustChangedFormula(true);
+    const timer = setTimeout(() => setJustChangedFormula(false), 900);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ibuFormula]);
 
   const updateRow = (index: number, patch: Partial<HopAddition>) => {
     onHopAdditionsChange(hopAdditions.map((row, i) => (i === index ? { ...row, ...patch } : row)));
   };
 
   return (
-    <SectionCard title="IBU (Tinseth)">
+    <SectionCard title={`IBU (${formulaLabel})`}>
       <p className="-mt-2 font-body text-xs text-ink/60">
-        Batch volume, wort gravity, and this hop schedule are shared with the BJCP Style Check tab.
+        Batch volume, wort gravity, hop schedule, and IBU formula are all shared with the BJCP Style Check tab and
+        Home.
       </p>
+      <IbuFormulaSelector
+        formula={ibuFormula}
+        onFormulaChange={onIbuFormulaChange}
+        garetzExtras={garetzExtras}
+        onGaretzExtrasChange={onGaretzExtrasChange}
+      />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField label="Wort Gravity (SG)" value={wortGravitySg} step={0.001} onChange={onWortGravityChange} />
         <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
@@ -449,9 +515,16 @@ function IbuCalculator({
           + Add Hop
         </button>
       </div>
-      <ResultCard title="Total IBU" value={roundForDisplay(result.totalIbu, 1).toString()} />
+      <div className={`rounded-lg transition-shadow duration-500 ${justChangedFormula ? 'ring-2 ring-teal-400' : ''}`}>
+        <ResultCard title="Total IBU" value={roundForDisplay(result.totalIbu, 1).toString()} />
+      </div>
 
-      <HopWeightForTargetIbuCalculator wortGravity={wortGravitySg} batchVolumeL={batchVolumeL} />
+      <HopWeightForTargetIbuCalculator
+        wortGravity={wortGravitySg}
+        batchVolumeL={batchVolumeL}
+        ibuFormula={ibuFormula}
+        garetzExtras={garetzExtras}
+      />
       <DryHopCalculator batchVolumeL={batchVolumeL} />
     </SectionCard>
   );
@@ -491,6 +564,10 @@ export function BrewhouseCalculatorsPanel({
   onWortGravityChange,
   hopAdditions,
   onHopAdditionsChange,
+  ibuFormula,
+  onIbuFormulaChange,
+  garetzExtras,
+  onGaretzExtrasChange,
 }: SharedRecipeProps) {
   return (
     <section className="flex flex-col gap-4">
@@ -531,6 +608,10 @@ export function BrewhouseCalculatorsPanel({
         onWortGravityChange={onWortGravityChange}
         hopAdditions={hopAdditions}
         onHopAdditionsChange={onHopAdditionsChange}
+        ibuFormula={ibuFormula}
+        onIbuFormulaChange={onIbuFormulaChange}
+        garetzExtras={garetzExtras}
+        onGaretzExtrasChange={onGaretzExtrasChange}
       />
       <SrmColorCalculator grainBill={grainBill} batchVolumeL={batchVolumeL} />
       <PitchRateCalculator og={og} onOgChange={onOgChange} batchVolumeL={batchVolumeL} onBatchVolumeChange={onBatchVolumeChange} />
