@@ -1,10 +1,11 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { IonProfile, GrainBillItem, calculateResidualAlkalinity, predictMashPh } from '@/lib/waterChemistry';
+import { IonProfile, EMPTY_ION_PROFILE, GrainBillItem, calculateResidualAlkalinity, predictMashPh } from '@/lib/waterChemistry';
 import { solveSaltAdditions } from '@/lib/saltAdditions';
 import { ACID_TYPES, calculateAcidDose } from '@/lib/acidAdditions';
 import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
+import { solveDilutionRatio } from '@/lib/dilutionOptimizer';
 import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { roundForDisplay } from '@/lib/units';
@@ -52,6 +53,18 @@ export function MashAdjustmentPanel({
 
   const acid = ACID_TYPES.find((a) => a.id === acidId) ?? ACID_TYPES[0];
   const acidDose = calculateAcidDose(mashPhResult.predictedPh, targetMashPh, batchVolumeL, acid);
+
+  const dilutionResult = saltResult.infeasible
+    ? solveDilutionRatio(sourceProfile, EMPTY_ION_PROFILE, {
+        calcium: targetStyle.profile.calcium,
+        magnesium: targetStyle.profile.magnesium,
+        sodium: targetStyle.profile.sodium,
+        sulfate: targetStyle.profile.sulfate,
+        chloride: targetStyle.profile.chloride,
+        bicarbonate: targetStyle.profile.bicarbonate,
+        alkalinity: targetStyle.profile.alkalinity,
+      })
+    : null;
 
   return (
     <section className="flex flex-col gap-4">
@@ -119,6 +132,20 @@ export function MashAdjustmentPanel({
               <li key={i}>* {note}</li>
             ))}
           </ul>
+        ) : null}
+        {dilutionResult && !dilutionResult.noDilutionNeeded ? (
+          <div className="mt-3 rounded-md border border-teal-300 bg-teal-100/60 p-3 text-sm text-teal-900">
+            <p>
+              Dilute source water with RO/distilled at{' '}
+              <span className="font-semibold">
+                {roundForDisplay(dilutionResult.sourceFraction * 100, 0)}% source /{' '}
+                {roundForDisplay(dilutionResult.dilutantFraction * 100, 0)}% RO
+              </span>{' '}
+              (for a {batchVolumeL} L batch: {roundForDisplay(dilutionResult.sourceFraction * batchVolumeL, 1)} L source +{' '}
+              {roundForDisplay(dilutionResult.dilutantFraction * batchVolumeL, 1)} L RO) before adding salts, driven by{' '}
+              <span className="font-semibold">{dilutionResult.bindingIon}</span>. Then re-solve salt additions against the diluted profile.
+            </p>
+          </div>
         ) : null}
       </div>
 

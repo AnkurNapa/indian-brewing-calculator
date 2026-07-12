@@ -7,6 +7,8 @@ import { GrainBillEditor } from '@/components/grain-bill/GrainBillEditor';
 import { MashAdjustmentPanel } from '@/components/mash-adjustment/MashAdjustmentPanel';
 import { SpargeAdjustmentPanel } from '@/components/sparge-adjustment/SpargeAdjustmentPanel';
 import { BlendingPanel } from '@/components/blending/BlendingPanel';
+import { WaterVolumesPanel } from '@/components/water-volumes/WaterVolumesPanel';
+import { BrewhouseCalculatorsPanel } from '@/components/brewhouse/BrewhouseCalculatorsPanel';
 import { useWaterProfile } from '@/hooks/useWaterProfile';
 
 const TABS: TabDef[] = [
@@ -14,6 +16,8 @@ const TABS: TabDef[] = [
   { id: 'mash-adjustment', label: 'Mash Adjustment' },
   { id: 'sparge-adjustment', label: 'Sparge Adjustment' },
   { id: 'blending', label: 'Blending' },
+  { id: 'water-volumes', label: 'Water Volumes' },
+  { id: 'brewhouse', label: 'Brewhouse Calculators' },
 ];
 
 export default function Home() {
@@ -76,6 +80,10 @@ export default function Home() {
             onPercentAChange={(blendPercentA) => setState((prev) => ({ ...prev, blendPercentA }))}
           />
         ) : null}
+
+        {activeTab === 'water-volumes' ? <WaterVolumesPanel grainBill={state.grainBill} /> : null}
+
+        {activeTab === 'brewhouse' ? <BrewhouseCalculatorsPanel /> : null}
       </div>
 
       <footer className="text-center font-body text-xs text-amber-700/70">

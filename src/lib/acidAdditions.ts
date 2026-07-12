@@ -23,6 +23,12 @@ export const ACID_TYPES: AcidType[] = [
   { id: 'lactic88', name: 'Lactic Acid 88%', meqPerMl: 11.7 },
   { id: 'phosphoric10', name: 'Phosphoric Acid 10%', meqPerMl: 1.4 },
   { id: 'phosphoric85', name: 'Phosphoric Acid 85%', meqPerMl: 14.4 },
+  // Vinegar-grade acetic acid, ~5% w/v (typical distilled white vinegar
+  // strength), density ~1.006 g/mL: mEq/mL = (0.05 * 1.006 * 1000) / 60.05.
+  { id: 'acetic5', name: 'Acetic Acid 5% (Vinegar)', meqPerMl: 0.84 },
+  // Food-grade citric acid solution, ~50% w/v, triprotic (3 mEq per
+  // mmol): mEq/mL = (0.50 * 1000 / 192.12) * 3.
+  { id: 'citric50', name: 'Citric Acid 50% Solution', meqPerMl: 7.8 },
 ];
 
 /** Minimum meaningful pH difference; below this we treat as "already at target". */

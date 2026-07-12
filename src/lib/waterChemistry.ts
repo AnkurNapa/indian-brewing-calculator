@@ -97,12 +97,75 @@ export function calculateResidualAlkalinity(profile: Pick<IonProfile, 'alkalinit
   return alkalinity - hardnessContribution;
 }
 
+/**
+ * Malt category, used to select a distilled-water (DI) mash pH and
+ * buffering-capacity baseline. Categories reflect well-documented,
+ * generally-published differences in how base, caramelized (crystal),
+ * roasted/dark, acidulated, and wheat/other malts behave when mashed in
+ * distilled water -- kilning chemistry (Maillard vs. caramelization vs.
+ * roasting), not just color, drives mash acidity. If a grain bill row
+ * omits `category`, it is auto-classified from `colorLovibond` using the
+ * thresholds in `classifyMaltCategory` below as a reasonable default.
+ */
+export type MaltCategory = 'base' | 'crystal' | 'roasted' | 'acidulated' | 'wheatOrOther';
+
 export interface GrainBillItem {
   name: string;
   /** Weight of this grain, kg */
   weightKg: number;
-  /** Color, degrees Lovibond (°L) -- Bru'n Water's convention. */
+  /** Color, degrees Lovibond (°L). */
   colorLovibond: number;
+  /**
+   * Optional malt category. When omitted, it is inferred from
+   * colorLovibond via `classifyMaltCategory`. Explicit category should be
+   * preferred when known (e.g. acidulated malt is pale but very acidic,
+   * and color-only inference cannot detect that).
+   */
+  category?: MaltCategory;
+}
+
+/**
+ * Per-category distilled-water mash pH and buffering capacity.
+ *
+ * - `diPh`: typical mash pH when this malt type is mashed alone in
+ *   distilled/RO water (no alkalinity to neutralize).
+ * - `bufferingMeqPerKgPerPh`: approximate milliequivalents of
+ *   acid/alkali this malt exerts per kilogram per pH unit of mash
+ *   buffering capacity -- roasted and crystal malts buffer (and
+ *   acidify) far more strongly per kg than base malt.
+ *
+ * These are generic, widely-published ranges from public brewing water
+ * chemistry literature (e.g. the well-known distinction that dark/crystal
+ * malts run substantially more acidic in DI water than base malts), not
+ * figures copied from any proprietary spreadsheet or tool. Values are
+ * representative midpoints intended for planning-grade estimates.
+ */
+interface MaltCategoryProfile {
+  diPh: number;
+  bufferingMeqPerKgPerPh: number;
+}
+
+export const MALT_CATEGORY_PROFILES: Record<MaltCategory, MaltCategoryProfile> = {
+  base: { diPh: 5.75, bufferingMeqPerKgPerPh: 40 },
+  wheatOrOther: { diPh: 5.85, bufferingMeqPerKgPerPh: 38 },
+  crystal: { diPh: 4.75, bufferingMeqPerKgPerPh: 70 },
+  roasted: { diPh: 4.35, bufferingMeqPerKgPerPh: 90 },
+  acidulated: { diPh: 3.2, bufferingMeqPerKgPerPh: 120 },
+};
+
+/**
+ * Classify a malt into a category from its color alone, for grain bill
+ * rows that don't specify a category explicitly. This is a reasonable
+ * default, not a substitute for explicit classification -- pale
+ * specialty malts like acidulated malt cannot be distinguished from base
+ * malt by color alone, which is exactly why `category` can be set
+ * explicitly to override this inference.
+ */
+export function classifyMaltCategory(colorLovibond: number): MaltCategory {
+  const color = Number.isFinite(colorLovibond) ? Math.max(0, colorLovibond) : 0;
+  if (color < 20) return 'base';
+  if (color < 80) return 'crystal';
+  return 'roasted';
 }
 
 export interface MashPhResult {
@@ -116,65 +179,79 @@ export interface MashPhResult {
   weightedColorLovibond: number;
   /** Total grist weight, kg */
   totalGristWeightKg: number;
+  /** Weighted-average distilled-water pH of the grist (before RA adjustment) */
+  weightedDiPh: number;
+  /** Total mash buffering capacity of the grist, mEq per pH unit */
+  totalBufferingMeqPerPh: number;
 }
 
 /**
  * Base distilled-water mash pH for a "typical" base malt, before any
- * residual-alkalinity or grain-color adjustment is applied.
- *
- * Real base malts mashed in distilled water typically land around
- * pH 5.6-5.8. We use 5.7 as a single configurable constant per the
- * project's approximation model.
+ * residual-alkalinity or grain-color adjustment is applied. Retained as
+ * the fallback value for an empty grain bill, and equal to the `base`
+ * category's `diPh` in MALT_CATEGORY_PROFILES.
  */
-export const BASE_MALT_DISTILLED_PH = 5.7;
-
-/**
- * Buffering capacity constant used to scale how strongly residual
- * alkalinity shifts mash pH per kilogram of grist.
- *
- * NOTE ON ACCURACY: this is a simplified linear approximation of the
- * real (nonlinear) mash buffering behavior described in the
- * Kolbach / Palmer brewing-water-chemistry literature. It is NOT a
- * precise reproduction of any published model's exact coefficients --
- * it is tuned to give plausible, monotonic, bounded output for a
- * homebrew-to-small-commercial scale (a few kg to a few hundred kg of
- * grist). Treat predicted pH as a planning estimate, always verify with
- * a calibrated pH meter at mash-in.
- */
-const BASE_BUFFERING_CAPACITY = 35; // (mg/L CaCO3) per pH-unit-per-kg equivalent scaling
-const RA_TO_PH_SCALING_CONSTANT = 1;
-
-/**
- * Linear color-darkening adjustment: for every 1 degree Lovibond of
- * weighted grist color, predicted pH decreases by 0.01, reflecting the
- * acidifying effect of kilned/roasted malts. This is clamped so
- * extreme grists (all black malt) cannot push the result outside the
- * plausible pH range before final clamping.
- */
-const COLOR_ADJUSTMENT_PER_LOVIBOND = -0.01;
+export const BASE_MALT_DISTILLED_PH = MALT_CATEGORY_PROFILES.base.diPh;
 
 export const MASH_PH_MIN = 4.0;
 export const MASH_PH_MAX = 6.5;
 
 /**
+ * Convert residual alkalinity (mg/L as CaCO3) for a given mash water
+ * volume into milliequivalents of alkalinity to be neutralized by the
+ * grist's buffering capacity. 1 mEq of CaCO3 alkalinity corresponds to
+ * 50.04 mg (its equivalent weight), so mEq = (RA_mgL * volumeL) / 50.04.
+ */
+function residualAlkalinityToMeq(residualAlkalinity: number, mashWaterVolumeL: number): number {
+  const safeRa = Number.isFinite(residualAlkalinity) ? residualAlkalinity : 0;
+  const safeVolume = Number.isFinite(mashWaterVolumeL) && mashWaterVolumeL > 0 ? mashWaterVolumeL : 0;
+  return (safeRa * safeVolume) / 50.04;
+}
+
+/**
+ * Assumed mash water volume per kilogram of grist (L/kg) when the caller
+ * does not supply an explicit mash water volume. This is a typical
+ * homebrew/small-commercial mash thickness, used only to estimate the
+ * residual-alkalinity buffering term when volume isn't otherwise known.
+ */
+const DEFAULT_MASH_THICKNESS_L_PER_KG = 3.0;
+
+/**
  * Predict mash pH from the source water's residual alkalinity and the
- * grain bill's weight/color composition.
+ * grain bill's per-malt-category distilled-water pH and buffering
+ * capacity.
  *
- * Formula (documented approximation, see constants above):
- *   predictedPh = BASE_MALT_DISTILLED_PH
- *               + (RA / (BASE_BUFFERING_CAPACITY * totalGristWeightKg)) * RA_TO_PH_SCALING_CONSTANT
- *               + colorAdjustment
+ * Model (documented approximation):
+ *   1. Each grist row is classified into a MaltCategory (explicit
+ *      `category`, or inferred from color via `classifyMaltCategory`).
+ *   2. weightedDiPh = weight-weighted average of each category's DI pH.
+ *   3. totalBufferingMeqPerPh = sum of (category buffering meq/kg/pH *
+ *      row weight kg) across the grist -- this replaces the old flat
+ *      "35 per kg" constant with a grist-composition-aware capacity, so
+ *      a crystal/roasted-heavy grist correctly buffers (resists pH
+ *      swings from RA) much more strongly than an all-base-malt grist.
+ *   4. raShiftPh = mEq of residual alkalinity to neutralize / total
+ *      buffering capacity -- alkalinity pushes pH up, so this is added.
+ *   5. predictedPh = weightedDiPh + raShiftPh, clamped to [4.0, 6.5].
+ *
+ * This is still a planning-grade linear approximation of a genuinely
+ * nonlinear titration relationship (real mash buffering curves flatten
+ * near the malt's natural pH and steepen away from it), but it is
+ * substantially closer to real behavior than a single color-only slope
+ * because it separates "how acidic is this malt" (diPh) from "how hard
+ * is it to move" (buffering capacity) per malt category.
  *
  * Edge cases handled:
  *  - Empty grain bill / zero total weight: returns a defined fallback
  *    result (isFallback = true) using BASE_MALT_DISTILLED_PH with no RA
  *    term, rather than dividing by zero.
- *  - Extreme grist color (all black malt or all base malt): the final
- *    predicted pH is always clamped to [4.0, 6.5].
+ *  - Extreme grists (all roasted, all acidulated, all base with huge
+ *    RA): the final predicted pH is always clamped to [4.0, 6.5].
  */
 export function predictMashPh(
   residualAlkalinity: number,
   grainBill: GrainBillItem[],
+  mashWaterVolumeL?: number,
 ): MashPhResult {
   const validItems = grainBill.filter(
     (item) => Number.isFinite(item.weightKg) && item.weightKg > 0,
@@ -188,6 +265,8 @@ export function predictMashPh(
       note: 'No grain bill entered -- showing base distilled-water malt pH as a fallback. Add grain weights to get a real prediction.',
       weightedColorLovibond: 0,
       totalGristWeightKg: 0,
+      weightedDiPh: BASE_MALT_DISTILLED_PH,
+      totalBufferingMeqPerPh: 0,
     };
   }
 
@@ -197,16 +276,25 @@ export function predictMashPh(
       return sum + color * item.weightKg;
     }, 0) / totalGristWeightKg;
 
-  const safeRa = Number.isFinite(residualAlkalinity) ? residualAlkalinity : 0;
-  const raTerm = (safeRa / (BASE_BUFFERING_CAPACITY * totalGristWeightKg)) * RA_TO_PH_SCALING_CONSTANT;
+  let weightedDiPhSum = 0;
+  let totalBufferingMeqPerPh = 0;
+  for (const item of validItems) {
+    const category = item.category ?? classifyMaltCategory(item.colorLovibond);
+    const categoryProfile = MALT_CATEGORY_PROFILES[category];
+    weightedDiPhSum += categoryProfile.diPh * item.weightKg;
+    totalBufferingMeqPerPh += categoryProfile.bufferingMeqPerKgPerPh * item.weightKg;
+  }
+  const weightedDiPh = weightedDiPhSum / totalGristWeightKg;
 
-  const colorAdjustment = clamp(
-    COLOR_ADJUSTMENT_PER_LOVIBOND * weightedColorLovibond,
-    -1.5,
-    0,
-  );
+  const mashWaterVolume =
+    Number.isFinite(mashWaterVolumeL) && (mashWaterVolumeL as number) > 0
+      ? (mashWaterVolumeL as number)
+      : totalGristWeightKg * DEFAULT_MASH_THICKNESS_L_PER_KG;
 
-  const rawPredictedPh = BASE_MALT_DISTILLED_PH + raTerm + colorAdjustment;
+  const raMeq = residualAlkalinityToMeq(residualAlkalinity, mashWaterVolume);
+  const raShiftPh = totalBufferingMeqPerPh > 0 ? raMeq / totalBufferingMeqPerPh : 0;
+
+  const rawPredictedPh = weightedDiPh + raShiftPh;
   const predictedPh = clamp(rawPredictedPh, MASH_PH_MIN, MASH_PH_MAX);
 
   return {
@@ -215,8 +303,10 @@ export function predictMashPh(
     note:
       predictedPh !== rawPredictedPh
         ? 'Predicted pH was clamped to the plausible brewing range (4.0-6.5).'
-        : 'Predicted using approximate linear RA/buffering model -- verify with a pH meter.',
+        : 'Predicted using per-malt-category DI pH and buffering-capacity model -- verify with a pH meter.',
     weightedColorLovibond,
     totalGristWeightKg,
+    weightedDiPh,
+    totalBufferingMeqPerPh,
   };
 }

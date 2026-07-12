@@ -1,6 +1,6 @@
 'use client';
 
-import { GrainBillItem } from '@/lib/waterChemistry';
+import { GrainBillItem, MaltCategory, classifyMaltCategory } from '@/lib/waterChemistry';
 import { Input } from '@/components/ui/Input';
 import { NumberField } from '@/components/ui/NumberField';
 
@@ -12,6 +12,15 @@ interface GrainBillEditorProps {
 function emptyRow(): GrainBillItem {
   return { name: '', weightKg: 0, colorLovibond: 2 };
 }
+
+const MALT_CATEGORY_OPTIONS: { id: MaltCategory | ''; label: string }[] = [
+  { id: '', label: 'Auto (by color)' },
+  { id: 'base', label: 'Base' },
+  { id: 'wheatOrOther', label: 'Wheat / Other Base' },
+  { id: 'crystal', label: 'Crystal / Caramel' },
+  { id: 'roasted', label: 'Roasted / Dark' },
+  { id: 'acidulated', label: 'Acidulated' },
+];
 
 export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
   const updateRow = (index: number, patch: Partial<GrainBillItem>) => {
@@ -52,7 +61,7 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
         {grainBill.map((row, index) => (
           <div
             key={index}
-            className="grid grid-cols-1 gap-3 rounded-lg border-2 border-amber-200 bg-amber-50/60 p-3 sm:grid-cols-[2fr_1fr_1fr_auto] sm:items-end"
+            className="grid grid-cols-1 gap-3 rounded-lg border-2 border-amber-200 bg-amber-50/60 p-3 sm:grid-cols-[2fr_1fr_1fr_1.4fr_auto] sm:items-end"
           >
             <Input
               label="Grain name"
@@ -74,6 +83,31 @@ export function GrainBillEditor({ grainBill, onChange }: GrainBillEditorProps) {
               step={0.5}
               onChange={(value) => updateRow(index, { colorLovibond: value })}
             />
+            <label className="flex flex-col gap-1">
+              <span className="font-body text-sm font-medium text-amber-900">
+                Malt Type
+                {!row.category ? (
+                  <span className="ml-1 font-normal text-amber-700">
+                    ({classifyMaltCategory(row.colorLovibond)})
+                  </span>
+                ) : null}
+              </span>
+              <select
+                className="min-h-[44px] rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-base text-ink"
+                value={row.category ?? ''}
+                onChange={(e) =>
+                  updateRow(index, {
+                    category: (e.target.value || undefined) as MaltCategory | undefined,
+                  })
+                }
+              >
+                {MALT_CATEGORY_OPTIONS.map((opt) => (
+                  <option key={opt.id} value={opt.id}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </label>
             <button
               type="button"
               onClick={() => removeRow(index)}

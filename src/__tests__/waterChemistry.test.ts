@@ -4,6 +4,7 @@ import {
   toMeqPerL,
   ionProfileToMeq,
   predictMashPh,
+  classifyMaltCategory,
   EMPTY_ION_PROFILE,
   MASH_PH_MIN,
   MASH_PH_MAX,
@@ -110,5 +111,50 @@ describe('predictMashPh', () => {
     ];
     const result = predictMashPh(30, grainBill);
     expect(result.totalGristWeightKg).toBeCloseTo(2, 5);
+  });
+
+  it('an all-roasted grist predicts a lower pH than an all-base grist at the same RA and weight', () => {
+    const baseGrist: GrainBillItem[] = [{ name: 'Pilsner', weightKg: 5, category: 'base', colorLovibond: 2 }];
+    const roastedGrist: GrainBillItem[] = [{ name: 'Roasted Barley', weightKg: 5, category: 'roasted', colorLovibond: 500 }];
+    const baseResult = predictMashPh(30, baseGrist);
+    const roastedResult = predictMashPh(30, roastedGrist);
+    expect(roastedResult.predictedPh).toBeLessThan(baseResult.predictedPh);
+  });
+
+  it('an explicit category overrides color-based inference (pale acidulated malt is more acidic than pale base malt)', () => {
+    const baseGrist: GrainBillItem[] = [{ name: 'Pilsner', weightKg: 5, category: 'base', colorLovibond: 2 }];
+    const acidulatedGrist: GrainBillItem[] = [{ name: 'Acidulated Malt', weightKg: 5, category: 'acidulated', colorLovibond: 2 }];
+    const baseResult = predictMashPh(30, baseGrist);
+    const acidulatedResult = predictMashPh(30, acidulatedGrist);
+    expect(acidulatedResult.predictedPh).toBeLessThan(baseResult.predictedPh);
+  });
+
+  it('a grist with more crystal/roasted buffering capacity resists RA-driven pH shifts more than an all-base grist', () => {
+    const allBase: GrainBillItem[] = [{ name: 'Pilsner', weightKg: 5, category: 'base', colorLovibond: 2 }];
+    const mixedGrist: GrainBillItem[] = [
+      { name: 'Pilsner', weightKg: 4, category: 'base', colorLovibond: 2 },
+      { name: 'Crystal 60', weightKg: 1, category: 'crystal', colorLovibond: 60 },
+    ];
+    const highRa = 150;
+    const baseShift = predictMashPh(highRa, allBase).predictedPh - predictMashPh(0, allBase).predictedPh;
+    const mixedShift = predictMashPh(highRa, mixedGrist).predictedPh - predictMashPh(0, mixedGrist).predictedPh;
+    expect(mixedShift).toBeLessThan(baseShift);
+  });
+
+  it('classifyMaltCategory buckets by color as documented', () => {
+    expect(classifyMaltCategory(2)).toBe('base');
+    expect(classifyMaltCategory(19.9)).toBe('base');
+    expect(classifyMaltCategory(20)).toBe('crystal');
+    expect(classifyMaltCategory(79.9)).toBe('crystal');
+    expect(classifyMaltCategory(80)).toBe('roasted');
+    expect(classifyMaltCategory(500)).toBe('roasted');
+  });
+
+  it('accepts an explicit mash water volume to compute the RA buffering term', () => {
+    const grainBill: GrainBillItem[] = [{ name: 'Pilsner', weightKg: 5, category: 'base', colorLovibond: 2 }];
+    const thin = predictMashPh(100, grainBill, 20);
+    const thick = predictMashPh(100, grainBill, 5);
+    // More mash water carries more alkalinity to neutralize -> higher pH shift.
+    expect(thin.predictedPh).toBeGreaterThan(thick.predictedPh);
   });
 });
