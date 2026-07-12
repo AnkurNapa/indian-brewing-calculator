@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GrainBillItem } from '@/lib/waterChemistry';
 import { calculateSrm } from '@/lib/srm';
 import { calculateAbvAdvanced } from '@/lib/fermentation';
@@ -61,6 +61,16 @@ export function StyleCheckPanel({
   onHopAdditionsChange,
 }: StyleCheckPanelProps) {
   const [styleSearch, setStyleSearch] = useState('');
+  // Briefly pulses the "Selected" confirmation so picking a style from the
+  // scrollable list gives the same unmistakable "yes, that registered"
+  // feedback as the SearchableSelect dropdowns elsewhere in the app.
+  const [justSelected, setJustSelected] = useState(false);
+
+  useEffect(() => {
+    if (!justSelected) return;
+    const timer = setTimeout(() => setJustSelected(false), 900);
+    return () => clearTimeout(timer);
+  }, [justSelected]);
 
   const style = BJCP_STYLES.find((s) => s.id === bjcpStyleId) ?? BJCP_STYLES[0];
 
@@ -109,22 +119,43 @@ export function StyleCheckPanel({
               <button
                 key={s.id}
                 type="button"
-                onClick={() => onBjcpStyleChange(s.id)}
-                className={`flex min-h-[44px] w-full flex-col items-start justify-center gap-0.5 border-b border-amber-100 px-3 py-1.5 text-left last:border-b-0 ${
+                onClick={() => {
+                  onBjcpStyleChange(s.id);
+                  setJustSelected(true);
+                }}
+                className={`flex min-h-[44px] w-full items-start justify-between gap-2 border-b border-amber-100 px-3 py-1.5 text-left last:border-b-0 ${
                   s.id === bjcpStyleId ? 'bg-teal-700 text-parchment' : 'hover:bg-amber-100'
                 }`}
               >
-                <span className="font-semibold">{s.name}</span>
-                <span className={`text-xs ${s.id === bjcpStyleId ? 'text-parchment/80' : 'text-amber-700/80'}`}>
-                  {s.category}
+                <span className="flex flex-col gap-0.5">
+                  <span className="font-semibold">{s.name}</span>
+                  <span className={`text-xs ${s.id === bjcpStyleId ? 'text-parchment/80' : 'text-amber-700/80'}`}>
+                    {s.category}
+                  </span>
                 </span>
+                {s.id === bjcpStyleId ? (
+                  <span aria-hidden="true" className="flex-shrink-0 pt-0.5">
+                    ✓
+                  </span>
+                ) : null}
               </button>
             ))
           )}
         </div>
-        <span className="text-xs text-amber-700/80">
-          Selected: <span className="font-semibold">{style.name}</span> -- {style.description}
-        </span>
+        <div
+          className={`flex items-center gap-2 rounded-md border-2 px-3 py-2 text-xs transition-colors duration-300 ${
+            justSelected ? 'border-teal-500 bg-teal-50 text-teal-900' : 'border-amber-200 bg-amber-50/60 text-amber-700/80'
+          }`}
+        >
+          {justSelected ? (
+            <span aria-hidden="true" className="text-teal-700">
+              ✓
+            </span>
+          ) : null}
+          <span>
+            Selected: <span className="font-semibold">{style.name}</span> -- {style.description}
+          </span>
+        </div>
       </div>
 
       <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
