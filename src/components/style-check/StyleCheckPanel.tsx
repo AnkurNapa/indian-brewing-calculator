@@ -41,12 +41,21 @@ function ParameterRow({ label, unit, compliance }: { label: string; unit: string
 
 export function StyleCheckPanel({ grainBill, batchVolumeL, og, onOgChange, fg, onFgChange }: StyleCheckPanelProps) {
   const [styleId, setStyleId] = useState(BJCP_STYLES[0].id);
+  const [styleSearch, setStyleSearch] = useState('');
   const [wortGravity, setWortGravity] = useState(1.06);
   const [hopAdditions, setHopAdditions] = useState<HopAddition[]>([
     { name: 'Bittering Hop', alphaAcidPercent: 12, weightG: 25, boilTimeMinutes: 60 },
   ]);
 
   const style = BJCP_STYLES.find((s) => s.id === styleId) ?? BJCP_STYLES[0];
+
+  const filteredStyles = useMemo(() => {
+    const query = styleSearch.trim().toLowerCase();
+    if (!query) return BJCP_STYLES;
+    return BJCP_STYLES.filter(
+      (s) => s.name.toLowerCase().includes(query) || s.category.toLowerCase().includes(query),
+    );
+  }, [styleSearch]);
 
   const srm = useMemo(() => calculateSrm(grainBill, batchVolumeL), [grainBill, batchVolumeL]);
   const abvPercent = calculateAbvAdvanced(og, fg);
@@ -70,21 +79,38 @@ export function StyleCheckPanel({ grainBill, batchVolumeL, og, onOgChange, fg, o
         descriptions and the complete category list.
       </p>
 
-      <label className="flex flex-col gap-1">
-        <span className="font-body text-sm font-medium text-amber-900">Target Style</span>
-        <select
-          className="min-h-[44px] rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-base text-ink"
-          value={styleId}
-          onChange={(e) => setStyleId(e.target.value)}
-        >
-          {BJCP_STYLES.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
-        <span className="text-xs text-amber-700/80">{style.description}</span>
-      </label>
+      <div className="flex flex-col gap-1">
+        <Input
+          label="Target Style"
+          value={styleSearch}
+          onChange={setStyleSearch}
+          placeholder={`Search ${BJCP_STYLES.length} styles by name or category (e.g. "IPA", "sour", "lager")...`}
+        />
+        <div className="mt-1 max-h-52 overflow-y-auto rounded-md border-2 border-amber-200 bg-parchment">
+          {filteredStyles.length === 0 ? (
+            <p className="p-3 text-sm text-amber-800">No styles match &quot;{styleSearch}&quot;.</p>
+          ) : (
+            filteredStyles.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => setStyleId(s.id)}
+                className={`flex min-h-[44px] w-full flex-col items-start justify-center gap-0.5 border-b border-amber-100 px-3 py-1.5 text-left last:border-b-0 ${
+                  s.id === styleId ? 'bg-teal-700 text-parchment' : 'hover:bg-amber-100'
+                }`}
+              >
+                <span className="font-semibold">{s.name}</span>
+                <span className={`text-xs ${s.id === styleId ? 'text-parchment/80' : 'text-amber-700/80'}`}>
+                  {s.category}
+                </span>
+              </button>
+            ))
+          )}
+        </div>
+        <span className="text-xs text-amber-700/80">
+          Selected: <span className="font-semibold">{style.name}</span> -- {style.description}
+        </span>
+      </div>
 
       <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
         <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">Gravity & ABV</h3>

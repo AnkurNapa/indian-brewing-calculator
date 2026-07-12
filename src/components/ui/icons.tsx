@@ -108,3 +108,14 @@ export function StyleCheckIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+/** Info circle -- About / Disclaimer / FAQ. */
+export function InfoIcon({ className }: IconProps) {
+  return (
+    <svg {...commonProps} className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5.5" />
+      <circle cx="12" cy="7.7" r="0.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}

@@ -12,6 +12,7 @@ import { BrewhouseCalculatorsPanel } from '@/components/brewhouse/BrewhouseCalcu
 import { TransferLauteringPanel } from '@/components/transfer-lautering/TransferLauteringPanel';
 import { FermentationTrackerPanel } from '@/components/fermentation-tracker/FermentationTrackerPanel';
 import { StyleCheckPanel } from '@/components/style-check/StyleCheckPanel';
+import { AboutPanel } from '@/components/about/AboutPanel';
 import { useWaterProfile } from '@/hooks/useWaterProfile';
 import {
   DropletIcon,
@@ -23,6 +24,7 @@ import {
   FermenterIcon,
   CalculatorIcon,
   StyleCheckIcon,
+  InfoIcon,
 } from '@/components/ui/icons';
 
 const TABS: TabDef[] = [
@@ -35,6 +37,7 @@ const TABS: TabDef[] = [
   { id: 'fermentation-tracker', label: 'Fermentation Tracker', shortLabel: 'Ferment', icon: FermenterIcon },
   { id: 'brewhouse', label: 'Brewhouse Calculators', shortLabel: 'Calcs', icon: CalculatorIcon },
   { id: 'style-check', label: 'BJCP Style Check', shortLabel: 'Style', icon: StyleCheckIcon },
+  { id: 'about', label: 'About', shortLabel: 'About', icon: InfoIcon },
 ];
 
 export default function Home() {
@@ -125,6 +128,8 @@ export default function Home() {
             onFgChange={(fgSg) => setState((prev) => ({ ...prev, fgSg }))}
           />
         ) : null}
+
+        {activeTab === 'about' ? <AboutPanel /> : null}
       </div>
 
       <footer className="flex flex-col items-center gap-1 text-center font-body text-xs text-amber-700/70">
