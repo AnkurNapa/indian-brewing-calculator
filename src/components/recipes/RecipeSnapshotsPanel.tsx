@@ -12,6 +12,31 @@ import { calculateAbvAdvanced } from '@/lib/fermentation';
 import { roundForDisplay } from '@/lib/units';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { BookmarkIcon } from '@/components/ui/icons';
+import { buildBeerXml } from '@/lib/beerXml';
+import { buildRecipePrintHtml } from '@/lib/recipePrintView';
+import { downloadTextFile } from '@/lib/dataExport';
+
+function sanitizeFilename(name: string): string {
+  return name.trim().replace(/[^a-z0-9-_ ]/gi, '').replace(/\s+/g, '-').toLowerCase() || 'recipe';
+}
+
+function exportBeerXml(snapshot: RecipeSnapshot) {
+  downloadTextFile(`${sanitizeFilename(snapshot.name)}.xml`, buildBeerXml(snapshot.state, snapshot.name), 'application/xml');
+}
+
+function exportPdf(snapshot: RecipeSnapshot) {
+  if (typeof window === 'undefined') return;
+  const html = buildRecipePrintHtml(snapshot.name, snapshot.state, snapshot.lockedAtMs);
+  // Blob URL instead of document.write() into a blank window -- avoids
+  // the XSS/perf pitfalls of document.write while still opening a
+  // normal printable page the browser's Print -> Save as PDF can use.
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  // Revoke well after the new tab has had time to load the blob (it's
+  // fetched once on open); an immediate revoke can race the load.
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+}
 
 interface RecipeSnapshotsPanelProps {
   currentState: AppState;
@@ -140,6 +165,22 @@ function SnapshotCard({
               Delete
             </button>
           </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => exportPdf(snapshot)}
+              className="min-h-[40px] flex-1 rounded-md border border-amber-300 bg-white px-3 py-2 font-body text-xs font-semibold text-amber-800 hover:bg-amber-50"
+            >
+              Export PDF
+            </button>
+            <button
+              type="button"
+              onClick={() => exportBeerXml(snapshot)}
+              className="min-h-[40px] flex-1 rounded-md border border-amber-300 bg-white px-3 py-2 font-body text-xs font-semibold text-amber-800 hover:bg-amber-50"
+            >
+              Export BeerXML
+            </button>
+          </div>
         </div>
       ) : null}
     </div>
@@ -195,7 +236,8 @@ export function RecipeSnapshotsPanel({
     <section className="flex flex-col gap-4">
       <h2 className="font-display text-xl font-bold text-ink">Recipes</h2>
       <p className="font-body text-sm text-amber-800">
-        Lock the current session as a named recipe snapshot, or reload/duplicate a recipe you locked earlier.
+        Lock the current session as a named recipe snapshot, reload/duplicate a recipe you locked earlier, or export
+        it as a PDF or BeerXML file.
       </p>
 
       <TutorialCallout
@@ -212,6 +254,10 @@ export function RecipeSnapshotsPanel({
           {
             lead: '3. Reload, duplicate, or delete anytime.',
             body: 'Load replaces the live session with that snapshot (with a confirmation, since it overwrites current unsaved edits); Duplicate makes an independent copy to branch a variation from.',
+          },
+          {
+            lead: '4. Export PDF or BeerXML.',
+            body: 'Export PDF opens a clean printable recipe sheet -- use your browser\'s Print -> Save as PDF. Export BeerXML downloads a .xml file most other brewing software (BeerSmith, Brewfather, etc.) can import directly.',
           },
         ]}
       />
