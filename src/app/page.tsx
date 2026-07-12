@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Tabs, TabDef } from '@/components/ui/Tabs';
 import { SessionSummary } from '@/components/ui/SessionSummary';
+import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
 import { roundForDisplay } from '@/lib/units';
 import { WaterReportForm } from '@/components/water-report/WaterReportForm';
@@ -166,6 +167,23 @@ export default function Home() {
 
         {activeTab === 'water-report' ? (
           <div className="flex flex-col gap-8">
+            <TutorialCallout
+              title="How to use Water Report"
+              steps={[
+                {
+                  lead: '1. Quick-fill or enter your source water.',
+                  body: 'Pick a known water type from the preset, or type your own ion values (Ca, Mg, Na, SO4, Cl, HCO3, alkalinity) from a water report/COA.',
+                },
+                {
+                  lead: '2. Check Residual Alkalinity.',
+                  body: 'Higher RA pushes mash pH up; very low or negative RA (like RO water) lets dark malt acidity dominate -- this feeds directly into Mash Adjustment.',
+                },
+                {
+                  lead: '3. Build your Grain Bill.',
+                  body: 'Add each grain with weight and color, quick-filling from Weyermann malts or typing your own. This grain bill is shared everywhere: mash pH, SRM color, water volumes, and Home.',
+                },
+              ]}
+            />
             <WaterReportForm
               profile={state.sourceProfile}
               onChange={(sourceProfile) => setState((prev) => ({ ...prev, sourceProfile }))}

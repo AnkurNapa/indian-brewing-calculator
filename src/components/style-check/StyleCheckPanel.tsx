@@ -11,6 +11,7 @@ import { NumberField } from '@/components/ui/NumberField';
 import { GravityField } from '@/components/ui/GravityField';
 import { Input } from '@/components/ui/Input';
 import { ResultCard } from '@/components/ui/ResultCard';
+import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { roundForDisplay } from '@/lib/units';
 
 interface StyleCheckPanelProps {
@@ -103,6 +104,24 @@ export function StyleCheckPanel({
         Reference numeric ranges only -- consult the official BJCP Style Guidelines (bjcp.org) for full style
         descriptions and the complete category list.
       </p>
+
+      <TutorialCallout
+        title="How to use BJCP Style Check"
+        steps={[
+          {
+            lead: '1. Search and pick a target style.',
+            body: 'The selected style flashes teal briefly to confirm the pick, and stays visible in the "Selected" line below the list.',
+          },
+          {
+            lead: '2. OG/FG and hops are shared, not separate.',
+            body: 'Gravity and hop schedule here are the same values used in Brewhouse Calculators and shown on Home -- edit them on any of those screens and they stay in sync.',
+          },
+          {
+            lead: '3. Read the Style Match score.',
+            body: 'Green/5-of-5 means every parameter (OG, FG, IBU, SRM, ABV) falls inside the style\'s published range; red rows below show exactly how far outside range you are and in which direction.',
+          },
+        ]}
+      />
 
       <div className="flex flex-col gap-1">
         <Input

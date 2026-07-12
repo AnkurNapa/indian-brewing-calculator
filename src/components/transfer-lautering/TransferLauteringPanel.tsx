@@ -6,6 +6,7 @@ import { calculateTransferTimeMinutes, calculateRequiredFlowRate } from '@/lib/w
 import { calculateGrainBedDepth, evaluateRunoffCutoff, DEFAULT_BED_VOLUME_L_PER_KG } from '@/lib/lautering';
 import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
+import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { roundForDisplay } from '@/lib/units';
 
 interface TransferLauteringPanelProps {
@@ -143,6 +144,23 @@ export function TransferLauteringPanel({ grainBill }: TransferLauteringPanelProp
       <p className="font-body text-sm text-amber-800">
         Quick on-the-go checks for transfer timing, stuck-mash risk, and runoff cutoff during brew day.
       </p>
+      <TutorialCallout
+        title="How to use Transfer & Lautering"
+        steps={[
+          {
+            lead: '1. Transfer Time',
+            body: 'is a general timing tool -- use it for any pumped transfer (mash to lauter, lauter to kettle, kettle to fermenter), not just lautering specifically.',
+          },
+          {
+            lead: '2. Grain Bed Depth',
+            body: 'flags stuck-mash risk from your lauter tun diameter and grist weight (pulled from the Grain Bill tab) -- a deep, narrow bed is the classic stuck-sparge setup.',
+          },
+          {
+            lead: '3. Runoff / Sparge Cutoff',
+            body: 'tells you when to stop collecting wort: enter your current runnings gravity and your cutoff threshold (commonly ~1.008-1.010) to avoid extracting tannins from the grain husks.',
+          },
+        ]}
+      />
       <TransferTimeCalculator />
       <GrainBedDepthCalculator totalGrainWeightKg={totalGrainWeightKg} />
       <RunoffCutoffAdvisor />

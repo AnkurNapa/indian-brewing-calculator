@@ -4,6 +4,7 @@ import { IonProfile } from '@/lib/waterChemistry';
 import { blendIonProfiles } from '@/lib/blending';
 import { WaterReportForm } from '@/components/water-report/WaterReportForm';
 import { ResultCard } from '@/components/ui/ResultCard';
+import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { roundForDisplay } from '@/lib/units';
 
 interface BlendingPanelProps {
@@ -38,6 +39,24 @@ export function BlendingPanel({
   return (
     <section className="flex flex-col gap-6">
       <h2 className="font-display text-xl font-bold text-ink">Water Blending</h2>
+
+      <TutorialCallout
+        title="How to use Water Blending"
+        steps={[
+          {
+            lead: '1. Enter both source waters.',
+            body: 'Source A and B are independent ion profiles -- e.g. your tap water and RO/distilled water, or two different wells/sources you\'re mixing.',
+          },
+          {
+            lead: '2. Drag the ratio slider.',
+            body: 'Moves the blend percentage between 100% Source A and 100% Source B -- watch the Blended Result table update live.',
+          },
+          {
+            lead: '3. Use the blended profile elsewhere.',
+            body: 'Once you find a ratio you like, copy those blended ion values into the Water Report tab as your actual brewing water.',
+          },
+        ]}
+      />
 
       <div className="flex flex-col gap-2">
         <label htmlFor="blend-ratio" className="font-body text-sm font-medium text-amber-900">

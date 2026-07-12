@@ -6,6 +6,7 @@ import { calculateWaterVolumes } from '@/lib/waterVolumes';
 import { calculateVolumeToAddForTargetTemp } from '@/lib/waterTemperature';
 import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
+import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { roundForDisplay } from '@/lib/units';
 
 interface WaterVolumesPanelProps {
@@ -86,6 +87,28 @@ export function WaterVolumesPanel({ grainBill }: WaterVolumesPanelProps) {
       <p className="font-body text-sm text-amber-800">
         Using grist weight from the Grain Bill tab: <span className="font-semibold">{totalGrainWeightKg.toFixed(2)} kg</span>
       </p>
+
+      <TutorialCallout
+        title="How to use Water Volumes"
+        steps={[
+          {
+            lead: '1. Add grain first.',
+            body: 'Grist weight comes from the Water Report tab\'s Grain Bill -- add your grains there so Mash Water and Sparge Water below aren\'t zero.',
+          },
+          {
+            lead: '2. Set your target final volume.',
+            body: 'How much you want in the fermenter after the boil -- everything else works backward from this number.',
+          },
+          {
+            lead: '3. Calibrate to your system.',
+            body: 'Boil-off rate and post-boil/trub loss vary a lot by kettle and burner -- adjust these to match your actual equipment for accurate numbers.',
+          },
+          {
+            lead: '4. Use Water Temperature Mixing separately.',
+            body: 'The card below answers a different question: how much hot or cold water to add to hit a target temperature, for heating strike water or cooling wort.',
+          },
+        ]}
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField

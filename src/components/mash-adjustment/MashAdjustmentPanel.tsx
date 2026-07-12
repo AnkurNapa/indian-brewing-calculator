@@ -16,6 +16,7 @@ import { solveDilutionRatio } from '@/lib/dilutionOptimizer';
 import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
+import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { roundForDisplay } from '@/lib/units';
 
 interface MashAdjustmentPanelProps {
@@ -81,6 +82,28 @@ export function MashAdjustmentPanel({
   return (
     <section className="flex flex-col gap-4">
       <h2 className="font-display text-xl font-bold text-ink">Mash Adjustment</h2>
+
+      <TutorialCallout
+        title="How to use Mash Adjustment"
+        steps={[
+          {
+            lead: '1. Set batch volume and target style.',
+            body: 'Batch volume is shared across the app; target style picks the salt-addition targets for Predicted Mash pH and Salt Additions below.',
+          },
+          {
+            lead: '2. Check Predicted Mash pH.',
+            body: 'Computed from your Water Report source water and Grain Bill -- add grains on the Water Report tab first if this looks like a fallback value.',
+          },
+          {
+            lead: '3. Add the suggested salts.',
+            body: 'These move your water toward the target style profile; dilution guidance appears automatically if salts alone can\'t reach the target.',
+          },
+          {
+            lead: '4. Dose acid only if needed.',
+            body: 'Set a Target Mash pH and pick an acid type -- the dose is calculated against your estimated mash water volume, not the full batch volume.',
+          },
+        ]}
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField

@@ -19,6 +19,7 @@ import { GravityField } from '@/components/ui/GravityField';
 import { Input } from '@/components/ui/Input';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
+import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { HOP_VARIETIES } from '@/lib/hopVarieties';
 import { YEAST_STRAINS } from '@/lib/yeastStrains';
 import { roundForDisplay } from '@/lib/units';
@@ -499,6 +500,23 @@ export function BrewhouseCalculatorsPanel({
         FG, batch volume, hop schedule, and grain bill are all shared with the Home overview and BJCP Style
         Check tabs.
       </p>
+      <TutorialCallout
+        title="How to use Brewhouse Calculators"
+        steps={[
+          {
+            lead: '1. Cards are ordered by brew-day timing.',
+            body: 'Efficiency and gravity corrections happen at mash-out, IBU and color during the boil, pitch rate at pitching, OG/FG tracking through fermentation, and priming/carbonation only at packaging -- scroll in order for a real brew day.',
+          },
+          {
+            lead: '2. Quick-fill hops and yeast, or type your own.',
+            body: 'Every preset dropdown (hop varieties, yeast strains) is optional -- anything not listed can be typed directly into the field below it.',
+          },
+          {
+            lead: '3. OG, FG, batch volume, hops, and grain bill are shared.',
+            body: 'Changes here show up on Home, BJCP Style Check, and the Beer Color card -- no need to re-enter the same numbers on every tab.',
+          },
+        ]}
+      />
       {/* Ordered to match when each reading is actually taken on brew day:
           mash-out efficiency, then gravity corrections, hop bitterness, and
           color during the boil, pitch rate at pitching, OG/FG tracking
