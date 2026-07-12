@@ -86,8 +86,23 @@ export default function Home() {
         {activeTab === 'brewhouse' ? <BrewhouseCalculatorsPanel /> : null}
       </div>
 
-      <footer className="text-center font-body text-xs text-amber-700/70">
-        All units metric: Liters, Hectoliters, milligrams, grams, °Celsius, °Lovibond for grain color.
+      <footer className="flex flex-col items-center gap-1 text-center font-body text-xs text-amber-700/70">
+        <p>All units metric: Liters, Hectoliters, milligrams, grams, °Celsius, °Lovibond for grain color.</p>
+        <p>
+          Built by Ankur Napa &middot;{' '}
+          <a
+            href="https://linkedin.com/in/ankurnapa"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-amber-900"
+          >
+            LinkedIn
+          </a>{' '}
+          &middot;{' '}
+          <a href="mailto:napaankur@gmail.com" className="underline hover:text-amber-900">
+            napaankur@gmail.com
+          </a>
+        </p>
       </footer>
     </main>
   );
