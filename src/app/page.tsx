@@ -10,16 +10,28 @@ import { BlendingPanel } from '@/components/blending/BlendingPanel';
 import { WaterVolumesPanel } from '@/components/water-volumes/WaterVolumesPanel';
 import { BrewhouseCalculatorsPanel } from '@/components/brewhouse/BrewhouseCalculatorsPanel';
 import { TransferLauteringPanel } from '@/components/transfer-lautering/TransferLauteringPanel';
+import { FermentationTrackerPanel } from '@/components/fermentation-tracker/FermentationTrackerPanel';
 import { useWaterProfile } from '@/hooks/useWaterProfile';
+import {
+  DropletIcon,
+  FlaskIcon,
+  FunnelIcon,
+  BlendIcon,
+  JugIcon,
+  PipeFlowIcon,
+  FermenterIcon,
+  CalculatorIcon,
+} from '@/components/ui/icons';
 
 const TABS: TabDef[] = [
-  { id: 'water-report', label: 'Water Report' },
-  { id: 'mash-adjustment', label: 'Mash Adjustment' },
-  { id: 'sparge-adjustment', label: 'Sparge Adjustment' },
-  { id: 'blending', label: 'Blending' },
-  { id: 'water-volumes', label: 'Water Volumes' },
-  { id: 'transfer-lautering', label: 'Transfer & Lautering' },
-  { id: 'brewhouse', label: 'Brewhouse Calculators' },
+  { id: 'water-report', label: 'Water Report', shortLabel: 'Water', icon: DropletIcon },
+  { id: 'mash-adjustment', label: 'Mash Adjustment', shortLabel: 'Mash', icon: FlaskIcon },
+  { id: 'sparge-adjustment', label: 'Sparge Adjustment', shortLabel: 'Sparge', icon: FunnelIcon },
+  { id: 'blending', label: 'Blending', shortLabel: 'Blend', icon: BlendIcon },
+  { id: 'water-volumes', label: 'Water Volumes', shortLabel: 'Volumes', icon: JugIcon },
+  { id: 'transfer-lautering', label: 'Transfer & Lautering', shortLabel: 'Transfer', icon: PipeFlowIcon },
+  { id: 'fermentation-tracker', label: 'Fermentation Tracker', shortLabel: 'Ferment', icon: FermenterIcon },
+  { id: 'brewhouse', label: 'Brewhouse Calculators', shortLabel: 'Calcs', icon: CalculatorIcon },
 ];
 
 export default function Home() {
@@ -86,6 +98,8 @@ export default function Home() {
         {activeTab === 'water-volumes' ? <WaterVolumesPanel grainBill={state.grainBill} /> : null}
 
         {activeTab === 'transfer-lautering' ? <TransferLauteringPanel grainBill={state.grainBill} /> : null}
+
+        {activeTab === 'fermentation-tracker' ? <FermentationTrackerPanel /> : null}
 
         {activeTab === 'brewhouse' ? <BrewhouseCalculatorsPanel /> : null}
       </div>

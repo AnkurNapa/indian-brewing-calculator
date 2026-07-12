@@ -9,8 +9,9 @@ import {
 } from '@/lib/fermentation';
 import { calculateBrewhouseEfficiency, pointsToSg, GrainPotentialItem } from '@/lib/efficiency';
 import { calculatePrimingDose, PRIMING_SUGARS } from '@/lib/priming';
-import { calculatePitchRate, YeastStyle } from '@/lib/pitchRate';
-import { calculateIbu, HopAddition } from '@/lib/ibu';
+import { calculateForceCarbonationPressure } from '@/lib/forceCarbonation';
+import { calculatePitchRate, calculateRepitchSlurryVolume, YeastStyle } from '@/lib/pitchRate';
+import { calculateIbu, calculateHopWeightForTargetIbu, calculateDryHopWeight, HopAddition } from '@/lib/ibu';
 import { NumberField } from '@/components/ui/NumberField';
 import { Input } from '@/components/ui/Input';
 import { ResultCard } from '@/components/ui/ResultCard';
@@ -141,6 +142,35 @@ function EfficiencyCalculator() {
   );
 }
 
+function ForceCarbonationCalculator() {
+  const [targetCo2Volumes, setTargetCo2Volumes] = useState(2.6);
+  const [temperatureC, setTemperatureC] = useState(4);
+
+  const result = calculateForceCarbonationPressure(targetCo2Volumes, temperatureC);
+
+  return (
+    <SectionCard title="Force Carbonation (CO2 Tank Pressure)">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <NumberField
+          label="Target CO2"
+          unit="volumes"
+          value={targetCo2Volumes}
+          step={0.1}
+          onChange={setTargetCo2Volumes}
+        />
+        <NumberField label="Tank / Beer Temp" unit="°C" value={temperatureC} step={0.5} onChange={setTemperatureC} allowNegative />
+      </div>
+      <ResultCard title="Regulator Pressure" value={roundForDisplay(result.pressurePsi, 1).toString()} unit="psi">
+        <p>≈ {roundForDisplay(result.pressureBar, 2)} bar.</p>
+        <p className="mt-1 text-amber-800">
+          Approximate -- cross-check against a physical carbonation chart or your regulator vendor&apos;s chart
+          before setting tank pressure.
+        </p>
+      </ResultCard>
+    </SectionCard>
+  );
+}
+
 function PrimingCalculator() {
   const [targetCo2Volumes, setTargetCo2Volumes] = useState(2.4);
   const [temperatureC, setTemperatureC] = useState(20);
@@ -151,7 +181,7 @@ function PrimingCalculator() {
   const result = calculatePrimingDose(targetCo2Volumes, temperatureC, batchVolumeL, sugar);
 
   return (
-    <SectionCard title="Priming Sugar / Carbonation">
+    <SectionCard title="Priming Sugar (Bottle Conditioning)">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField
           label="Target CO2"
@@ -201,6 +231,10 @@ function PitchRateCalculator() {
 
   const result = calculatePitchRate(og, batchVolumeL, style);
 
+  const [slurryDensity, setSlurryDensity] = useState(1.2);
+  const [viabilityPercent, setViabilityPercent] = useState(85);
+  const repitch = calculateRepitchSlurryVolume(result.targetCellsBillion, slurryDensity, viabilityPercent);
+
   return (
     <SectionCard title="Yeast Pitch Rate">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -221,9 +255,85 @@ function PitchRateCalculator() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <ResultCard title="Target Cells" value={roundForDisplay(result.targetCellsBillion, 0).toString()} unit="billion" />
         <ResultCard title="Dry Yeast" value={roundForDisplay(result.dryYeastGrams, 1).toString()} unit="g" />
-        <ResultCard title="Liquid Slurry" value={roundForDisplay(result.slurryMl, 0).toString()} unit="mL" />
+        <ResultCard title="Fresh Liquid Slurry" value={roundForDisplay(result.slurryMl, 0).toString()} unit="mL" />
+      </div>
+
+      <div className="rounded-md border border-teal-300 bg-teal-100/40 p-3">
+        <h4 className="font-body text-sm font-semibold text-teal-900">Repitching From Cropped/Cone-Harvested Slurry</h4>
+        <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <NumberField
+            label="Harvested Slurry Density"
+            unit="billion/mL"
+            value={slurryDensity}
+            step={0.1}
+            onChange={setSlurryDensity}
+            helperText="Measure with a hemocytometer/cell counter if possible."
+          />
+          <NumberField
+            label="Viability"
+            unit="%"
+            value={viabilityPercent}
+            step={1}
+            max={100}
+            onChange={setViabilityPercent}
+            helperText="Cropped slurry is rarely 100% viable -- check with methylene blue staining."
+          />
+        </div>
+        <p className="mt-2 font-body text-sm text-ink">
+          Use approximately{' '}
+          <span className="font-semibold">{roundForDisplay(repitch.slurryMlNeeded, 0)} mL</span> of this harvested
+          slurry to deliver the target cell count above.
+        </p>
       </div>
     </SectionCard>
+  );
+}
+
+function HopWeightForTargetIbuCalculator({ wortGravity, batchVolumeL }: { wortGravity: number; batchVolumeL: number }) {
+  const [targetIbu, setTargetIbu] = useState(40);
+  const [alphaAcidPercent, setAlphaAcidPercent] = useState(12);
+  const [boilTimeMinutes, setBoilTimeMinutes] = useState(60);
+
+  const grams = calculateHopWeightForTargetIbu(targetIbu, alphaAcidPercent, boilTimeMinutes, wortGravity, batchVolumeL);
+
+  return (
+    <div className="rounded-md border border-teal-300 bg-teal-100/40 p-3">
+      <h4 className="font-body text-sm font-semibold text-teal-900">Hop Weight For a Target IBU</h4>
+      <p className="mt-1 font-body text-xs text-ink/70">
+        Uses the wort gravity and batch volume from above.
+      </p>
+      <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <NumberField label="Target IBU" value={targetIbu} step={1} onChange={setTargetIbu} />
+        <NumberField label="Alpha Acid" unit="%" value={alphaAcidPercent} step={0.1} onChange={setAlphaAcidPercent} />
+        <NumberField label="Boil Time" unit="min" value={boilTimeMinutes} step={1} onChange={setBoilTimeMinutes} />
+      </div>
+      <p className="mt-2 font-body text-sm text-ink">
+        Add <span className="font-semibold">{roundForDisplay(grams, 1)} g</span> of this hop at {boilTimeMinutes} min.
+      </p>
+    </div>
+  );
+}
+
+function DryHopCalculator({ batchVolumeL }: { batchVolumeL: number }) {
+  const [rateGPerL, setRateGPerL] = useState(2.5);
+
+  const grams = calculateDryHopWeight(rateGPerL, batchVolumeL);
+
+  return (
+    <div className="rounded-md border border-teal-300 bg-teal-100/40 p-3">
+      <h4 className="font-body text-sm font-semibold text-teal-900">Dry Hop / Whirlpool Addition</h4>
+      <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <NumberField
+          label="Rate"
+          unit="g/L"
+          value={rateGPerL}
+          step={0.1}
+          onChange={setRateGPerL}
+          helperText="Typical 1-2 g/L subtle, 5-8+ g/L for heavily dry-hopped styles."
+        />
+        <ResultCard title="Hop Weight Needed" value={roundForDisplay(grams, 1).toString()} unit="g" />
+      </div>
+    </div>
   );
 }
 
@@ -284,6 +394,9 @@ function IbuCalculator() {
         </button>
       </div>
       <ResultCard title="Total IBU" value={roundForDisplay(result.totalIbu, 1).toString()} />
+
+      <HopWeightForTargetIbuCalculator wortGravity={wortGravity} batchVolumeL={batchVolumeL} />
+      <DryHopCalculator batchVolumeL={batchVolumeL} />
     </SectionCard>
   );
 }
@@ -298,6 +411,7 @@ export function BrewhouseCalculatorsPanel() {
       <AbvAttenuationCalculator />
       <HydrometerCorrectionCalculator />
       <EfficiencyCalculator />
+      <ForceCarbonationCalculator />
       <PrimingCalculator />
       <PitchRateCalculator />
       <IbuCalculator />

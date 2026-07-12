@@ -41,6 +41,46 @@ export interface PitchRateResult {
   slurryMl: number;
 }
 
+export interface RepitchSlurryResult {
+  /** mL of harvested (cropped) slurry needed, accounting for measured viability. */
+  slurryMlNeeded: number;
+  /** Viable cells actually delivered by that volume, billions -- should equal targetCellsBillion. */
+  viableCellsDeliveredBillion: number;
+}
+
+/**
+ * Compute how much harvested/cropped yeast slurry (e.g. from a
+ * conical's cone harvest, common practice when repitching rather than
+ * buying fresh dry yeast every batch) is needed to hit a target cell
+ * count, accounting for the slurry's measured viable cell density and
+ * viability percentage (cropped slurry is never 100% viable -- older
+ * generations and stressed harvests read lower).
+ *
+ * Edge cases handled:
+ *  - Non-positive target cells, density, or viability: returns 0 mL
+ *    needed rather than dividing by zero or returning a negative/NaN
+ *    volume.
+ */
+export function calculateRepitchSlurryVolume(
+  targetCellsBillion: number,
+  slurryBillionCellsPerMl: number,
+  viabilityPercent: number,
+): RepitchSlurryResult {
+  const target = safePositive(targetCellsBillion, 0);
+  const density = safePositive(slurryBillionCellsPerMl, 0);
+  const viability = Number.isFinite(viabilityPercent) ? Math.min(100, Math.max(0, viabilityPercent)) : 0;
+
+  if (target <= 0 || density <= 0 || viability <= 0) {
+    return { slurryMlNeeded: 0, viableCellsDeliveredBillion: 0 };
+  }
+
+  const viableDensity = density * (viability / 100);
+  const slurryMlNeeded = target / viableDensity;
+  const viableCellsDeliveredBillion = slurryMlNeeded * viableDensity;
+
+  return { slurryMlNeeded, viableCellsDeliveredBillion };
+}
+
 /**
  * Compute the yeast pitch requirement for a batch.
  *

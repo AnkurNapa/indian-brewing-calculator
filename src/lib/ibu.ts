@@ -88,3 +88,50 @@ export function calculateIbu(
 
   return { totalIbu, perAdditionIbu };
 }
+
+/**
+ * Solve for the hop weight (grams) needed to hit a target IBU for a
+ * single boil addition -- the inverse of `calculateIbu` for one hop,
+ * derived algebraically from the same Tinseth relationship:
+ *
+ *   grams = (targetIBU * batchVolumeL) / (aaDecimal * utilization * 1000)
+ *
+ * Useful on brew day for "I want 40 IBU from this 5.5% AA hop at 60 min
+ * -- how many grams do I need?" instead of guessing a weight and
+ * checking the resulting IBU.
+ *
+ * Edge cases handled:
+ *  - Non-positive target IBU, alpha acid, batch volume, or a 0-minute
+ *    (flameout) addition where utilization is ~0: returns 0 grams
+ *    rather than dividing by zero or returning Infinity/NaN.
+ */
+export function calculateHopWeightForTargetIbu(
+  targetIbu: number,
+  alphaAcidPercent: number,
+  boilTimeMinutes: number,
+  wortGravity: number,
+  batchVolumeL: number,
+): number {
+  const ibu = Number.isFinite(targetIbu) && targetIbu > 0 ? targetIbu : 0;
+  const aaDecimal = Number.isFinite(alphaAcidPercent) && alphaAcidPercent > 0 ? alphaAcidPercent / 100 : 0;
+  const volume = safePositive(batchVolumeL, 0);
+  const utilization = tinsethUtilization(wortGravity, boilTimeMinutes);
+
+  if (ibu <= 0 || aaDecimal <= 0 || volume <= 0 || utilization <= 0) {
+    return 0;
+  }
+
+  return (ibu * volume) / (aaDecimal * utilization * 1000);
+}
+
+/**
+ * Dry-hop (or other post-boil/whirlpool, no-bitterness) addition rate
+ * calculator: grams = rate (g/L) * batch volume (L). Typical published
+ * dry-hop rates range roughly 1-2 g/L for a subtle aroma addition up to
+ * 5-8+ g/L for heavily dry-hopped hazy/NEIPA styles.
+ */
+export function calculateDryHopWeight(rateGPerL: number, batchVolumeL: number): number {
+  const rate = Number.isFinite(rateGPerL) && rateGPerL > 0 ? rateGPerL : 0;
+  const volume = safePositive(batchVolumeL, 0);
+  return rate * volume;
+}
