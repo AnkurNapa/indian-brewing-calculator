@@ -6,6 +6,7 @@ import { recommendSpargeAcidification } from '@/lib/spargeAdjustment';
 import { ACID_TYPES } from '@/lib/acidAdditions';
 import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
+import { SearchableSelect } from '@/components/ui/SearchableSelect';
 
 interface SpargeAdjustmentPanelProps {
   sourceProfile: IonProfile;
@@ -37,20 +38,12 @@ export function SpargeAdjustmentPanel({
           onChange={onSpargeVolumeChange}
           helperText="Enter 0 for brew-in-a-bag / no-sparge brewing."
         />
-        <label className="flex flex-col gap-1">
-          <span className="font-body text-sm font-medium text-amber-900">Acid Type</span>
-          <select
-            className="min-h-[44px] rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-base text-ink"
-            value={acidId}
-            onChange={(e) => setAcidId(e.target.value)}
-          >
-            {ACID_TYPES.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SearchableSelect
+          label="Acid Type"
+          value={acidId}
+          onChange={setAcidId}
+          options={ACID_TYPES.map((a) => ({ id: a.id, label: a.name }))}
+        />
       </div>
 
       <ResultCard

@@ -8,6 +8,7 @@ import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
 import { solveDilutionRatio } from '@/lib/dilutionOptimizer';
 import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
+import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { roundForDisplay } from '@/lib/units';
 
 interface MashAdjustmentPanelProps {
@@ -79,20 +80,12 @@ export function MashAdjustmentPanel({
           onChange={onBatchVolumeChange}
           helperText="Enter commercial volumes in HL x 100 to convert to L."
         />
-        <label className="flex flex-col gap-1">
-          <span className="font-body text-sm font-medium text-amber-900">Target Style Profile</span>
-          <select
-            className="min-h-[44px] rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-base text-ink"
-            value={targetStyleId}
-            onChange={(e) => onTargetStyleChange(e.target.value)}
-          >
-            {TARGET_STYLE_PROFILES.map((style) => (
-              <option key={style.id} value={style.id}>
-                {style.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SearchableSelect
+          label="Target Style Profile"
+          value={targetStyleId}
+          onChange={onTargetStyleChange}
+          options={TARGET_STYLE_PROFILES.map((style) => ({ id: style.id, label: style.name }))}
+        />
       </div>
 
       <ResultCard
@@ -162,20 +155,12 @@ export function MashAdjustmentPanel({
             max={6.5}
             onChange={setTargetMashPh}
           />
-          <label className="flex flex-col gap-1">
-            <span className="font-body text-sm font-medium text-amber-900">Acid Type</span>
-            <select
-              className="min-h-[44px] rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-base text-ink"
-              value={acidId}
-              onChange={(e) => setAcidId(e.target.value)}
-            >
-              {ACID_TYPES.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <SearchableSelect
+            label="Acid Type"
+            value={acidId}
+            onChange={setAcidId}
+            options={ACID_TYPES.map((a) => ({ id: a.id, label: a.name }))}
+          />
         </div>
         <p className="mt-3 font-body text-sm text-ink">
           {acidDose.alreadyAtTarget

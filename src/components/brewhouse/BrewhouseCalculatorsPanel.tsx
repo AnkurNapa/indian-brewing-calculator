@@ -15,6 +15,7 @@ import { calculateIbu, calculateHopWeightForTargetIbu, calculateDryHopWeight, Ho
 import { NumberField } from '@/components/ui/NumberField';
 import { Input } from '@/components/ui/Input';
 import { ResultCard } from '@/components/ui/ResultCard';
+import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { roundForDisplay } from '@/lib/units';
 
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
@@ -205,20 +206,12 @@ function PrimingCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRec
           onChange={setTemperatureC}
         />
         <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
-        <label className="flex flex-col gap-1">
-          <span className="font-body text-sm font-medium text-amber-900">Priming Sugar</span>
-          <select
-            className="min-h-[44px] rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-base text-ink"
-            value={sugarId}
-            onChange={(e) => setSugarId(e.target.value)}
-          >
-            {PRIMING_SUGARS.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SearchableSelect
+          label="Priming Sugar"
+          value={sugarId}
+          onChange={setSugarId}
+          options={PRIMING_SUGARS.map((s) => ({ id: s.id, label: s.name }))}
+        />
       </div>
       <ResultCard
         title="Priming Sugar Needed"

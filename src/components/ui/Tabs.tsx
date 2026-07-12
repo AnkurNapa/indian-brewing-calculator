@@ -17,18 +17,18 @@ interface TabsProps {
 }
 
 /**
- * Mobile-first tab navigation: a horizontally scrollable row of icon +
- * label buttons, sticky to the top of the viewport, so the current
- * section stays identifiable by shape/icon even before reading text.
- * Each tap target is at least 44px tall. On wider screens the row has
- * room to breathe and shows the full label.
+ * App-shell navigation: on phones, a fixed bottom tab bar (iOS/Android
+ * pattern) so the current section is always one thumb-reach away and the
+ * screen reads like an installed app rather than a scrolling web page. On
+ * wider screens it becomes a centered pill row near the top, since there's
+ * no need to reserve thumb-reach space. Each tap target is at least 44px.
  */
 export function Tabs({ tabs, activeId, onChange }: TabsProps) {
   return (
-    <div
+    <nav
       role="tablist"
       aria-label="Brewing calculator sections"
-      className="sticky top-0 z-10 -mx-4 flex gap-1.5 overflow-x-auto border-b-2 border-amber-200 bg-parchment/95 px-4 py-2 backdrop-blur sm:mx-0 sm:flex-wrap sm:justify-center sm:rounded-lg sm:border sm:px-2"
+      className="fixed inset-x-0 bottom-0 z-20 flex justify-around border-t-2 border-amber-200 bg-parchment/97 pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_10px_rgba(0,0,0,0.06)] backdrop-blur sm:sticky sm:top-0 sm:mx-auto sm:mt-0 sm:max-w-3xl sm:flex-wrap sm:justify-center sm:gap-1.5 sm:rounded-full sm:border sm:bg-parchment/95 sm:px-2 sm:py-2 sm:pb-2 sm:shadow-sm"
     >
       {tabs.map((tab) => {
         const isActive = tab.id === activeId;
@@ -40,18 +40,16 @@ export function Tabs({ tabs, activeId, onChange }: TabsProps) {
             type="button"
             aria-selected={isActive}
             onClick={() => onChange(tab.id)}
-            className={`flex min-h-[52px] flex-shrink-0 flex-col items-center gap-0.5 whitespace-nowrap rounded-xl px-3 py-1.5 font-body text-xs font-semibold transition-colors sm:min-h-[44px] sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2 sm:text-sm ${
-              isActive
-                ? 'bg-teal-700 text-parchment shadow'
-                : 'bg-amber-100 text-amber-900 hover:bg-amber-200 active:bg-amber-300'
+            className={`flex min-h-[54px] flex-1 flex-col items-center justify-center gap-0.5 whitespace-nowrap px-1 py-1.5 font-body text-[0.65rem] font-semibold transition-colors sm:min-h-[40px] sm:flex-none sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2 sm:text-sm ${
+              isActive ? 'text-teal-700 sm:bg-teal-700 sm:text-parchment sm:shadow' : 'text-amber-800/80 sm:bg-amber-100 sm:text-amber-900 sm:hover:bg-amber-200'
             }`}
           >
-            <Icon className="h-5 w-5 flex-shrink-0" />
-            <span className="sm:hidden">{tab.shortLabel ?? tab.label}</span>
+            <Icon className={`h-5 w-5 flex-shrink-0 transition-transform ${isActive ? 'scale-110 sm:scale-100' : ''}`} />
+            <span className="max-w-[4.2rem] truncate leading-tight sm:hidden">{tab.shortLabel ?? tab.label}</span>
             <span className="hidden sm:inline">{tab.label}</span>
           </button>
         );
       })}
-    </div>
+    </nav>
   );
 }

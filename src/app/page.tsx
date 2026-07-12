@@ -29,27 +29,35 @@ import {
   CloudSyncIcon,
 } from '@/components/ui/icons';
 
+/**
+ * Ordered to mirror an actual brew-day walk-through, from water prep
+ * through to packaging and record-keeping, so swiping/tapping forward
+ * through the tabs follows the same order a brewer works the floor.
+ */
 const TABS: TabDef[] = [
   { id: 'water-report', label: 'Water Report', shortLabel: 'Water', icon: DropletIcon },
   { id: 'mash-adjustment', label: 'Mash Adjustment', shortLabel: 'Mash', icon: FlaskIcon },
   { id: 'sparge-adjustment', label: 'Sparge Adjustment', shortLabel: 'Sparge', icon: FunnelIcon },
-  { id: 'blending', label: 'Blending', shortLabel: 'Blend', icon: BlendIcon },
   { id: 'water-volumes', label: 'Water Volumes', shortLabel: 'Volumes', icon: JugIcon },
   { id: 'transfer-lautering', label: 'Transfer & Lautering', shortLabel: 'Transfer', icon: PipeFlowIcon },
-  { id: 'fermentation-tracker', label: 'Fermentation Tracker', shortLabel: 'Ferment', icon: FermenterIcon },
   { id: 'brewhouse', label: 'Brewhouse Calculators', shortLabel: 'Calcs', icon: CalculatorIcon },
+  { id: 'fermentation-tracker', label: 'Fermentation Tracker', shortLabel: 'Ferment', icon: FermenterIcon },
   { id: 'style-check', label: 'BJCP Style Check', shortLabel: 'Style', icon: StyleCheckIcon },
+  { id: 'blending', label: 'Blending', shortLabel: 'Blend', icon: BlendIcon },
   { id: 'backup', label: 'Backup & Sync', shortLabel: 'Backup', icon: CloudSyncIcon },
   { id: 'about', label: 'About', shortLabel: 'About', icon: InfoIcon },
 ];
 
+const TAB_BY_ID = new Map(TABS.map((tab) => [tab.id, tab]));
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState('water-report');
   const { state, setState } = useWaterProfile();
+  const activeTabDef = TAB_BY_ID.get(activeTab) ?? TABS[0];
 
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-16 pt-6 sm:px-6">
-      <header className="flex flex-col gap-1 text-center">
+    <main className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-24 pt-2 sm:px-6 sm:pb-16 sm:pt-6">
+      <header className="hidden flex-col gap-1 text-center sm:flex">
         <h1 className="font-display text-2xl font-extrabold text-amber-900 sm:text-3xl">
           Indian Brewing Water Calculator
         </h1>
@@ -57,6 +65,13 @@ export default function Home() {
           A metric (L / HL / mg / g / °C) brewing water chemistry lab notebook.
         </p>
       </header>
+
+      {/* Compact native-style app bar on phones: current screen title only,
+          since the bottom tab bar (below) carries navigation. */}
+      <div className="sticky top-0 z-20 -mx-4 flex items-center gap-2 border-b-2 border-amber-200 bg-parchment/97 px-4 py-3 backdrop-blur sm:hidden">
+        <activeTabDef.icon className="h-5 w-5 flex-shrink-0 text-teal-700" />
+        <h1 className="font-display text-base font-bold text-amber-900">{activeTabDef.label}</h1>
+      </div>
 
       <Tabs tabs={TABS} activeId={activeTab} onChange={setActiveTab} />
 

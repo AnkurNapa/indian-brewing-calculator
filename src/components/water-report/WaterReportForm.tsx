@@ -3,6 +3,7 @@
 import { IonProfile, calculateResidualAlkalinity } from '@/lib/waterChemistry';
 import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
+import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { SOURCE_WATER_PROFILES } from '@/lib/waterProfiles';
 import { roundForDisplay } from '@/lib/units';
 
@@ -29,26 +30,16 @@ export function WaterReportForm({ profile, onChange, title = 'Source Water Repor
     <section className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <h2 className="font-display text-xl font-bold text-ink">{title}</h2>
-        <label className="font-body text-sm font-medium text-amber-900">
-          Quick-fill from a known water type
-          <select
-            className="mt-1 min-h-[44px] w-full rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-base text-ink"
-            onChange={(e) => {
-              const preset = SOURCE_WATER_PROFILES.find((p) => p.id === e.target.value);
-              if (preset) onChange({ ...preset.profile });
-            }}
-            defaultValue=""
-          >
-            <option value="" disabled>
-              Choose a preset...
-            </option>
-            {SOURCE_WATER_PROFILES.map((preset) => (
-              <option key={preset.id} value={preset.id}>
-                {preset.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SearchableSelect
+          label="Quick-fill from a known water type"
+          placeholder="Choose a preset..."
+          value=""
+          options={SOURCE_WATER_PROFILES.map((preset) => ({ id: preset.id, label: preset.name }))}
+          onChange={(id) => {
+            const preset = SOURCE_WATER_PROFILES.find((p) => p.id === id);
+            if (preset) onChange({ ...preset.profile });
+          }}
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

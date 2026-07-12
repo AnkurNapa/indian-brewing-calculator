@@ -32,6 +32,54 @@ function fromDatetimeLocalValue(value: string): number {
   return Number.isFinite(ms) ? ms : Date.now();
 }
 
+function TutorialCallout() {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="rounded-lg border-2 border-teal-300 bg-teal-50/60">
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="flex min-h-[44px] w-full items-center justify-between px-4 py-3 text-left"
+        aria-expanded={isOpen}
+      >
+        <span className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">
+          How to use the Fermentation Tracker
+        </span>
+        <span aria-hidden="true" className="text-teal-700">
+          {isOpen ? '▾' : '▸'}
+        </span>
+      </button>
+      {isOpen ? (
+        <ol className="flex flex-col gap-2 border-t border-teal-200 px-4 py-3 font-body text-sm text-ink">
+          <li>
+            <span className="font-semibold text-teal-800">1. Create a batch.</span> Type a name (e.g. &quot;IPA
+            Batch 12&quot;) under Batches and tap <span className="font-semibold">+ Add Batch</span>. It becomes
+            the active batch automatically.
+          </li>
+          <li>
+            <span className="font-semibold text-teal-800">2. Log your first reading at pitch.</span> Set the
+            Date/Time, enter your original gravity and pitching temperature, then tap{' '}
+            <span className="font-semibold">+ Log Reading</span>. This becomes your Original Gravity.
+          </li>
+          <li>
+            <span className="font-semibold text-teal-800">3. Keep logging daily (or twice daily).</span> Each new
+            reading updates Current Gravity, ABV So Far, and Apparent Attenuation automatically -- no manual math.
+          </li>
+          <li>
+            <span className="font-semibold text-teal-800">4. Watch for &quot;likely finished&quot;.</span> Once
+            gravity holds steady for 24h+, the Apparent Attenuation card turns green with a finished note --
+            that&apos;s your cue to check for diacetyl/off-flavors before packaging.
+          </li>
+          <li>
+            <span className="font-semibold text-teal-800">5. Switch or delete batches</span> any time using the
+            pills under Batches. Everything is saved to this device&apos;s browser storage only (see footer).
+          </li>
+        </ol>
+      ) : null}
+    </div>
+  );
+}
+
 export function FermentationTrackerPanel() {
   const { batches, setBatches } = useFermentationBatches();
   const [activeBatchId, setActiveBatchId] = useState<string | null>(batches[0]?.id ?? null);
@@ -96,6 +144,8 @@ export function FermentationTrackerPanel() {
         Log gravity/temperature readings on the go. Saved only in this phone&apos;s browser storage -- see the
         footer privacy note.
       </p>
+
+      <TutorialCallout />
 
       <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
         <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">Batches</h3>
