@@ -151,7 +151,7 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
           likelyComplete: stats.likelyComplete,
         };
       }),
-    });
+    }, t);
     await share(text);
   };
 

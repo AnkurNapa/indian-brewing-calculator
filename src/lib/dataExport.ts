@@ -35,10 +35,17 @@ export function buildBackupPayload(): BackupPayload {
   return { version: 1, exportedAt: new Date().toISOString(), data };
 }
 
+/**
+ * Error codes rather than English messages -- this module runs outside
+ * React and has no access to the i18n `t()` function, so callers (which
+ * do have `t()`) map a code to a translated string for display.
+ */
+export type ParsedBackupErrorCode = 'invalidJson' | 'unrecognizedFormat';
+
 export interface ParsedBackupResult {
   ok: boolean;
   payload?: BackupPayload;
-  error?: string;
+  errorCode?: ParsedBackupErrorCode;
 }
 
 /** Parse and structurally validate a previously-exported backup JSON string. */
@@ -47,15 +54,15 @@ export function parseBackupPayload(text: string): ParsedBackupResult {
   try {
     parsed = JSON.parse(text);
   } catch {
-    return { ok: false, error: 'That file is not valid JSON.' };
+    return { ok: false, errorCode: 'invalidJson' };
   }
 
   if (typeof parsed !== 'object' || parsed === null) {
-    return { ok: false, error: 'Unrecognized backup file format.' };
+    return { ok: false, errorCode: 'unrecognizedFormat' };
   }
   const candidate = parsed as Record<string, unknown>;
   if (candidate.version !== 1 || typeof candidate.data !== 'object' || candidate.data === null) {
-    return { ok: false, error: 'Unrecognized backup file format.' };
+    return { ok: false, errorCode: 'unrecognizedFormat' };
   }
 
   return { ok: true, payload: candidate as unknown as BackupPayload };

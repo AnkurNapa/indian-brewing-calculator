@@ -230,4 +230,37 @@ export const recipesTranslations = {
     hi: '"{name}" को मौजूदा सेशन में लोड करें? इससे आपकी मौजूदा अनसेव्ड एंट्रीज़ बदल जाएंगी।',
     mr: '"{name}" सध्याच्या सेशनमध्ये लोड करायचे? यामुळे तुमच्या सध्याच्या अनसेव्ह्ड एंट्री बदलल्या जातील.',
   },
+
+  // --- Print / Save-as-PDF recipe view (buildRecipePrintHtml in
+  // src/lib/recipePrintView.ts) -- this runs outside React so `t` is
+  // passed in as a parameter rather than called via the hook.
+  'recipes.print.htmlLang': { en: 'en', de: 'de', hi: 'hi', mr: 'mr' },
+  'recipes.print.titleSuffix': { en: 'Recipe', de: 'Rezept', hi: 'रेसिपी', mr: 'रेसिपी' },
+  'recipes.print.button': { en: 'Print / Save as PDF', de: 'Drucken / Als PDF speichern', hi: 'प्रिंट करें / PDF के रूप में सहेजें', mr: 'प्रिंट करा / PDF म्हणून सेव्ह करा' },
+  'recipes.print.lockedAt': { en: 'Locked {date} -- ', de: 'Gesperrt am {date} -- ', hi: '{date} को लॉक किया गया -- ', mr: '{date} रोजी लॉक केले -- ' },
+  'recipes.print.ibuFormula': { en: 'IBU Formula: {formula}', de: 'IBU-Formel: {formula}', hi: 'IBU फ़ॉर्मूला: {formula}', mr: 'IBU सूत्र: {formula}' },
+  'recipes.print.batchVolume': { en: 'Batch Volume', de: 'Sudvolumen', hi: 'बैच मात्रा', mr: 'बॅच प्रमाण' },
+  'recipes.print.color': { en: 'Color', de: 'Farbe', hi: 'रंग', mr: 'रंग' },
+  'recipes.print.efficiency': { en: 'Efficiency', de: 'Ausbeute', hi: 'दक्षता', mr: 'कार्यक्षमता' },
+  'recipes.print.sparge': { en: 'Sparge', de: 'Läutern', hi: 'स्पार्ज', mr: 'स्पार्ज' },
+  'recipes.print.grainBillHeading': { en: 'Grain Bill', de: 'Schüttung', hi: 'ग्रेन बिल', mr: 'ग्रेन बिल' },
+  'recipes.print.grainColHeader': { en: 'Grain', de: 'Malz', hi: 'अनाज', mr: 'धान्य' },
+  'recipes.print.weightColHeader': { en: 'Weight', de: 'Gewicht', hi: 'वज़न', mr: 'वजन' },
+  'recipes.print.colorColHeader': { en: 'Color', de: 'Farbe', hi: 'रंग', mr: 'रंग' },
+  'recipes.print.potentialColHeader': { en: 'Potential', de: 'Potenzial', hi: 'संभावित', mr: 'संभाव्य' },
+  'recipes.print.noGrains': { en: 'No grains entered.', de: 'Kein Malz eingegeben.', hi: 'कोई अनाज दर्ज नहीं किया गया।', mr: 'कोणतेही धान्य टाकलेले नाही.' },
+  'recipes.print.unnamedGrain': { en: 'Unnamed grain', de: 'Unbenanntes Malz', hi: 'अनाम अनाज', mr: 'अनामिक धान्य' },
+  'recipes.print.hopScheduleHeading': { en: 'Hop Schedule', de: 'Hopfengabe', hi: 'हॉप शेड्यूल', mr: 'हॉप वेळापत्रक' },
+  'recipes.print.hopColHeader': { en: 'Hop', de: 'Hopfen', hi: 'हॉप', mr: 'हॉप' },
+  'recipes.print.alphaAcidColHeader': { en: 'Alpha Acid', de: 'Alpha-Säure', hi: 'अल्फा एसिड', mr: 'अल्फा आम्ल' },
+  'recipes.print.boilTimeColHeader': { en: 'Boil Time', de: 'Kochzeit', hi: 'बॉयल समय', mr: 'उकळण्याचा वेळ' },
+  'recipes.print.noHops': { en: 'No hops entered.', de: 'Kein Hopfen eingegeben.', hi: 'कोई हॉप दर्ज नहीं किया गया।', mr: 'कोणताही हॉप टाकलेला नाही.' },
+  'recipes.print.unnamedHop': { en: 'Unnamed hop', de: 'Unbenannter Hopfen', hi: 'अनाम हॉप', mr: 'अनामिक हॉप' },
+  'recipes.print.sourceWaterHeading': { en: 'Source Water (mg/L)', de: 'Quellwasser (mg/L)', hi: 'स्रोत जल (mg/L)', mr: 'स्रोत पाणी (mg/L)' },
+  'recipes.print.footer': {
+    en: "Made with Indian Brewer's Calculator (ankurnapa.github.io/indian-brewing-calculator)",
+    de: "Erstellt mit Indian Brewer's Calculator (ankurnapa.github.io/indian-brewing-calculator)",
+    hi: "Indian Brewer's Calculator से बनाया गया (ankurnapa.github.io/indian-brewing-calculator)",
+    mr: "Indian Brewer's Calculator ने तयार केले (ankurnapa.github.io/indian-brewing-calculator)",
+  },
 } as const satisfies TranslationDict;

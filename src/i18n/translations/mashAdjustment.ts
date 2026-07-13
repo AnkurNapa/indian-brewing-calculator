@@ -112,11 +112,32 @@ export const mashAdjustmentTranslations = {
     hi: 'इस लक्ष्य के लिए किसी नमक मिलावट की आवश्यकता नहीं है।',
     mr: 'या लक्ष्यासाठी मीठ मिसळण्याची गरज नाही.',
   },
-  'mashAdjustment.dilution.instruction': {
-    en: 'Dilute source water with RO/distilled at {sourcePercent}% source / {roPercent}% RO (for a {batchVolume} L batch: {sourceVolume} L source + {roVolume} L RO) before adding salts, driven by {ion}. Then re-solve salt additions against the diluted profile.',
-    de: 'Verdünnen Sie das Quellwasser mit RO-/destilliertem Wasser im Verhältnis {sourcePercent}% Quelle / {roPercent}% RO (für einen {batchVolume}-L-Sud: {sourceVolume} L Quelle + {roVolume} L RO), bevor Sie Salze zugeben; maßgeblich ist {ion}. Berechnen Sie die Salzgaben anschließend erneut anhand des verdünnten Profils.',
-    hi: 'नमक डालने से पहले स्रोत जल को RO/डिस्टिल्ड जल के साथ {sourcePercent}% स्रोत / {roPercent}% RO के अनुपात में पतला करें ({batchVolume} L बैच के लिए: {sourceVolume} L स्रोत + {roVolume} L RO), जो {ion} द्वारा निर्धारित होता है। फिर पतले प्रोफ़ाइल के आधार पर नमक मिलावट पुनः तय करें।',
-    mr: 'मीठ टाकण्यापूर्वी स्रोत पाणी RO/डिस्टिल्ड पाण्याने {sourcePercent}% स्रोत / {roPercent}% RO या प्रमाणात सौम्य करा ({batchVolume} L बॅचसाठी: {sourceVolume} L स्रोत + {roVolume} L RO), जे {ion} वर आधारित आहे. त्यानंतर सौम्य प्रोफाइलनुसार मीठ मिसळणी पुन्हा ठरवा.',
+  // Split into 4 segments (instead of one flat sentence) so the two key
+  // figures -- the dilution ratio and the binding ion -- can be wrapped
+  // in a bold <span> in JSX, matching the original pre-i18n markup.
+  'mashAdjustment.dilution.instructionPrefix': {
+    en: 'Dilute source water with RO/distilled at ',
+    de: 'Verdünnen Sie das Quellwasser mit RO-/destilliertem Wasser im Verhältnis ',
+    hi: 'नमक डालने से पहले स्रोत जल को RO/डिस्टिल्ड जल के साथ ',
+    mr: 'मीठ टाकण्यापूर्वी स्रोत पाणी RO/डिस्टिल्ड पाण्याने ',
+  },
+  'mashAdjustment.dilution.instructionRatio': {
+    en: '{sourcePercent}% source / {roPercent}% RO',
+    de: '{sourcePercent}% Quelle / {roPercent}% RO',
+    hi: '{sourcePercent}% स्रोत / {roPercent}% RO',
+    mr: '{sourcePercent}% स्रोत / {roPercent}% RO',
+  },
+  'mashAdjustment.dilution.instructionMiddle': {
+    en: ' (for a {batchVolume} L batch: {sourceVolume} L source + {roVolume} L RO) before adding salts, driven by ',
+    de: ' (für einen {batchVolume}-L-Sud: {sourceVolume} L Quelle + {roVolume} L RO), bevor Sie Salze zugeben; maßgeblich ist ',
+    hi: ' के अनुपात में पतला करें ({batchVolume} L बैच के लिए: {sourceVolume} L स्रोत + {roVolume} L RO), जो ',
+    mr: ' या प्रमाणात सौम्य करा ({batchVolume} L बॅचसाठी: {sourceVolume} L स्रोत + {roVolume} L RO), जे ',
+  },
+  'mashAdjustment.dilution.instructionSuffix': {
+    en: '. Then re-solve salt additions against the diluted profile.',
+    de: '. Berechnen Sie die Salzgaben anschließend erneut anhand des verdünnten Profils.',
+    hi: ' द्वारा निर्धारित होता है। फिर पतले प्रोफ़ाइल के आधार पर नमक मिलावट पुनः तय करें।',
+    mr: ' वर आधारित आहे. त्यानंतर सौम्य प्रोफाइलनुसार मीठ मिसळणी पुन्हा ठरवा.',
   },
 
   'mashAdjustment.acidDosing.title': {

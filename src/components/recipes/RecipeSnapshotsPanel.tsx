@@ -16,6 +16,7 @@ import { buildBeerXml } from '@/lib/beerXml';
 import { buildRecipePrintHtml } from '@/lib/recipePrintView';
 import { downloadTextFile } from '@/lib/dataExport';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { TranslationKey } from '@/i18n/translations';
 
 function sanitizeFilename(name: string): string {
   return name.trim().replace(/[^a-z0-9-_ ]/gi, '').replace(/\s+/g, '-').toLowerCase() || 'recipe';
@@ -25,9 +26,9 @@ function exportBeerXml(snapshot: RecipeSnapshot) {
   downloadTextFile(`${sanitizeFilename(snapshot.name)}.xml`, buildBeerXml(snapshot.state, snapshot.name), 'application/xml');
 }
 
-function exportPdf(snapshot: RecipeSnapshot) {
+function exportPdf(snapshot: RecipeSnapshot, t: (key: TranslationKey, vars?: Record<string, string | number>) => string) {
   if (typeof window === 'undefined') return;
-  const html = buildRecipePrintHtml(snapshot.name, snapshot.state, snapshot.lockedAtMs);
+  const html = buildRecipePrintHtml(snapshot.name, snapshot.state, snapshot.lockedAtMs, t);
   // Blob URL instead of document.write() into a blank window -- avoids
   // the XSS/perf pitfalls of document.write while still opening a
   // normal printable page the browser's Print -> Save as PDF can use.
@@ -189,7 +190,7 @@ function SnapshotCard({
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
-              onClick={() => exportPdf(snapshot)}
+              onClick={() => exportPdf(snapshot, t)}
               className="min-h-[40px] flex-1 rounded-md border border-amber-300 bg-white px-3 py-2 font-body text-xs font-semibold text-amber-800 hover:bg-amber-50"
             >
               {t('recipes.card.exportPdf')}

@@ -198,14 +198,20 @@ export function MashAdjustmentPanel({
         {dilutionResult && !dilutionResult.noDilutionNeeded ? (
           <div className="mt-3 rounded-md border border-teal-300 bg-teal-100/60 p-3 text-sm text-teal-900">
             <p>
-              {t('mashAdjustment.dilution.instruction', {
-                sourcePercent: roundForDisplay(dilutionResult.sourceFraction * 100, 0),
-                roPercent: roundForDisplay(dilutionResult.dilutantFraction * 100, 0),
+              {t('mashAdjustment.dilution.instructionPrefix')}
+              <span className="font-semibold">
+                {t('mashAdjustment.dilution.instructionRatio', {
+                  sourcePercent: roundForDisplay(dilutionResult.sourceFraction * 100, 0),
+                  roPercent: roundForDisplay(dilutionResult.dilutantFraction * 100, 0),
+                })}
+              </span>
+              {t('mashAdjustment.dilution.instructionMiddle', {
                 batchVolume: batchVolumeL,
                 sourceVolume: roundForDisplay(dilutionResult.sourceFraction * batchVolumeL, 1),
                 roVolume: roundForDisplay(dilutionResult.dilutantFraction * batchVolumeL, 1),
-                ion: dilutionResult.bindingIon ?? '',
               })}
+              <span className="font-semibold">{dilutionResult.bindingIon}</span>
+              {t('mashAdjustment.dilution.instructionSuffix')}
             </p>
           </div>
         ) : null}

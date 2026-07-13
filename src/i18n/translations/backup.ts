@@ -98,6 +98,18 @@ export const backupTranslations = {
     hi: 'इम्पोर्ट विफल हुआ।',
     mr: 'इम्पोर्ट अयशस्वी झाला.',
   },
+  'backup.import.invalidJsonError': {
+    en: 'That file is not valid JSON.',
+    de: 'Diese Datei ist kein gültiges JSON.',
+    hi: 'यह फ़ाइल मान्य JSON नहीं है।',
+    mr: 'ही फाइल वैध JSON नाही.',
+  },
+  'backup.import.unrecognizedFormatError': {
+    en: 'Unrecognized backup file format.',
+    de: 'Unbekanntes Sicherungsdateiformat.',
+    hi: 'बैकअप फ़ाइल का प्रारूप पहचान में नहीं आया।',
+    mr: 'बॅकअप फाइलचा फॉरमॅट ओळखता आला नाही.',
+  },
   'backup.import.success': {
     en: 'Backup restored. Reloading...',
     de: 'Sicherung wiederhergestellt. Wird neu geladen...',

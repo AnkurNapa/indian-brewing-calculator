@@ -66,7 +66,7 @@ describe('parseBackupPayload', () => {
   it('rejects malformed JSON', () => {
     const result = parseBackupPayload('not json {');
     expect(result.ok).toBe(false);
-    expect(result.error).toBeTruthy();
+    expect(result.errorCode).toBe('invalidJson');
   });
 
   it('rejects valid JSON that is not a recognized backup shape', () => {

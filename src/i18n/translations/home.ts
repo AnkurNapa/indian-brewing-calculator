@@ -227,4 +227,88 @@ export const homeTranslations = {
     hi: 'यह रेसिपी लॉक करें',
     mr: 'ही रेसिपी लॉक करा',
   },
+
+  // --- Plain-text recipe share summary (buildRecipeShareText in
+  // src/lib/recipeShareText.ts) -- this runs outside React so `t` is
+  // passed in as a parameter rather than called via the hook.
+  'home.shareText.title': { en: 'Brew Recipe Summary', de: 'Zusammenfassung des Braurezepts', hi: 'ब्रू रेसिपी सारांश', mr: 'ब्रू रेसिपी सारांश' },
+  'home.shareText.batchVolume': { en: 'Batch Volume', de: 'Sudvolumen', hi: 'बैच मात्रा', mr: 'बॅच प्रमाण' },
+  'home.shareText.spargeVolume': { en: 'Sparge Volume', de: 'Läuterwassermenge', hi: 'स्पार्ज मात्रा', mr: 'स्पार्ज प्रमाण' },
+  'home.shareText.targetWaterStyle': { en: 'Target Water Style', de: 'Zielwasserstil', hi: 'लक्ष्य जल शैली', mr: 'लक्ष्य पाणी शैली' },
+  'home.shareText.targetBjcpStyle': {
+    en: 'Target BJCP Style: {name} ({inRange}/5 parameters in range)',
+    de: 'Ziel-BJCP-Stil: {name} ({inRange}/5 Parameter im Bereich)',
+    hi: 'लक्ष्य BJCP शैली: {name} ({inRange}/5 पैरामीटर सीमा में)',
+    mr: 'लक्ष्य BJCP शैली: {name} ({inRange}/5 पॅरामीटर मर्यादेत)',
+  },
+  'home.shareText.sourceWaterHeading': { en: 'Source Water (mg/L):', de: 'Quellwasser (mg/L):', hi: 'स्रोत जल (mg/L):', mr: 'स्रोत पाणी (mg/L):' },
+  'home.shareText.sourceWaterLine': {
+    en: '  Calcium {calcium}, Magnesium {magnesium}, Sodium {sodium}, Sulfate {sulfate}, Chloride {chloride}, Bicarbonate {bicarbonate}, Alkalinity {alkalinity}',
+    de: '  Calcium {calcium}, Magnesium {magnesium}, Natrium {sodium}, Sulfat {sulfate}, Chlorid {chloride}, Bicarbonat {bicarbonate}, Alkalität {alkalinity}',
+    hi: '  कैल्शियम {calcium}, मैग्नीशियम {magnesium}, सोडियम {sodium}, सल्फेट {sulfate}, क्लोराइड {chloride}, बाइकार्बोनेट {bicarbonate}, क्षारीयता {alkalinity}',
+    mr: '  कॅल्शियम {calcium}, मॅग्नेशियम {magnesium}, सोडियम {sodium}, सल्फेट {sulfate}, क्लोराईड {chloride}, बायकार्बोनेट {bicarbonate}, क्षारता {alkalinity}',
+  },
+  'home.shareText.grainBillHeading': { en: 'Grain Bill:', de: 'Schüttung:', hi: 'ग्रेन बिल:', mr: 'ग्रेन बिल:' },
+  'home.shareText.noneEntered': { en: '  (none entered)', de: '  (nichts eingegeben)', hi: '  (कुछ भी दर्ज नहीं)', mr: '  (काहीही टाकलेले नाही)' },
+  'home.shareText.unnamedGrain': { en: 'Unnamed grain', de: 'Unbenanntes Malz', hi: 'अनाम अनाज', mr: 'अनामिक धान्य' },
+  'home.shareText.grainRow': {
+    en: '  - {name}: {weight} kg @ {color} L{potential}',
+    de: '  - {name}: {weight} kg @ {color} L{potential}',
+    hi: '  - {name}: {weight} kg @ {color} L{potential}',
+    mr: '  - {name}: {weight} kg @ {color} L{potential}',
+  },
+  'home.shareText.potentialSuffix': {
+    en: ', potential {value} SG',
+    de: ', Potenzial {value} SG',
+    hi: ', संभावित {value} SG',
+    mr: ', संभाव्य {value} SG',
+  },
+  'home.shareText.hopScheduleHeading': { en: 'Hop Schedule:', de: 'Hopfengabe:', hi: 'हॉप शेड्यूल:', mr: 'हॉप वेळापत्रक:' },
+  'home.shareText.unnamedHop': { en: 'Unnamed hop', de: 'Unbenannter Hopfen', hi: 'अनाम हॉप', mr: 'अनामिक हॉप' },
+  'home.shareText.hopRow': {
+    en: '  - {name}: {weight} g @ {aa}% AA, {time} min',
+    de: '  - {name}: {weight} g @ {aa}% AA, {time} min',
+    hi: '  - {name}: {weight} g @ {aa}% AA, {time} min',
+    mr: '  - {name}: {weight} g @ {aa}% AA, {time} min',
+  },
+  'home.shareText.gravityLine': {
+    en: 'OG: {og}   FG: {fg}   ABV: {abv}%',
+    de: 'OG: {og}   FG: {fg}   ABV: {abv}%',
+    hi: 'OG: {og}   FG: {fg}   ABV: {abv}%',
+    mr: 'OG: {og}   FG: {fg}   ABV: {abv}%',
+  },
+  'home.shareText.ibuColorLine': {
+    en: 'IBU: {ibu}   Color: {color}',
+    de: 'IBU: {ibu}   Farbe: {color}',
+    hi: 'IBU: {ibu}   रंग: {color}',
+    mr: 'IBU: {ibu}   रंग: {color}',
+  },
+  'home.shareText.colorNotAvailable': { en: 'n/a', de: 'k. A.', hi: 'लागू नहीं', mr: 'लागू नाही' },
+  'home.shareText.fermentationBatchesHeading': {
+    en: 'Fermentation Batches:',
+    de: 'Gärchargen:',
+    hi: 'किण्वन बैच:',
+    mr: 'किण्वन बॅच:',
+  },
+  'home.shareText.noneLogged': { en: '  (none logged)', de: '  (nichts protokolliert)', hi: '  (कुछ भी लॉग नहीं)', mr: '  (काहीही नोंदवलेले नाही)' },
+  'home.shareText.noReadings': { en: 'no readings', de: 'keine Messwerte', hi: 'कोई रीडिंग नहीं', mr: 'कोणतीही नोंद नाही' },
+  'home.shareText.attenuationSuffix': {
+    en: ', {value}% attenuation',
+    de: ', {value}% Vergärungsgrad',
+    hi: ', {value}% अपघटन',
+    mr: ', {value}% अपघटन',
+  },
+  'home.shareText.likelyFinishedSuffix': { en: ', likely finished', de: ', wahrscheinlich fertig', hi: ', संभवतः पूर्ण', mr: ', बहुधा पूर्ण' },
+  'home.shareText.batchRow': {
+    en: '  - {name}: {count} reading(s), current {gravity}{attenuation}{finished}',
+    de: '  - {name}: {count} Messwert(e), aktuell {gravity}{attenuation}{finished}',
+    hi: '  - {name}: {count} रीडिंग, वर्तमान {gravity}{attenuation}{finished}',
+    mr: '  - {name}: {count} नोंदी, सध्याचे {gravity}{attenuation}{finished}',
+  },
+  'home.shareText.footer': {
+    en: "Made with Indian Brewer's Calculator (ankurnapa.github.io/indian-brewing-calculator)",
+    de: "Erstellt mit Indian Brewer's Calculator (ankurnapa.github.io/indian-brewing-calculator)",
+    hi: "Indian Brewer's Calculator से बनाया गया (ankurnapa.github.io/indian-brewing-calculator)",
+    mr: "Indian Brewer's Calculator ने तयार केले (ankurnapa.github.io/indian-brewing-calculator)",
+  },
 } as const satisfies TranslationDict;

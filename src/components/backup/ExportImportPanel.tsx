@@ -45,7 +45,13 @@ export function ExportImportPanel({ grainBill, fermentationBatches }: ExportImpo
     const text = await file.text();
     const result = parseBackupPayload(text);
     if (!result.ok || !result.payload) {
-      setImportMessage({ text: result.error ?? t('backup.import.genericError'), isError: true });
+      const errorKey =
+        result.errorCode === 'invalidJson'
+          ? 'backup.import.invalidJsonError'
+          : result.errorCode === 'unrecognizedFormat'
+            ? 'backup.import.unrecognizedFormatError'
+            : 'backup.import.genericError';
+      setImportMessage({ text: t(errorKey), isError: true });
       return;
     }
     applyBackupPayload(result.payload);
