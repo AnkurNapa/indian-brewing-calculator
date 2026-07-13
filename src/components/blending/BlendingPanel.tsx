@@ -6,6 +6,7 @@ import { WaterReportForm } from '@/components/water-report/WaterReportForm';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { roundForDisplay } from '@/lib/units';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface BlendingPanelProps {
   sourceA: IonProfile;
@@ -16,15 +17,15 @@ interface BlendingPanelProps {
   onPercentAChange: (value: number) => void;
 }
 
-const ION_ROWS: { key: keyof IonProfile; label: string }[] = [
-  { key: 'calcium', label: 'Calcium' },
-  { key: 'magnesium', label: 'Magnesium' },
-  { key: 'sodium', label: 'Sodium' },
-  { key: 'sulfate', label: 'Sulfate' },
-  { key: 'chloride', label: 'Chloride' },
-  { key: 'bicarbonate', label: 'Bicarbonate' },
-  { key: 'alkalinity', label: 'Alkalinity' },
-];
+const ION_ROWS = [
+  { key: 'calcium', labelKey: 'blending.ion.calcium' },
+  { key: 'magnesium', labelKey: 'blending.ion.magnesium' },
+  { key: 'sodium', labelKey: 'blending.ion.sodium' },
+  { key: 'sulfate', labelKey: 'blending.ion.sulfate' },
+  { key: 'chloride', labelKey: 'blending.ion.chloride' },
+  { key: 'bicarbonate', labelKey: 'blending.ion.bicarbonate' },
+  { key: 'alkalinity', labelKey: 'blending.ion.alkalinity' },
+] as const satisfies { key: keyof IonProfile; labelKey: string }[];
 
 export function BlendingPanel({
   sourceA,
@@ -34,33 +35,34 @@ export function BlendingPanel({
   percentA,
   onPercentAChange,
 }: BlendingPanelProps) {
+  const { t } = useLanguage();
   const blended = blendIonProfiles(sourceA, sourceB, percentA);
 
   return (
     <section className="flex flex-col gap-6">
-      <h2 className="font-display text-xl font-bold text-ink">Water Blending</h2>
+      <h2 className="font-display text-xl font-bold text-ink">{t('blending.heading')}</h2>
 
       <TutorialCallout
-        title="How to use Water Blending"
+        title={t('blending.tutorial.title')}
         steps={[
           {
-            lead: '1. Enter both source waters.',
-            body: 'Source A and B are independent ion profiles -- e.g. your tap water and RO/distilled water, or two different wells/sources you\'re mixing.',
+            lead: t('blending.tutorial.step1.lead'),
+            body: t('blending.tutorial.step1.body'),
           },
           {
-            lead: '2. Drag the ratio slider.',
-            body: 'Moves the blend percentage between 100% Source A and 100% Source B -- watch the Blended Result table update live.',
+            lead: t('blending.tutorial.step2.lead'),
+            body: t('blending.tutorial.step2.body'),
           },
           {
-            lead: '3. Use the blended profile elsewhere.',
-            body: 'Once you find a ratio you like, copy those blended ion values into the Water Report tab as your actual brewing water.',
+            lead: t('blending.tutorial.step3.lead'),
+            body: t('blending.tutorial.step3.body'),
           },
         ]}
       />
 
       <div className="flex flex-col gap-2">
         <label htmlFor="blend-ratio" className="font-body text-sm font-medium text-amber-900">
-          Blend Ratio: {percentA}% Source A / {100 - percentA}% Source B
+          {t('blending.ratio.label', { percentA, percentB: 100 - percentA })}
         </label>
         <input
           id="blend-ratio"
@@ -75,23 +77,23 @@ export function BlendingPanel({
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <WaterReportForm profile={sourceA} onChange={onSourceAChange} title="Source A" />
-        <WaterReportForm profile={sourceB} onChange={onSourceBChange} title="Source B" />
+        <WaterReportForm profile={sourceA} onChange={onSourceAChange} title={t('blending.sourceA.title')} />
+        <WaterReportForm profile={sourceB} onChange={onSourceBChange} title={t('blending.sourceB.title')} />
       </div>
 
-      <ResultCard title="Blended Result">
+      <ResultCard title={t('blending.result.title')}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[320px] text-left text-sm">
             <thead>
               <tr className="border-b border-ink/20">
-                <th className="py-1 pr-2">Ion</th>
+                <th className="py-1 pr-2">{t('blending.result.ion')}</th>
                 <th className="py-1">mg/L</th>
               </tr>
             </thead>
             <tbody>
-              {ION_ROWS.map(({ key, label }) => (
+              {ION_ROWS.map(({ key, labelKey }) => (
                 <tr key={key} className="border-b border-ink/10">
-                  <td className="py-1 pr-2">{label}</td>
+                  <td className="py-1 pr-2">{t(labelKey)}</td>
                   <td className="py-1 font-semibold">{roundForDisplay(blended[key])}</td>
                 </tr>
               ))}

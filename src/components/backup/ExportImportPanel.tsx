@@ -11,6 +11,7 @@ import {
   applyBackupPayload,
   downloadTextFile,
 } from '@/lib/dataExport';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface ExportImportPanelProps {
   grainBill: GrainBillItem[];
@@ -23,6 +24,7 @@ function timestampedFilename(base: string, extension: string): string {
 }
 
 export function ExportImportPanel({ grainBill, fermentationBatches }: ExportImportPanelProps) {
+  const { t } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importMessage, setImportMessage] = useState<{ text: string; isError: boolean } | null>(null);
 
@@ -43,23 +45,20 @@ export function ExportImportPanel({ grainBill, fermentationBatches }: ExportImpo
     const text = await file.text();
     const result = parseBackupPayload(text);
     if (!result.ok || !result.payload) {
-      setImportMessage({ text: result.error ?? 'Import failed.', isError: true });
+      setImportMessage({ text: result.error ?? t('backup.import.genericError'), isError: true });
       return;
     }
     applyBackupPayload(result.payload);
-    setImportMessage({ text: 'Backup restored. Reloading...', isError: false });
+    setImportMessage({ text: t('backup.import.success'), isError: false });
     window.location.reload();
   };
 
   return (
     <div className="rounded-lg border-2 border-amber-300 bg-amber-50/60 p-4">
       <h3 className="font-display text-sm font-bold uppercase tracking-wide text-amber-900">
-        Local Export / Import
+        {t('backup.export.title')}
       </h3>
-      <p className="mt-1 font-body text-sm text-ink">
-        No account needed. Download a full backup file to keep on your own device, or export tables that open
-        directly in Excel/Sheets.
-      </p>
+      <p className="mt-1 font-body text-sm text-ink">{t('backup.export.description')}</p>
 
       <div className="mt-3 flex flex-wrap gap-3">
         <button
@@ -67,27 +66,27 @@ export function ExportImportPanel({ grainBill, fermentationBatches }: ExportImpo
           onClick={exportFullBackup}
           className="min-h-[44px] rounded-md bg-teal-700 px-4 py-2 font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800"
         >
-          Export Full Backup (.json)
+          {t('backup.export.fullBackup')}
         </button>
         <button
           type="button"
           onClick={exportGrainBillCsv}
           className="min-h-[44px] rounded-md border-2 border-teal-700 px-4 py-2 font-body text-sm font-semibold text-teal-800 hover:bg-teal-100"
         >
-          Export Grain Bill (.csv)
+          {t('backup.export.grainBillCsv')}
         </button>
         <button
           type="button"
           onClick={exportFermentationCsv}
           className="min-h-[44px] rounded-md border-2 border-teal-700 px-4 py-2 font-body text-sm font-semibold text-teal-800 hover:bg-teal-100"
         >
-          Export Fermentation Log (.csv)
+          {t('backup.export.fermentationCsv')}
         </button>
       </div>
 
       <div className="mt-4 border-t border-amber-200 pt-3">
         <label className="flex flex-col gap-1">
-          <span className="font-body text-sm font-medium text-amber-900">Restore From Backup (.json)</span>
+          <span className="font-body text-sm font-medium text-amber-900">{t('backup.import.label')}</span>
           <input
             ref={fileInputRef}
             type="file"

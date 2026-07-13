@@ -1,6 +1,7 @@
 'use client';
 
 import { ComponentType, useEffect, useRef } from 'react';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 export interface TabDef {
   id: string;
@@ -26,6 +27,7 @@ interface TabsProps {
  * for all of them without scrolling. Every tap target is at least 44px.
  */
 export function Tabs({ tabs, activeId, onChange }: TabsProps) {
+  const { t } = useLanguage();
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export function Tabs({ tabs, activeId, onChange }: TabsProps) {
       {/* Desktop: every tab, always visible, no scrolling needed. */}
       <nav
         role="tablist"
-        aria-label="Brewing calculator sections"
+        aria-label={t('sharedUi.tabs.ariaLabel')}
         className="hidden sm:sticky sm:top-0 sm:z-20 sm:mx-auto sm:flex sm:max-w-3xl sm:flex-wrap sm:justify-center sm:gap-1.5 sm:rounded-full sm:border sm:border-amber-200 sm:bg-parchment/95 sm:px-2 sm:py-2 sm:shadow-sm"
       >
         {tabs.map((tab) => (
@@ -53,7 +55,7 @@ export function Tabs({ tabs, activeId, onChange }: TabsProps) {
         <nav
           ref={scrollerRef}
           role="tablist"
-          aria-label="Brewing calculator sections"
+          aria-label={t('sharedUi.tabs.ariaLabel')}
           className="flex snap-x snap-mandatory gap-1 overflow-x-auto scroll-px-4 px-4 py-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {tabs.map((tab) => (

@@ -14,6 +14,7 @@ import { ResultCard } from '@/components/ui/ResultCard';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { IbuFormulaSelector } from '@/components/ui/IbuFormulaSelector';
 import { roundForDisplay } from '@/lib/units';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface StyleCheckPanelProps {
   grainBill: GrainBillItem[];
@@ -35,6 +36,7 @@ interface StyleCheckPanelProps {
 }
 
 function ParameterRow({ label, unit, compliance }: { label: string; unit: string; compliance: ParameterCompliance }) {
+  const { t } = useLanguage();
   return (
     <div
       className={`flex items-center justify-between rounded-md border p-2 text-sm ${
@@ -45,7 +47,7 @@ function ParameterRow({ label, unit, compliance }: { label: string; unit: string
       <span className={compliance.inRange ? 'text-teal-800' : 'text-red-700'}>
         {roundForDisplay(compliance.value, 3)} {unit}
         <span className="ml-2 text-xs text-ink/60">
-          (target {compliance.range.min}-{compliance.range.max})
+          ({t('styleCheck.param.target', { min: compliance.range.min, max: compliance.range.max })})
         </span>
       </span>
     </div>
@@ -70,6 +72,7 @@ export function StyleCheckPanel({
   garetzExtras,
   onGaretzExtrasChange,
 }: StyleCheckPanelProps) {
+  const { t } = useLanguage();
   const [styleSearch, setStyleSearch] = useState('');
   // Briefly pulses the "Selected" confirmation so picking a style from the
   // scrollable list gives the same unmistakable "yes, that registered"
@@ -107,41 +110,37 @@ export function StyleCheckPanel({
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-display text-xl font-bold text-ink">BJCP Style Check</h2>
-      <p className="font-body text-sm text-amber-800">
-        Compare your recipe&apos;s OG, FG, IBU, color (SRM), and ABV against common BJCP-style numeric ranges.
-        Reference numeric ranges only -- consult the official BJCP Style Guidelines (bjcp.org) for full style
-        descriptions and the complete category list.
-      </p>
+      <h2 className="font-display text-xl font-bold text-ink">{t('styleCheck.title')}</h2>
+      <p className="font-body text-sm text-amber-800">{t('styleCheck.intro')}</p>
 
       <TutorialCallout
-        title="How to use BJCP Style Check"
+        title={t('styleCheck.tutorial.title')}
         steps={[
           {
-            lead: '1. Search and pick a target style.',
-            body: 'The selected style flashes teal briefly to confirm the pick, and stays visible in the "Selected" line below the list.',
+            lead: t('styleCheck.tutorial.step1.lead'),
+            body: t('styleCheck.tutorial.step1.body'),
           },
           {
-            lead: '2. OG/FG and hops are shared, not separate.',
-            body: 'Gravity and hop schedule here are the same values used in Brewhouse Calculators and shown on Home -- edit them on any of those screens and they stay in sync.',
+            lead: t('styleCheck.tutorial.step2.lead'),
+            body: t('styleCheck.tutorial.step2.body'),
           },
           {
-            lead: '3. Read the Style Match score.',
-            body: 'Green/5-of-5 means every parameter (OG, FG, IBU, SRM, ABV) falls inside the style\'s published range; red rows below show exactly how far outside range you are and in which direction.',
+            lead: t('styleCheck.tutorial.step3.lead'),
+            body: t('styleCheck.tutorial.step3.body'),
           },
         ]}
       />
 
       <div className="flex flex-col gap-1">
         <Input
-          label="Target Style"
+          label={t('styleCheck.targetStyle.label')}
           value={styleSearch}
           onChange={setStyleSearch}
-          placeholder={`Search ${BJCP_STYLES.length} styles by name or category (e.g. "IPA", "sour", "lager")...`}
+          placeholder={t('styleCheck.targetStyle.searchPlaceholder', { count: BJCP_STYLES.length })}
         />
         <div className="mt-1 max-h-52 overflow-y-auto rounded-md border-2 border-amber-200 bg-parchment">
           {filteredStyles.length === 0 ? (
-            <p className="p-3 text-sm text-amber-800">No styles match &quot;{styleSearch}&quot;.</p>
+            <p className="p-3 text-sm text-amber-800">{t('styleCheck.noStylesMatch', { query: styleSearch })}</p>
           ) : (
             filteredStyles.map((s) => (
               <button
@@ -181,24 +180,24 @@ export function StyleCheckPanel({
             </span>
           ) : null}
           <span>
-            Selected: <span className="font-semibold">{style.name}</span> -- {style.description}
+            {t('styleCheck.selected')} <span className="font-semibold">{style.name}</span> -- {style.description}
           </span>
         </div>
       </div>
 
       <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
-        <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">Gravity & ABV</h3>
+        <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">{t('styleCheck.gravityAbv.title')}</h3>
         <p className="mt-1 font-body text-xs text-ink/70">
-          Batch volume ({batchVolumeL} L) comes from Mash Adjustment; OG/FG are shared with Brewhouse Calculators.
+          {t('styleCheck.gravityAbv.subtitle', { volume: batchVolumeL })}
         </p>
         <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <GravityField label="Original Gravity" value={og} onChange={onOgChange} />
-          <GravityField label="Final Gravity" value={fg} onChange={onFgChange} />
+          <GravityField label={t('styleCheck.originalGravity')} value={og} onChange={onOgChange} />
+          <GravityField label={t('styleCheck.finalGravity')} value={fg} onChange={onFgChange} />
         </div>
       </div>
 
       <div className="rounded-lg border-2 border-amber-300 bg-amber-50/60 p-4">
-        <h3 className="font-display text-sm font-bold uppercase tracking-wide text-amber-900">Hops (for IBU)</h3>
+        <h3 className="font-display text-sm font-bold uppercase tracking-wide text-amber-900">{t('styleCheck.hopsForIbu.title')}</h3>
         <div className="mt-3">
           <IbuFormulaSelector
             formula={ibuFormula}
@@ -208,33 +207,33 @@ export function StyleCheckPanel({
           />
         </div>
         <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <NumberField label="Wort Gravity (SG)" value={wortGravitySg} step={0.001} onChange={onWortGravityChange} />
+          <NumberField label={t('styleCheck.wortGravity')} value={wortGravitySg} step={0.001} onChange={onWortGravityChange} />
         </div>
         <div className="mt-3 flex flex-col gap-2">
           {hopAdditions.map((row, index) => (
             <div key={index} className="grid grid-cols-1 gap-3 sm:grid-cols-4">
               <Input
-                label="Hop"
+                label={t('styleCheck.hop.label')}
                 value={row.name}
                 onChange={(value) => updateHopRow(index, { name: value })}
-                placeholder="Type any hop name..."
+                placeholder={t('styleCheck.hop.placeholder')}
               />
               <NumberField
-                label="Alpha Acid"
+                label={t('styleCheck.alphaAcid')}
                 unit="%"
                 value={row.alphaAcidPercent}
                 step={0.1}
                 onChange={(value) => updateHopRow(index, { alphaAcidPercent: value })}
               />
               <NumberField
-                label="Weight"
+                label={t('styleCheck.weight')}
                 unit="g"
                 value={row.weightG}
                 step={1}
                 onChange={(value) => updateHopRow(index, { weightG: value })}
               />
               <NumberField
-                label="Boil Time"
+                label={t('styleCheck.boilTime')}
                 unit="min"
                 value={row.boilTimeMinutes}
                 step={1}
@@ -249,25 +248,25 @@ export function StyleCheckPanel({
             }
             className="min-h-[44px] self-start rounded-md bg-teal-700 px-4 py-2 font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800"
           >
-            + Add Hop
+            {t('styleCheck.addHop')}
           </button>
         </div>
       </div>
 
       <ResultCard
-        title="Style Match"
+        title={t('styleCheck.styleMatch.title')}
         value={`${compliance.parametersInRange}/5`}
         tone={compliance.fullyCompliant ? 'success' : compliance.parametersInRange >= 3 ? 'default' : 'warning'}
       >
-        Grain-bill color (SRM): {roundForDisplay(srm, 1)}. Total IBU: {roundForDisplay(ibuResult.totalIbu, 1)}.
+        {t('styleCheck.styleMatch.summary', { srm: roundForDisplay(srm, 1), ibu: roundForDisplay(ibuResult.totalIbu, 1) })}
       </ResultCard>
 
       <div className="flex flex-col gap-2">
-        <ParameterRow label="Original Gravity" unit="SG" compliance={compliance.og} />
-        <ParameterRow label="Final Gravity" unit="SG" compliance={compliance.fg} />
-        <ParameterRow label="IBU" unit="" compliance={compliance.ibu} />
-        <ParameterRow label="Color (SRM)" unit="" compliance={compliance.srm} />
-        <ParameterRow label="ABV" unit="%" compliance={compliance.abvPercent} />
+        <ParameterRow label={t('styleCheck.originalGravity')} unit="SG" compliance={compliance.og} />
+        <ParameterRow label={t('styleCheck.finalGravity')} unit="SG" compliance={compliance.fg} />
+        <ParameterRow label={t('styleCheck.param.ibu')} unit="" compliance={compliance.ibu} />
+        <ParameterRow label={t('styleCheck.param.colorSrm')} unit="" compliance={compliance.srm} />
+        <ParameterRow label={t('styleCheck.param.abv')} unit="%" compliance={compliance.abvPercent} />
       </div>
     </section>
   );

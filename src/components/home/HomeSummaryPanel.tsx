@@ -16,6 +16,7 @@ import { buildRecipeShareText } from '@/lib/recipeShareText';
 import { TabDef } from '@/components/ui/Tabs';
 import { predictOriginalGravity } from '@/lib/efficiency';
 import { GravityDisplay, GravityUnitToggle, GravityUnit } from '@/components/ui/GravityDisplay';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface HomeSummaryPanelProps {
   state: AppState;
@@ -41,6 +42,7 @@ function SummarySection({
   headerExtra?: React.ReactNode;
   children: React.ReactNode;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="rounded-lg border-2 border-amber-200 bg-amber-50/40 p-4">
       <div className="flex items-center justify-between gap-2">
@@ -55,7 +57,7 @@ function SummarySection({
             onClick={() => onJumpToTab(tabId)}
             className="flex min-h-[44px] flex-shrink-0 items-center rounded-full border border-teal-300 bg-teal-50 px-3 py-1 font-body text-xs font-semibold text-teal-800 hover:bg-teal-100"
           >
-            Edit
+            {t('home.edit')}
           </button>
         </div>
       </div>
@@ -64,14 +66,19 @@ function SummarySection({
   );
 }
 
-function deviationText(compliance: ParameterCompliance, unit: string): string {
-  if (compliance.inRange) return 'in range';
+function deviationText(
+  compliance: ParameterCompliance,
+  unit: string,
+  t: ReturnType<typeof useLanguage>['t'],
+): string {
+  if (compliance.inRange) return t('home.deviation.inRange');
   const delta = compliance.value < compliance.range.min ? compliance.range.min - compliance.value : compliance.value - compliance.range.max;
-  const direction = compliance.value < compliance.range.min ? 'under' : 'over';
-  return `${roundForDisplay(delta, 2)}${unit} ${direction} range`;
+  const direction = compliance.value < compliance.range.min ? t('home.deviation.under') : t('home.deviation.over');
+  return `${roundForDisplay(delta, 2)}${unit} ${t('home.deviation.rangeSuffix', { direction })}`;
 }
 
 function DeviationRow({ label, unit, compliance }: { label: string; unit: string; compliance: ParameterCompliance }) {
+  const { t } = useLanguage();
   return (
     <div
       className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${
@@ -81,7 +88,7 @@ function DeviationRow({ label, unit, compliance }: { label: string; unit: string
       <span className="font-medium text-ink">{label}</span>
       <span className={compliance.inRange ? 'text-teal-800' : 'text-red-700'}>
         {roundForDisplay(compliance.value, 3)}
-        {unit} <span className="text-xs text-ink/60">({deviationText(compliance, unit)})</span>
+        {unit} <span className="text-xs text-ink/60">({deviationText(compliance, unit, t)})</span>
       </span>
     </div>
   );
@@ -96,6 +103,7 @@ function DeviationRow({ label, unit, compliance }: { label: string; unit: string
  * session at a glance, instead of re-visiting every tab one by one.
  */
 export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, processSteps }: HomeSummaryPanelProps) {
+  const { t } = useLanguage();
   const { share, status: shareStatus } = useShareText('Brew Recipe Summary');
   const [gravityUnit, setGravityUnit] = useState<GravityUnit>('sg');
 
@@ -149,16 +157,14 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-display text-xl font-bold text-ink">Brew Session Overview</h2>
-      <p className="font-body text-sm text-amber-800">
-        Everything entered so far, in brew-day order. Tap Edit on any card to jump back and change it.
-      </p>
+      <h2 className="font-display text-xl font-bold text-ink">{t('home.title')}</h2>
+      <p className="font-body text-sm text-amber-800">{t('home.subtitle')}</p>
 
       <div className="rounded-lg border-2 border-amber-200 bg-amber-50/40 p-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-display text-xs font-bold uppercase tracking-wide text-amber-900">Brew Day Flow</h3>
+          <h3 className="font-display text-xs font-bold uppercase tracking-wide text-amber-900">{t('home.processFlow.title')}</h3>
           <span className="flex items-center gap-1 font-body text-[0.65rem] font-semibold text-amber-600">
-            Scroll for more <span aria-hidden="true">→</span>
+            {t('home.processFlow.scrollHint')} <span aria-hidden="true">→</span>
           </span>
         </div>
         <div className="relative mt-2">
@@ -191,49 +197,58 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
         </div>
       </div>
 
-      <SummarySection title="Water Source" icon={DropletIcon} tabId="water-report" onJumpToTab={onJumpToTab}>
+      <SummarySection title={t('home.waterSource.title')} icon={DropletIcon} tabId="water-report" onJumpToTab={onJumpToTab}>
         <p>
-          Calcium {state.sourceProfile.calcium} &middot; Magnesium {state.sourceProfile.magnesium} &middot; Sulfate{' '}
-          {state.sourceProfile.sulfate} &middot; Chloride {state.sourceProfile.chloride} mg/L
+          {t('home.waterSource.summary', {
+            calcium: state.sourceProfile.calcium,
+            magnesium: state.sourceProfile.magnesium,
+            sulfate: state.sourceProfile.sulfate,
+            chloride: state.sourceProfile.chloride,
+          })}
         </p>
       </SummarySection>
 
-      <SummarySection title="Grain Bill" icon={DropletIcon} tabId="mash-adjustment" onJumpToTab={onJumpToTab}>
+      <SummarySection title={t('home.grainBill.title')} icon={DropletIcon} tabId="mash-adjustment" onJumpToTab={onJumpToTab}>
         {state.grainBill.length === 0 ? (
-          <p className="text-amber-700">No grains added yet.</p>
+          <p className="text-amber-700">{t('home.grainBill.empty')}</p>
         ) : (
           <>
             <ul className="flex flex-col gap-0.5">
               {state.grainBill.map((row, i) => (
                 <li key={i}>
-                  {row.name || 'Unnamed grain'} -- {row.weightKg} kg @ {row.colorLovibond}°L
+                  {row.name || t('home.grainBill.unnamedGrain')} -- {row.weightKg} kg @ {row.colorLovibond}°L
                   {Number.isFinite(row.potentialSg) && (row.potentialSg as number) > 0
-                    ? `, ${row.potentialSg} SG potential`
+                    ? t('home.grainBill.potentialSuffix', { potential: row.potentialSg as number })
                     : ''}
                 </li>
               ))}
             </ul>
             <p className="mt-1 font-semibold">
-              Total: {totalGrainKg.toFixed(2)} kg {srm !== null ? `-- ~${roundForDisplay(srm, 1)} SRM` : ''}
+              {t('home.grainBill.total', {
+                total: totalGrainKg.toFixed(2),
+                srm: srm !== null ? t('home.grainBill.srmSuffix', { srm: roundForDisplay(srm, 1) }) : '',
+              })}
             </p>
             {hasPotential ? (
               <p className="mt-1 font-semibold text-teal-800">
-                Estimated OG: {roundForDisplay(predictedOg, 3)} SG (at {state.assumedEfficiencyPercent}% assumed
-                efficiency)
+                {t('home.grainBill.estimatedOg', {
+                  og: roundForDisplay(predictedOg, 3),
+                  efficiency: state.assumedEfficiencyPercent,
+                })}
               </p>
             ) : null}
           </>
         )}
       </SummarySection>
 
-      <SummarySection title="Mash & Sparge" icon={FlaskIcon} tabId="mash-adjustment" onJumpToTab={onJumpToTab}>
-        <p>Batch Volume: {state.batchVolumeL} L</p>
-        <p>Target Style Profile: {targetStyleName}</p>
-        <p>Sparge Volume: {state.spargeVolumeL} L</p>
+      <SummarySection title={t('home.mashSparge.title')} icon={FlaskIcon} tabId="mash-adjustment" onJumpToTab={onJumpToTab}>
+        <p>{t('home.mashSparge.batchVolume', { volume: state.batchVolumeL })}</p>
+        <p>{t('home.mashSparge.targetStyleProfile', { style: targetStyleName })}</p>
+        <p>{t('home.mashSparge.spargeVolume', { volume: state.spargeVolumeL })}</p>
       </SummarySection>
 
       <SummarySection
-        title="Recipe Gravity"
+        title={t('home.recipeGravity.title')}
         icon={CalculatorIcon}
         tabId="brewhouse"
         onJumpToTab={onJumpToTab}
@@ -241,23 +256,28 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
       >
         <GravityDisplay label="OG" valueSg={state.ogSg} unit={gravityUnit} />
         <GravityDisplay label="FG" valueSg={state.fgSg} unit={gravityUnit} />
-        {abvSoFar !== null ? <p>ABV (simple): {abvSoFar}%</p> : null}
+        {abvSoFar !== null ? <p>{t('home.recipeGravity.abvSimple', { abv: abvSoFar })}</p> : null}
       </SummarySection>
 
-      <SummarySection title="Hops & IBU" icon={CalculatorIcon} tabId="brewhouse" onJumpToTab={onJumpToTab}>
+      <SummarySection title={t('home.hopsIbu.title')} icon={CalculatorIcon} tabId="brewhouse" onJumpToTab={onJumpToTab}>
         {state.hopAdditions.length === 0 || state.hopAdditions.every((h) => h.weightG === 0) ? (
-          <p className="text-amber-700">No hop additions logged yet.</p>
+          <p className="text-amber-700">{t('home.hopsIbu.empty')}</p>
         ) : (
           <ul className="flex flex-col gap-0.5">
             {state.hopAdditions.map((hop, i) => (
               <li key={i}>
-                {hop.name || 'Unnamed hop'} -- {hop.weightG} g @ {hop.alphaAcidPercent}% AA, {hop.boilTimeMinutes} min
+                {hop.name || t('home.hopsIbu.unnamedHop')} --{' '}
+                {t('home.hopsIbu.additionDetail', {
+                  weight: hop.weightG,
+                  aa: hop.alphaAcidPercent,
+                  time: hop.boilTimeMinutes,
+                })}
               </li>
             ))}
           </ul>
         )}
         <p className="mt-1 font-semibold">
-          Total IBU: {roundForDisplay(ibuResult.totalIbu, 1)} <span className="font-normal text-ink/60">({ibuFormulaLabel})</span>
+          {t('home.hopsIbu.totalIbu', { ibu: roundForDisplay(ibuResult.totalIbu, 1), formula: ibuFormulaLabel })}
         </p>
       </SummarySection>
 
@@ -265,44 +285,48 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
         <div className="flex items-center justify-between gap-2">
           <h3 className="flex items-center gap-2 font-display text-sm font-bold uppercase tracking-wide text-teal-800">
             <StyleCheckIcon className="h-4 w-4 flex-shrink-0 text-teal-700" />
-            Deviation vs {bjcpStyle.name}
+            {t('home.deviation.title', { style: bjcpStyle.name })}
           </h3>
           <button
             type="button"
             onClick={() => onJumpToTab('style-check')}
             className="flex min-h-[44px] flex-shrink-0 items-center rounded-full border border-teal-300 bg-teal-50 px-3 py-1 font-body text-xs font-semibold text-teal-800 hover:bg-teal-100"
           >
-            Change Style
+            {t('home.deviation.changeStyle')}
           </button>
         </div>
         <p className="mt-1 font-body text-xs text-ink/70">
-          Matches {compliance.parametersInRange}/5 parameters -- built from Grain Bill, Hops, and Recipe
-          Gravity above.
+          {t('home.deviation.matchSummary', { count: compliance.parametersInRange })}
         </p>
         <div className="mt-3 flex flex-col gap-1.5">
-          <DeviationRow label="Original Gravity" unit=" SG" compliance={compliance.og} />
-          <DeviationRow label="Final Gravity" unit=" SG" compliance={compliance.fg} />
-          <DeviationRow label="IBU" unit="" compliance={compliance.ibu} />
-          <DeviationRow label="Color (SRM)" unit="" compliance={compliance.srm} />
-          <DeviationRow label="ABV" unit="%" compliance={compliance.abvPercent} />
+          <DeviationRow label={t('home.deviation.originalGravity')} unit=" SG" compliance={compliance.og} />
+          <DeviationRow label={t('home.deviation.finalGravity')} unit=" SG" compliance={compliance.fg} />
+          <DeviationRow label={t('home.deviation.ibu')} unit="" compliance={compliance.ibu} />
+          <DeviationRow label={t('home.deviation.colorSrm')} unit="" compliance={compliance.srm} />
+          <DeviationRow label={t('home.deviation.abv')} unit="%" compliance={compliance.abvPercent} />
         </div>
       </div>
 
-      <SummarySection title="Fermentation Batches" icon={FermenterIcon} tabId="fermentation-tracker" onJumpToTab={onJumpToTab}>
+      <SummarySection title={t('home.fermentation.title')} icon={FermenterIcon} tabId="fermentation-tracker" onJumpToTab={onJumpToTab}>
         {fermentationBatches.length === 0 ? (
-          <p className="text-amber-700">No batches logged yet.</p>
+          <p className="text-amber-700">{t('home.fermentation.empty')}</p>
         ) : (
           <ul className="flex flex-col gap-1">
             {fermentationBatches.map((batch) => {
               const stats = calculateFermentationStats(batch.entries);
               return (
                 <li key={batch.id}>
-                  <span className="font-semibold">{batch.name}</span> -- {batch.entries.length} reading
-                  {batch.entries.length === 1 ? '' : 's'}
+                  <span className="font-semibold">{batch.name}</span> --{' '}
+                  {t('home.fermentation.readingCount', {
+                    count: batch.entries.length,
+                    plural: batch.entries.length === 1 ? '' : 's',
+                  })}
                   {stats.apparentAttenuationPercent !== null
-                    ? `, ${roundForDisplay(stats.apparentAttenuationPercent, 1)}% attenuation`
+                    ? t('home.fermentation.attenuationSuffix', {
+                        attenuation: roundForDisplay(stats.apparentAttenuationPercent, 1),
+                      })
                     : ''}
-                  {stats.likelyComplete ? ' -- likely finished' : ''}
+                  {stats.likelyComplete ? t('home.fermentation.likelyFinished') : ''}
                 </li>
               );
             })}
@@ -317,16 +341,16 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
           className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-teal-700 px-4 py-3 font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800 active:bg-teal-900"
         >
           <ShareIcon className="h-5 w-5 flex-shrink-0" />
-          Share / Export Recipe
+          {t('home.share.button')}
         </button>
         <p className="mt-2 text-center font-body text-xs text-amber-700" role="status" aria-live="polite">
           {shareStatus === 'shared'
-            ? 'Shared.'
+            ? t('home.share.shared')
             : shareStatus === 'copied'
-              ? 'Copied to clipboard -- paste into any app.'
+              ? t('home.share.copied')
               : shareStatus === 'error'
-                ? 'Sharing not supported on this browser -- try the Print/Save as PDF option in your browser menu.'
-                : "Opens your device's share sheet (WhatsApp, Email, etc.), or copies a text summary if sharing isn't available. For a PDF, use your browser's Print -> Save as PDF."}
+                ? t('home.share.error')
+                : t('home.share.idle')}
         </p>
         <button
           type="button"
@@ -334,7 +358,7 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
           className="mt-2 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-md border border-teal-300 bg-teal-50 px-4 py-2 font-body text-sm font-semibold text-teal-800 hover:bg-teal-100"
         >
           <BookmarkIcon className="h-4 w-4 flex-shrink-0" />
-          Lock This Recipe
+          {t('home.lockRecipe')}
         </button>
       </div>
     </section>

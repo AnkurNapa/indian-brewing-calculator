@@ -32,6 +32,7 @@ import { IbuFormulaSelector } from '@/components/ui/IbuFormulaSelector';
 import { HOP_VARIETIES } from '@/lib/hopVarieties';
 import { YEAST_STRAINS } from '@/lib/yeastStrains';
 import { roundForDisplay } from '@/lib/units';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -61,27 +62,28 @@ interface SharedRecipeProps {
 }
 
 function AbvAttenuationCalculator({ og, onOgChange, fg, onFgChange }: Pick<SharedRecipeProps, 'og' | 'onOgChange' | 'fg' | 'onFgChange'>) {
+  const { t } = useLanguage();
   const abvSimple = calculateAbvSimple(og, fg);
   const abvAdvanced = calculateAbvAdvanced(og, fg);
   const attenuation = calculateAttenuation(og, fg);
 
   return (
-    <SectionCard title="OG / FG - ABV & Attenuation">
-      <p className="-mt-2 font-body text-xs text-ink/60">Shared with Pitch Rate and BJCP Style Check.</p>
+    <SectionCard title={t('brewhouse.abv.title')}>
+      <p className="-mt-2 font-body text-xs text-ink/60">{t('brewhouse.abv.sharedNote')}</p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <GravityField label="Original Gravity" value={og} onChange={onOgChange} />
-        <GravityField label="Final Gravity" value={fg} onChange={onFgChange} />
+        <GravityField label={t('brewhouse.abv.originalGravity')} value={og} onChange={onOgChange} />
+        <GravityField label={t('brewhouse.abv.finalGravity')} value={fg} onChange={onFgChange} />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <ResultCard title="ABV (Simple)" value={roundForDisplay(abvSimple, 2).toString()} unit="%" />
-        <ResultCard title="ABV (Advanced)" value={roundForDisplay(abvAdvanced, 2).toString()} unit="%" />
+        <ResultCard title={t('brewhouse.abv.simple')} value={roundForDisplay(abvSimple, 2).toString()} unit="%" />
+        <ResultCard title={t('brewhouse.abv.advanced')} value={roundForDisplay(abvAdvanced, 2).toString()} unit="%" />
         <ResultCard
-          title="Apparent Attenuation"
+          title={t('brewhouse.abv.apparentAttenuation')}
           value={roundForDisplay(attenuation.apparentAttenuationPercent, 1).toString()}
           unit="%"
         />
         <ResultCard
-          title="Real Attenuation"
+          title={t('brewhouse.abv.realAttenuation')}
           value={roundForDisplay(attenuation.realAttenuationPercent, 1).toString()}
           unit="%"
         />
@@ -91,6 +93,7 @@ function AbvAttenuationCalculator({ og, onOgChange, fg, onFgChange }: Pick<Share
 }
 
 function HydrometerCorrectionCalculator() {
+  const { t } = useLanguage();
   const [measuredSg, setMeasuredSg] = useState(1.05);
   const [sampleTempC, setSampleTempC] = useState(25);
   const [calibrationTempC, setCalibrationTempC] = useState(20);
@@ -98,24 +101,25 @@ function HydrometerCorrectionCalculator() {
   const corrected = correctHydrometerReading(measuredSg, sampleTempC, calibrationTempC);
 
   return (
-    <SectionCard title="Hydrometer Temperature Correction">
+    <SectionCard title={t('brewhouse.hydrometer.title')}>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <NumberField label="Measured SG" value={measuredSg} step={0.001} onChange={setMeasuredSg} />
-        <NumberField label="Sample Temp" unit="°C" value={sampleTempC} step={1} onChange={setSampleTempC} allowNegative />
+        <NumberField label={t('brewhouse.hydrometer.measuredSg')} value={measuredSg} step={0.001} onChange={setMeasuredSg} />
+        <NumberField label={t('brewhouse.hydrometer.sampleTemp')} unit="°C" value={sampleTempC} step={1} onChange={setSampleTempC} allowNegative />
         <NumberField
-          label="Calibration Temp"
+          label={t('brewhouse.hydrometer.calibrationTemp')}
           unit="°C"
           value={calibrationTempC}
           step={1}
           onChange={setCalibrationTempC}
         />
       </div>
-      <ResultCard title="Corrected SG" value={roundForDisplay(corrected, 4).toString()} />
+      <ResultCard title={t('brewhouse.hydrometer.correctedSg')} value={roundForDisplay(corrected, 4).toString()} />
     </SectionCard>
   );
 }
 
 function EfficiencyCalculator() {
+  const { t } = useLanguage();
   const [grainBill, setGrainBill] = useState<GrainPotentialItem[]>([
     { name: 'Pale Malt', weightKg: 5, potentialSg: 1.037 },
   ]);
@@ -129,24 +133,24 @@ function EfficiencyCalculator() {
   };
 
   return (
-    <SectionCard title="Brewhouse / Mash Efficiency">
+    <SectionCard title={t('brewhouse.efficiency.title')}>
       <div className="flex flex-col gap-2">
         {grainBill.map((row, index) => (
           <div key={index} className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <Input label="Grain" value={row.name} onChange={(value) => updateRow(index, { name: value })} />
+            <Input label={t('brewhouse.efficiency.grainLabel')} value={row.name} onChange={(value) => updateRow(index, { name: value })} />
             <NumberField
-              label="Weight"
+              label={t('brewhouse.efficiency.weight')}
               unit="kg"
               value={row.weightKg}
               step={0.1}
               onChange={(value) => updateRow(index, { weightKg: value })}
             />
             <NumberField
-              label="Potential SG"
+              label={t('brewhouse.efficiency.potentialSg')}
               value={row.potentialSg}
               step={0.001}
               onChange={(value) => updateRow(index, { potentialSg: value })}
-              helperText="Maltster spec, typically 1.030-1.038."
+              helperText={t('brewhouse.efficiency.potentialSgHelper')}
             />
           </div>
         ))}
@@ -155,48 +159,48 @@ function EfficiencyCalculator() {
           onClick={() => setGrainBill([...grainBill, { name: '', weightKg: 0, potentialSg: 1.037 }])}
           className="min-h-[44px] self-start rounded-md bg-teal-700 px-4 py-2 font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800"
         >
-          + Add Grain
+          {t('brewhouse.efficiency.addGrain')}
         </button>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField
-          label="Actual Measured SG"
+          label={t('brewhouse.efficiency.actualMeasuredSg')}
           value={actualMeasuredSg}
           step={0.001}
           onChange={setActualMeasuredSg}
         />
-        <NumberField label="Measured At Volume" unit="L" value={measuredVolumeL} step={1} onChange={setMeasuredVolumeL} />
+        <NumberField label={t('brewhouse.efficiency.measuredAtVolume')} unit="L" value={measuredVolumeL} step={1} onChange={setMeasuredVolumeL} />
       </div>
-      <ResultCard title="Brewhouse Efficiency" value={roundForDisplay(result.efficiencyPercent, 1).toString()} unit="%">
-        Max theoretical: {roundForDisplay(pointsToSg(result.maxTheoreticalPoints), 4)} SG at this volume.
+      <ResultCard title={t('brewhouse.efficiency.result')} value={roundForDisplay(result.efficiencyPercent, 1).toString()} unit="%">
+        {t('brewhouse.efficiency.maxTheoretical', { value: roundForDisplay(pointsToSg(result.maxTheoreticalPoints), 4).toString() })}
       </ResultCard>
     </SectionCard>
   );
 }
 
 function ForceCarbonationCalculator() {
+  const { t } = useLanguage();
   const [targetCo2Volumes, setTargetCo2Volumes] = useState(2.6);
   const [temperatureC, setTemperatureC] = useState(4);
 
   const result = calculateForceCarbonationPressure(targetCo2Volumes, temperatureC);
 
   return (
-    <SectionCard title="Force Carbonation (CO2 Tank Pressure)">
+    <SectionCard title={t('brewhouse.forceCarb.title')}>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField
-          label="Target CO2"
-          unit="volumes"
+          label={t('brewhouse.forceCarb.targetCo2')}
+          unit={t('brewhouse.forceCarb.volumes')}
           value={targetCo2Volumes}
           step={0.1}
           onChange={setTargetCo2Volumes}
         />
-        <NumberField label="Tank / Beer Temp" unit="°C" value={temperatureC} step={0.5} onChange={setTemperatureC} allowNegative />
+        <NumberField label={t('brewhouse.forceCarb.tankTemp')} unit="°C" value={temperatureC} step={0.5} onChange={setTemperatureC} allowNegative />
       </div>
-      <ResultCard title="Regulator Pressure" value={roundForDisplay(result.pressurePsi, 1).toString()} unit="psi">
-        <p>≈ {roundForDisplay(result.pressureBar, 2)} bar.</p>
+      <ResultCard title={t('brewhouse.forceCarb.regulatorPressure')} value={roundForDisplay(result.pressurePsi, 1).toString()} unit="psi">
+        <p>{t('brewhouse.forceCarb.approxBar', { value: roundForDisplay(result.pressureBar, 2).toString() })}</p>
         <p className="mt-1 text-amber-800">
-          Approximate -- cross-check against a physical carbonation chart or your regulator vendor&apos;s chart
-          before setting tank pressure.
+          {t('brewhouse.forceCarb.disclaimer')}
         </p>
       </ResultCard>
     </SectionCard>
@@ -204,6 +208,7 @@ function ForceCarbonationCalculator() {
 }
 
 function PrimingCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeProps, 'batchVolumeL' | 'onBatchVolumeChange'>) {
+  const { t } = useLanguage();
   const [targetCo2Volumes, setTargetCo2Volumes] = useState(2.4);
   const [temperatureC, setTemperatureC] = useState(20);
   const [sugarId, setSugarId] = useState(PRIMING_SUGARS[0].id);
@@ -212,43 +217,44 @@ function PrimingCalculator({ batchVolumeL, onBatchVolumeChange }: Pick<SharedRec
   const result = calculatePrimingDose(targetCo2Volumes, temperatureC, batchVolumeL, sugar);
 
   return (
-    <SectionCard title="Priming Sugar (Bottle Conditioning)">
-      <p className="-mt-2 font-body text-xs text-ink/60">Batch volume is shared across every calculator below.</p>
+    <SectionCard title={t('brewhouse.priming.title')}>
+      <p className="-mt-2 font-body text-xs text-ink/60">{t('brewhouse.priming.sharedNote')}</p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField
-          label="Target CO2"
-          unit="volumes"
+          label={t('brewhouse.priming.targetCo2')}
+          unit={t('brewhouse.forceCarb.volumes')}
           value={targetCo2Volumes}
           step={0.1}
           onChange={setTargetCo2Volumes}
         />
         <NumberField
-          label="Conditioning Temp"
+          label={t('brewhouse.priming.conditioningTemp')}
           unit="°C"
           value={temperatureC}
           step={1}
           onChange={setTemperatureC}
         />
-        <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
+        <NumberField label={t('brewhouse.priming.batchVolume')} unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
         <SearchableSelect
-          label="Priming Sugar"
+          label={t('brewhouse.priming.sugarSelect')}
           value={sugarId}
           onChange={setSugarId}
           options={PRIMING_SUGARS.map((s) => ({ id: s.id, label: s.name }))}
         />
       </div>
       <ResultCard
-        title="Priming Sugar Needed"
+        title={t('brewhouse.priming.needed')}
         value={result.alreadyAtTarget ? '0' : roundForDisplay(result.primingSugarGrams, 1).toString()}
         unit="g"
       >
-        Residual CO2 at {temperatureC}°C: {roundForDisplay(result.residualCo2Volumes, 2)} volumes.
+        {t('brewhouse.priming.residual', { temp: temperatureC.toString(), value: roundForDisplay(result.residualCo2Volumes, 2).toString() })}
       </ResultCard>
     </SectionCard>
   );
 }
 
 function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange }: Pick<SharedRecipeProps, 'og' | 'onOgChange' | 'batchVolumeL' | 'onBatchVolumeChange'>) {
+  const { t } = useLanguage();
   const [style, setStyle] = useState<YeastStyle>('ale');
   const [strainName, setStrainName] = useState('');
 
@@ -259,10 +265,10 @@ function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange
   const repitch = calculateRepitchSlurryVolume(result.targetCellsBillion, slurryDensity, viabilityPercent);
 
   return (
-    <SectionCard title="Yeast Pitch Rate">
+    <SectionCard title={t('brewhouse.pitchRate.title')}>
       <SearchableSelect
-        label="Quick-fill from common yeast strains (optional)"
-        placeholder="Search yeast strains..."
+        label={t('brewhouse.pitchRate.quickFill')}
+        placeholder={t('brewhouse.pitchRate.searchPlaceholder')}
         value={YEAST_STRAINS.find((s) => s.name === strainName)?.id ?? ''}
         options={YEAST_STRAINS.map((strain) => ({ id: strain.id, label: strain.name }))}
         onChange={(id) => {
@@ -274,60 +280,58 @@ function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange
         }}
       />
       <p className="-mt-2 font-body text-xs font-semibold text-amber-700/80">
-        Not in the list? Just type any strain name below and pick Ale or Lager.
+        {t('brewhouse.pitchRate.notInList')}
       </p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
-          label="Strain (optional)"
+          label={t('brewhouse.pitchRate.strainLabel')}
           value={strainName}
           onChange={setStrainName}
-          placeholder="e.g. US-05, WLP001..."
+          placeholder={t('brewhouse.pitchRate.strainPlaceholder')}
         />
         <SearchableSelect
-          label="Style"
+          label={t('brewhouse.pitchRate.styleLabel')}
           value={style}
           onChange={(id) => setStyle(id as YeastStyle)}
           options={[
-            { id: 'ale', label: 'Ale' },
-            { id: 'lager', label: 'Lager' },
+            { id: 'ale', label: t('brewhouse.pitchRate.ale') },
+            { id: 'lager', label: t('brewhouse.pitchRate.lager') },
           ]}
         />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <GravityField label="Original Gravity" value={og} onChange={onOgChange} />
-        <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
+        <GravityField label={t('brewhouse.pitchRate.originalGravity')} value={og} onChange={onOgChange} />
+        <NumberField label={t('brewhouse.pitchRate.batchVolume')} unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <ResultCard title="Target Cells" value={roundForDisplay(result.targetCellsBillion, 0).toString()} unit="billion" />
-        <ResultCard title="Dry Yeast" value={roundForDisplay(result.dryYeastGrams, 1).toString()} unit="g" />
-        <ResultCard title="Fresh Liquid Slurry" value={roundForDisplay(result.slurryMl, 0).toString()} unit="mL" />
+        <ResultCard title={t('brewhouse.pitchRate.targetCells')} value={roundForDisplay(result.targetCellsBillion, 0).toString()} unit={t('brewhouse.pitchRate.billion')} />
+        <ResultCard title={t('brewhouse.pitchRate.dryYeast')} value={roundForDisplay(result.dryYeastGrams, 1).toString()} unit="g" />
+        <ResultCard title={t('brewhouse.pitchRate.freshSlurry')} value={roundForDisplay(result.slurryMl, 0).toString()} unit="mL" />
       </div>
 
       <div className="rounded-md border border-teal-300 bg-teal-100/40 p-3">
-        <h4 className="font-body text-sm font-semibold text-teal-900">Repitching From Cropped/Cone-Harvested Slurry</h4>
+        <h4 className="font-body text-sm font-semibold text-teal-900">{t('brewhouse.pitchRate.repitchTitle')}</h4>
         <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <NumberField
-            label="Harvested Slurry Density"
+            label={t('brewhouse.pitchRate.slurryDensity')}
             unit="billion/mL"
             value={slurryDensity}
             step={0.1}
             onChange={setSlurryDensity}
-            helperText="Measure with a hemocytometer/cell counter if possible."
+            helperText={t('brewhouse.pitchRate.slurryDensityHelper')}
           />
           <NumberField
-            label="Viability"
+            label={t('brewhouse.pitchRate.viability')}
             unit="%"
             value={viabilityPercent}
             step={1}
             max={100}
             onChange={setViabilityPercent}
-            helperText="Cropped slurry is rarely 100% viable -- check with methylene blue staining."
+            helperText={t('brewhouse.pitchRate.viabilityHelper')}
           />
         </div>
         <p className="mt-2 font-body text-sm text-ink">
-          Use approximately{' '}
-          <span className="font-semibold">{roundForDisplay(repitch.slurryMlNeeded, 0)} mL</span> of this harvested
-          slurry to deliver the target cell count above.
+          {t('brewhouse.pitchRate.useApprox', { amount: roundForDisplay(repitch.slurryMlNeeded, 0).toString() })}
         </p>
       </div>
     </SectionCard>
@@ -345,6 +349,7 @@ function HopWeightForTargetIbuCalculator({
   ibuFormula: IbuFormula;
   garetzExtras: GaretzExtras;
 }) {
+  const { t } = useLanguage();
   const [targetIbu, setTargetIbu] = useState(40);
   const [alphaAcidPercent, setAlphaAcidPercent] = useState(12);
   const [boilTimeMinutes, setBoilTimeMinutes] = useState(60);
@@ -361,40 +366,41 @@ function HopWeightForTargetIbuCalculator({
 
   return (
     <div className="rounded-md border border-teal-300 bg-teal-100/40 p-3">
-      <h4 className="font-body text-sm font-semibold text-teal-900">Hop Weight For a Target IBU</h4>
+      <h4 className="font-body text-sm font-semibold text-teal-900">{t('brewhouse.hopTarget.title')}</h4>
       <p className="mt-1 font-body text-xs text-ink/70">
-        Uses the wort gravity and batch volume from above.
+        {t('brewhouse.hopTarget.usesAbove')}
       </p>
       <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <NumberField label="Target IBU" value={targetIbu} step={1} onChange={setTargetIbu} />
-        <NumberField label="Alpha Acid" unit="%" value={alphaAcidPercent} step={0.1} onChange={setAlphaAcidPercent} />
-        <NumberField label="Boil Time" unit="min" value={boilTimeMinutes} step={1} onChange={setBoilTimeMinutes} />
+        <NumberField label={t('brewhouse.hopTarget.targetIbu')} value={targetIbu} step={1} onChange={setTargetIbu} />
+        <NumberField label={t('brewhouse.hopTarget.alphaAcid')} unit="%" value={alphaAcidPercent} step={0.1} onChange={setAlphaAcidPercent} />
+        <NumberField label={t('brewhouse.hopTarget.boilTime')} unit="min" value={boilTimeMinutes} step={1} onChange={setBoilTimeMinutes} />
       </div>
       <p className="mt-2 font-body text-sm text-ink">
-        Add <span className="font-semibold">{roundForDisplay(grams, 1)} g</span> of this hop at {boilTimeMinutes} min.
+        {t('brewhouse.hopTarget.addResult', { grams: roundForDisplay(grams, 1).toString(), minutes: boilTimeMinutes.toString() })}
       </p>
     </div>
   );
 }
 
 function DryHopCalculator({ batchVolumeL }: { batchVolumeL: number }) {
+  const { t } = useLanguage();
   const [rateGPerL, setRateGPerL] = useState(2.5);
 
   const grams = calculateDryHopWeight(rateGPerL, batchVolumeL);
 
   return (
     <div className="rounded-md border border-teal-300 bg-teal-100/40 p-3">
-      <h4 className="font-body text-sm font-semibold text-teal-900">Dry Hop / Whirlpool Addition</h4>
+      <h4 className="font-body text-sm font-semibold text-teal-900">{t('brewhouse.dryHop.title')}</h4>
       <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <NumberField
-          label="Rate"
+          label={t('brewhouse.dryHop.rate')}
           unit="g/L"
           value={rateGPerL}
           step={0.1}
           onChange={setRateGPerL}
-          helperText="Typical 1-2 g/L subtle, 5-8+ g/L for heavily dry-hopped styles."
+          helperText={t('brewhouse.dryHop.rateHelper')}
         />
-        <ResultCard title="Hop Weight Needed" value={roundForDisplay(grams, 1).toString()} unit="g" />
+        <ResultCard title={t('brewhouse.dryHop.weightNeeded')} value={roundForDisplay(grams, 1).toString()} unit="g" />
       </div>
     </div>
   );
@@ -424,6 +430,7 @@ function IbuCalculator({
   | 'garetzExtras'
   | 'onGaretzExtrasChange'
 >) {
+  const { t } = useLanguage();
   const result = calculateIbu(hopAdditions, wortGravitySg, batchVolumeL, ibuFormula, garetzExtras);
   const formulaLabel = IBU_FORMULAS.find((f) => f.id === ibuFormula)?.label ?? 'Tinseth';
 
@@ -443,10 +450,9 @@ function IbuCalculator({
   };
 
   return (
-    <SectionCard title={`IBU (${formulaLabel})`}>
+    <SectionCard title={t('brewhouse.ibu.title', { formula: formulaLabel })}>
       <p className="-mt-2 font-body text-xs text-ink/60">
-        Batch volume, wort gravity, hop schedule, and IBU formula are all shared with the BJCP Style Check tab and
-        Home.
+        {t('brewhouse.ibu.sharedNote')}
       </p>
       <IbuFormulaSelector
         formula={ibuFormula}
@@ -455,15 +461,15 @@ function IbuCalculator({
         onGaretzExtrasChange={onGaretzExtrasChange}
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <NumberField label="Wort Gravity (SG)" value={wortGravitySg} step={0.001} onChange={onWortGravityChange} />
-        <NumberField label="Batch Volume" unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
+        <NumberField label={t('brewhouse.ibu.wortGravity')} value={wortGravitySg} step={0.001} onChange={onWortGravityChange} />
+        <NumberField label={t('brewhouse.ibu.batchVolume')} unit="L" value={batchVolumeL} step={1} onChange={onBatchVolumeChange} />
       </div>
       <div className="flex flex-col gap-2">
         {hopAdditions.map((row, index) => (
           <div key={index} className="flex flex-col gap-3 rounded-md border-2 border-amber-200 bg-amber-50/40 p-2 sm:border-0 sm:bg-transparent sm:p-0">
             <SearchableSelect
-              label="Quick-fill from common hop varieties (optional)"
-              placeholder="Search hop varieties..."
+              label={t('brewhouse.ibu.quickFillHop')}
+              placeholder={t('brewhouse.ibu.searchHopPlaceholder')}
               value={HOP_VARIETIES.find((h) => h.name === row.name)?.id ?? ''}
               options={HOP_VARIETIES.map((hop) => ({ id: hop.id, label: `${hop.name} (~${hop.alphaAcidPercent}% AA)` }))}
               onChange={(id) => {
@@ -472,31 +478,31 @@ function IbuCalculator({
               }}
             />
             <p className="-mt-1.5 font-body text-xs font-semibold text-amber-700/80">
-              Not in the list? Just type any hop name, alpha acid, weight, and boil time directly below.
+              {t('brewhouse.ibu.notInListHop')}
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
             <Input
-              label="Hop"
+              label={t('brewhouse.ibu.hopLabel')}
               value={row.name}
               onChange={(value) => updateRow(index, { name: value })}
-              placeholder="Type any hop name..."
+              placeholder={t('brewhouse.ibu.hopPlaceholder')}
             />
             <NumberField
-              label="Alpha Acid"
+              label={t('brewhouse.ibu.alphaAcid')}
               unit="%"
               value={row.alphaAcidPercent}
               step={0.1}
               onChange={(value) => updateRow(index, { alphaAcidPercent: value })}
             />
             <NumberField
-              label="Weight"
+              label={t('brewhouse.ibu.weight')}
               unit="g"
               value={row.weightG}
               step={1}
               onChange={(value) => updateRow(index, { weightG: value })}
             />
             <NumberField
-              label="Boil Time"
+              label={t('brewhouse.ibu.boilTime')}
               unit="min"
               value={row.boilTimeMinutes}
               step={1}
@@ -512,11 +518,11 @@ function IbuCalculator({
           }
           className="min-h-[44px] self-start rounded-md bg-teal-700 px-4 py-2 font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800"
         >
-          + Add Hop
+          {t('brewhouse.ibu.addHop')}
         </button>
       </div>
       <div className={`rounded-lg transition-shadow duration-500 ${justChangedFormula ? 'ring-2 ring-teal-400' : ''}`}>
-        <ResultCard title="Total IBU" value={roundForDisplay(result.totalIbu, 1).toString()} />
+        <ResultCard title={t('brewhouse.ibu.totalIbu')} value={roundForDisplay(result.totalIbu, 1).toString()} />
       </div>
 
       <HopWeightForTargetIbuCalculator
@@ -531,14 +537,14 @@ function IbuCalculator({
 }
 
 function SrmColorCalculator({ grainBill, batchVolumeL }: { grainBill: GrainBillItem[]; batchVolumeL: number }) {
+  const { t } = useLanguage();
   const srm = calculateSrm(grainBill, batchVolumeL);
   const hasGrain = grainBill.some((row) => row.weightKg > 0);
 
   return (
-    <SectionCard title="Beer Color (SRM)">
+    <SectionCard title={t('brewhouse.srm.title')}>
       <p className="-mt-2 font-body text-xs text-ink/60">
-        Predicted from the Grain Bill (Water Report tab) and batch volume via the Morey equation -- most accurate
-        under ~50 SRM. Add grains there to see a prediction here.
+        {t('brewhouse.srm.description')}
       </p>
       <div className="flex items-center gap-4">
         <div
@@ -546,7 +552,7 @@ function SrmColorCalculator({ grainBill, batchVolumeL }: { grainBill: GrainBillI
           className="h-16 w-16 flex-shrink-0 rounded-full border-2 border-amber-200 shadow-inner"
           style={{ backgroundColor: hasGrain ? srmToApproxHex(srm) : '#eef1f4' }}
         />
-        <ResultCard title="Estimated Color" value={hasGrain ? roundForDisplay(srm, 1).toString() : '--'} unit="SRM" />
+        <ResultCard title={t('brewhouse.srm.estimatedColor')} value={hasGrain ? roundForDisplay(srm, 1).toString() : '--'} unit="SRM" />
       </div>
     </SectionCard>
   );
@@ -569,28 +575,27 @@ export function BrewhouseCalculatorsPanel({
   garetzExtras,
   onGaretzExtrasChange,
 }: SharedRecipeProps) {
+  const { t } = useLanguage();
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-display text-xl font-bold text-ink">Brewhouse Calculators</h2>
+      <h2 className="font-display text-xl font-bold text-ink">{t('brewhouse.title')}</h2>
       <p className="font-body text-sm text-amber-800">
-        Day-to-day production math: gravity/ABV, efficiency, carbonation, pitch rate, bitterness, and color. OG,
-        FG, batch volume, hop schedule, and grain bill are all shared with the Home overview and BJCP Style
-        Check tabs.
+        {t('brewhouse.tagline')}
       </p>
       <TutorialCallout
-        title="How to use Brewhouse Calculators"
+        title={t('brewhouse.tutorial.title')}
         steps={[
           {
-            lead: '1. Cards are ordered by brew-day timing.',
-            body: 'Efficiency and gravity corrections happen at mash-out, IBU and color during the boil, pitch rate at pitching, OG/FG tracking through fermentation, and priming/carbonation only at packaging -- scroll in order for a real brew day.',
+            lead: t('brewhouse.tutorial.step1.lead'),
+            body: t('brewhouse.tutorial.step1.body'),
           },
           {
-            lead: '2. Quick-fill hops and yeast, or type your own.',
-            body: 'Every preset dropdown (hop varieties, yeast strains) is optional -- anything not listed can be typed directly into the field below it.',
+            lead: t('brewhouse.tutorial.step2.lead'),
+            body: t('brewhouse.tutorial.step2.body'),
           },
           {
-            lead: '3. OG, FG, batch volume, hops, and grain bill are shared.',
-            body: 'Changes here show up on Home, BJCP Style Check, and the Beer Color card -- no need to re-enter the same numbers on every tab.',
+            lead: t('brewhouse.tutorial.step3.lead'),
+            body: t('brewhouse.tutorial.step3.body'),
           },
         ]}
       />

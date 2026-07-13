@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 export interface SearchableSelectOption {
   id: string;
@@ -16,6 +17,7 @@ interface SearchableSelectProps {
 }
 
 export function SearchableSelect({ label, options, value, onChange, placeholder }: SearchableSelectProps) {
+  const { t } = useLanguage();
   const inputId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -77,7 +79,7 @@ export function SearchableSelect({ label, options, value, onChange, placeholder 
             </span>
           ) : null}
           <span className={`truncate ${selected ? '' : 'text-ink/50'}`}>
-            {selected ? selected.label : placeholder ?? 'Select...'}
+            {selected ? selected.label : placeholder ?? t('sharedUi.searchableSelect.selectPlaceholder')}
           </span>
         </span>
         <span aria-hidden="true" className="ml-2 flex-shrink-0 text-amber-700">
@@ -92,12 +94,12 @@ export function SearchableSelect({ label, options, value, onChange, placeholder 
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search..."
+            placeholder={t('sharedUi.searchableSelect.searchPlaceholder')}
             className="w-full border-b border-amber-100 px-3 py-2 text-base text-ink outline-none"
           />
           <ul className="max-h-60 overflow-y-auto">
             {filteredOptions.length === 0 ? (
-              <li className="px-3 py-2 font-body text-sm text-ink/60">No matches.</li>
+              <li className="px-3 py-2 font-body text-sm text-ink/60">{t('sharedUi.searchableSelect.noMatches')}</li>
             ) : (
               filteredOptions.map((opt) => (
                 <li key={opt.id}>

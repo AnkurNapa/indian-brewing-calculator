@@ -9,6 +9,7 @@ import { NumberField } from '@/components/ui/NumberField';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { GravityField } from '@/components/ui/GravityField';
 import { roundForDisplay } from '@/lib/units';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface GrainBillEditorProps {
   grainBill: GrainBillItem[];
@@ -24,13 +25,13 @@ function emptyRow(): GrainBillItem {
   return { name: '', weightKg: 0, colorLovibond: 2 };
 }
 
-const MALT_CATEGORY_OPTIONS: { id: MaltCategory | ''; label: string }[] = [
-  { id: '', label: 'Auto (by color)' },
-  { id: 'base', label: 'Base' },
-  { id: 'wheatOrOther', label: 'Wheat / Other Base' },
-  { id: 'crystal', label: 'Crystal / Caramel' },
-  { id: 'roasted', label: 'Roasted / Dark' },
-  { id: 'acidulated', label: 'Acidulated' },
+const MALT_CATEGORY_OPTION_KEYS = [
+  { id: '' as const, labelKey: 'mashAdjustment.maltCategory.auto' as const },
+  { id: 'base' as const, labelKey: 'mashAdjustment.maltCategory.base' as const },
+  { id: 'wheatOrOther' as const, labelKey: 'mashAdjustment.maltCategory.wheatOrOther' as const },
+  { id: 'crystal' as const, labelKey: 'mashAdjustment.maltCategory.crystal' as const },
+  { id: 'roasted' as const, labelKey: 'mashAdjustment.maltCategory.roasted' as const },
+  { id: 'acidulated' as const, labelKey: 'mashAdjustment.maltCategory.acidulated' as const },
 ];
 
 type BillMode = 'weight' | 'percent';
@@ -44,7 +45,9 @@ export function GrainBillEditor({
   assumedEfficiencyPercent,
   onAssumedEfficiencyChange,
 }: GrainBillEditorProps) {
+  const { t } = useLanguage();
   const [mode, setMode] = useState<BillMode>('weight');
+  const maltCategoryOptions = MALT_CATEGORY_OPTION_KEYS.map((opt) => ({ id: opt.id, label: t(opt.labelKey) }));
 
   const updateRow = (index: number, patch: Partial<GrainBillItem>) => {
     const next = grainBill.map((row, i) => (i === index ? { ...row, ...patch } : row));
@@ -100,23 +103,23 @@ export function GrainBillEditor({
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-xl font-bold text-ink">Grain Bill</h2>
+        <h2 className="font-display text-xl font-bold text-ink">{t('mashAdjustment.grainBill.heading')}</h2>
         <button
           type="button"
           onClick={addRow}
           className="min-h-[44px] rounded-md bg-teal-700 px-4 py-2 font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800 active:bg-teal-900"
         >
-          + Add Grain
+          {t('mashAdjustment.grainBill.addGrain')}
         </button>
       </div>
 
       <div className="flex items-center justify-between gap-2 rounded-lg border-2 border-amber-200 bg-amber-50/40 p-3">
-        <span className="font-body text-sm font-medium text-amber-900">Enter grain bill by</span>
+        <span className="font-body text-sm font-medium text-amber-900">{t('mashAdjustment.grainBill.enterBy')}</span>
         <div className="flex flex-shrink-0 gap-0.5 rounded-full border border-amber-200 bg-white p-0.5">
           {(
             [
-              { id: 'weight', label: 'Weight' },
-              { id: 'percent', label: '% of Bill' },
+              { id: 'weight', label: t('mashAdjustment.grainBill.modeWeight') },
+              { id: 'percent', label: t('mashAdjustment.grainBill.modePercent') },
             ] as { id: BillMode; label: string }[]
           ).map((opt) => (
             <button
@@ -136,13 +139,12 @@ export function GrainBillEditor({
       {mode === 'percent' ? (
         <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-3">
           <p className="font-body text-xs text-ink/70">
-            Set your target OG and each malt&apos;s share of the bill (base vs. specialty) -- weights are solved
-            for you using batch volume ({batchVolumeL} L) and assumed efficiency.
+            {t('mashAdjustment.grainBill.percentModeHelper', { batchVolume: batchVolumeL })}
           </p>
           <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <GravityField label="Target OG" value={targetOgSg} onChange={onTargetOgChange} />
+            <GravityField label={t('mashAdjustment.targetOg.label')} value={targetOgSg} onChange={onTargetOgChange} />
             <NumberField
-              label="Assumed Efficiency"
+              label={t('mashAdjustment.assumedEfficiency.label')}
               unit="%"
               value={assumedEfficiencyPercent}
               step={1}
@@ -156,8 +158,13 @@ export function GrainBillEditor({
             }`}
           >
             <span>
-              {percentIsBalanced ? '✓' : '⚠'} Total: {roundForDisplay(percentSum, 1)}%{' '}
-              {percentIsBalanced ? '(balanced)' : '(should sum to 100%)'}
+              {t('mashAdjustment.percentTotal.label', {
+                status: percentIsBalanced ? '✓' : '⚠',
+                percent: roundForDisplay(percentSum, 1),
+                balanceNote: percentIsBalanced
+                  ? t('mashAdjustment.percentTotal.balanced')
+                  : t('mashAdjustment.percentTotal.shouldSum'),
+              })}
             </span>
             {!percentIsBalanced && percentSum > 0 ? (
               <button
@@ -165,7 +172,7 @@ export function GrainBillEditor({
                 onClick={normalizeToHundred}
                 className="min-h-[32px] flex-shrink-0 rounded-full border border-amber-400 bg-white px-3 font-body text-xs font-semibold text-amber-800 hover:bg-amber-100"
               >
-                Normalize to 100%
+                {t('mashAdjustment.normalizeTo100')}
               </button>
             ) : null}
           </div>
@@ -174,7 +181,7 @@ export function GrainBillEditor({
 
       {grainBill.length === 0 ? (
         <p className="rounded-md border-2 border-dashed border-amber-300 bg-amber-50 p-4 text-center font-body text-sm text-amber-800">
-          No grains added yet. Add at least one grain to get a mash pH prediction.
+          {t('mashAdjustment.grainBill.empty')}
         </p>
       ) : null}
 
@@ -185,8 +192,8 @@ export function GrainBillEditor({
             className="flex flex-col gap-3 rounded-lg border-2 border-amber-200 bg-amber-50/40 p-3"
           >
             <SearchableSelect
-              label="Quick-fill from Weyermann malts (optional)"
-              placeholder="Search Weyermann malts..."
+              label={t('mashAdjustment.grainBill.quickFillLabel')}
+              placeholder={t('mashAdjustment.grainBill.quickFillPlaceholder')}
               value={WEYERMANN_MALTS.find((m) => m.name === row.name)?.id ?? ''}
               options={WEYERMANN_MALTS.map((malt) => ({ id: malt.id, label: malt.name }))}
               onChange={(id) => {
@@ -202,18 +209,18 @@ export function GrainBillEditor({
               }}
             />
             <p className="-mt-1.5 font-body text-xs font-semibold text-amber-700/80">
-              Not in the list? Just type any grain name, weight, and color directly below.
+              {t('mashAdjustment.grainBill.notInListHint')}
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-[2fr_1fr_1fr_1.4fr] sm:items-end">
             <Input
-              label="Grain name"
+              label={t('mashAdjustment.grainBill.grainName.label')}
               value={row.name}
               onChange={(value) => updateRow(index, { name: value })}
-              placeholder="Type any grain name..."
+              placeholder={t('mashAdjustment.grainBill.grainName.placeholder')}
             />
             {mode === 'weight' ? (
               <NumberField
-                label="Weight"
+                label={t('mashAdjustment.grainBill.weight.label')}
                 unit="kg"
                 value={row.weightKg}
                 step={0.1}
@@ -221,7 +228,7 @@ export function GrainBillEditor({
               />
             ) : (
               <NumberField
-                label="% of Bill"
+                label={t('mashAdjustment.grainBill.percentOfBill.label')}
                 unit="%"
                 value={row.percentOfBill ?? 0}
                 step={1}
@@ -230,7 +237,7 @@ export function GrainBillEditor({
               />
             )}
             <NumberField
-              label="Color"
+              label={t('mashAdjustment.grainBill.color.label')}
               unit="°L"
               value={row.colorLovibond}
               step={0.5}
@@ -238,18 +245,22 @@ export function GrainBillEditor({
             />
             <SearchableSelect
               label={
-                !row.category ? `Malt Type (${classifyMaltCategory(row.colorLovibond)})` : 'Malt Type'
+                !row.category
+                  ? t('mashAdjustment.grainBill.maltType.autoLabel', {
+                      category: classifyMaltCategory(row.colorLovibond),
+                    })
+                  : t('mashAdjustment.grainBill.maltType.label')
               }
               value={row.category ?? ''}
               onChange={(id) =>
                 updateRow(index, { category: (id || undefined) as MaltCategory | undefined })
               }
-              options={MALT_CATEGORY_OPTIONS.map((opt) => ({ id: opt.id, label: opt.label }))}
+              options={maltCategoryOptions}
             />
             </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
             <NumberField
-              label="Extract Potential (optional)"
+              label={t('mashAdjustment.grainBill.extractPotential.label')}
               unit="SG"
               value={row.potentialSg ?? 0}
               step={0.001}
@@ -258,15 +269,15 @@ export function GrainBillEditor({
                 const next = grainBill.map((r, i) => (i === index ? { ...r, ...patch } : r));
                 onChange(mode === 'percent' ? resolveWeightsFromPercent(next) : next);
               }}
-              helperText="Maltster spec, typically 1.026-1.038. Used for OG planning."
+              helperText={t('mashAdjustment.grainBill.extractPotential.helper')}
             />
             <button
               type="button"
               onClick={() => removeRow(index)}
-              aria-label={`Remove ${row.name || 'grain'} row`}
+              aria-label={t('mashAdjustment.grainBill.removeRowAria', { grainName: row.name || 'grain' })}
               className="min-h-[44px] rounded-md border-2 border-red-300 px-4 py-2 font-body text-sm font-semibold text-red-700 hover:bg-red-50 active:bg-red-100"
             >
-              Remove
+              {t('mashAdjustment.grainBill.remove')}
             </button>
             </div>
           </div>
@@ -274,7 +285,7 @@ export function GrainBillEditor({
       </div>
 
       <p className="font-body text-sm text-amber-800">
-        Total grist weight: <span className="font-semibold">{totalWeightKg.toFixed(2)} kg</span>
+        {t('mashAdjustment.grainBill.totalGristWeight')} <span className="font-semibold">{totalWeightKg.toFixed(2)} kg</span>
       </p>
     </section>
   );

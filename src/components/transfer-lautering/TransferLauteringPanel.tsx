@@ -8,12 +8,14 @@ import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { roundForDisplay } from '@/lib/units';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface TransferLauteringPanelProps {
   grainBill: GrainBillItem[];
 }
 
 function TransferTimeCalculator() {
+  const { t } = useLanguage();
   const [volumeL, setVolumeL] = useState(20);
   const [flowRateLPerMin, setFlowRateLPerMin] = useState(4);
 
@@ -22,14 +24,20 @@ function TransferTimeCalculator() {
 
   return (
     <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
-      <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">Transfer Time</h3>
-      <p className="mt-1 font-body text-sm text-ink">
-        Mash-to-lauter, lauter-to-kettle, or kettle-to-fermenter transfer timing.
-      </p>
+      <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">
+        {t('transferLautering.transferTime.heading')}
+      </h3>
+      <p className="mt-1 font-body text-sm text-ink">{t('transferLautering.transferTime.description')}</p>
       <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <NumberField label="Volume to Transfer" unit="L" value={volumeL} step={1} onChange={setVolumeL} />
         <NumberField
-          label="Pump / Flow Rate"
+          label={t('transferLautering.transferTime.volume.label')}
+          unit="L"
+          value={volumeL}
+          step={1}
+          onChange={setVolumeL}
+        />
+        <NumberField
+          label={t('transferLautering.transferTime.flowRate.label')}
           unit="L/min"
           value={flowRateLPerMin}
           step={0.1}
@@ -37,9 +45,13 @@ function TransferTimeCalculator() {
         />
       </div>
       <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <ResultCard title="Estimated Transfer Time" value={roundForDisplay(timeMinutes, 1).toString()} unit="min" />
         <ResultCard
-          title="Flow Rate for a 10-min Transfer"
+          title={t('transferLautering.transferTime.result.estimatedTime')}
+          value={roundForDisplay(timeMinutes, 1).toString()}
+          unit="min"
+        />
+        <ResultCard
+          title={t('transferLautering.transferTime.result.flowRateForTenMin')}
           value={roundForDisplay(requiredFlowRateForTenMin, 2).toString()}
           unit="L/min"
         />
@@ -49,6 +61,7 @@ function TransferTimeCalculator() {
 }
 
 function GrainBedDepthCalculator({ totalGrainWeightKg }: { totalGrainWeightKg: number }) {
+  const { t } = useLanguage();
   const [lauterTunDiameterCm, setLauterTunDiameterCm] = useState(50);
   const [bedVolumeLPerKg, setBedVolumeLPerKg] = useState(DEFAULT_BED_VOLUME_L_PER_KG);
 
@@ -57,38 +70,39 @@ function GrainBedDepthCalculator({ totalGrainWeightKg }: { totalGrainWeightKg: n
   return (
     <div className="rounded-lg border-2 border-amber-300 bg-amber-50/60 p-4">
       <h3 className="font-display text-sm font-bold uppercase tracking-wide text-amber-900">
-        Grain Bed Depth (Stuck-Mash Check)
+        {t('transferLautering.grainBedDepth.heading')}
       </h3>
       <p className="mt-1 font-body text-sm text-ink">
-        Using grist weight from the Grain Bill tab: <span className="font-semibold">{totalGrainWeightKg.toFixed(2)} kg</span>
+        {t('transferLautering.grainBedDepth.grainWeightNote')}{' '}
+        <span className="font-semibold">{totalGrainWeightKg.toFixed(2)} kg</span>
       </p>
       <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField
-          label="Lauter Tun Diameter"
+          label={t('transferLautering.grainBedDepth.diameter.label')}
           unit="cm"
           value={lauterTunDiameterCm}
           step={1}
           onChange={setLauterTunDiameterCm}
         />
         <NumberField
-          label="Bed Volume Factor"
+          label={t('transferLautering.grainBedDepth.bedVolumeFactor.label')}
           unit="L/kg"
           value={bedVolumeLPerKg}
           step={0.05}
           onChange={setBedVolumeLPerKg}
-          helperText="Typical 0.65-1.0 L/kg -- calibrate to your crush/malt."
+          helperText={t('transferLautering.grainBedDepth.bedVolumeFactor.helperText')}
         />
       </div>
       <div className="mt-3">
         <ResultCard
-          title="Estimated Bed Depth"
+          title={t('transferLautering.grainBedDepth.result.title')}
           value={roundForDisplay(result.bedDepthCm, 1).toString()}
           unit="cm"
           tone={result.stuckMashRisk ? 'warning' : 'default'}
         >
           {result.stuckMashRisk
             ? result.notes.join(' ')
-            : 'Within the typical safe range for stuck-mash risk.'}
+            : t('transferLautering.grainBedDepth.result.safeRange')}
         </ResultCard>
       </div>
     </div>
@@ -96,6 +110,7 @@ function GrainBedDepthCalculator({ totalGrainWeightKg }: { totalGrainWeightKg: n
 }
 
 function RunoffCutoffAdvisor() {
+  const { t } = useLanguage();
   const [currentRunningsSg, setCurrentRunningsSg] = useState(1.012);
   const [cutoffSg, setCutoffSg] = useState(1.008);
 
@@ -104,25 +119,32 @@ function RunoffCutoffAdvisor() {
   return (
     <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
       <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">
-        Runoff / Sparge Cutoff
+        {t('transferLautering.runoffCutoff.heading')}
       </h3>
-      <p className="mt-1 font-body text-sm text-ink">
-        Check current runnings gravity against your stop-collecting threshold to avoid tannin extraction.
-      </p>
+      <p className="mt-1 font-body text-sm text-ink">{t('transferLautering.runoffCutoff.description')}</p>
       <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField
-          label="Current Runnings Gravity"
+          label={t('transferLautering.runoffCutoff.currentGravity.label')}
           value={currentRunningsSg}
           step={0.001}
           onChange={setCurrentRunningsSg}
         />
-        <NumberField label="Cutoff Gravity" value={cutoffSg} step={0.001} onChange={setCutoffSg} />
+        <NumberField
+          label={t('transferLautering.runoffCutoff.cutoffGravity.label')}
+          value={cutoffSg}
+          step={0.001}
+          onChange={setCutoffSg}
+        />
       </div>
       <div className="mt-3">
         <ResultCard
-          title={result.shouldContinueCollecting ? 'Keep Collecting' : 'Stop Collecting'}
+          title={
+            result.shouldContinueCollecting
+              ? t('transferLautering.runoffCutoff.result.keepCollecting')
+              : t('transferLautering.runoffCutoff.result.stopCollecting')
+          }
           value={roundForDisplay(result.gravityPointsAboveCutoff, 1).toString()}
-          unit="pts above cutoff"
+          unit={t('transferLautering.runoffCutoff.result.unit')}
           tone={result.shouldContinueCollecting ? 'success' : 'warning'}
         >
           {result.note}
@@ -133,6 +155,7 @@ function RunoffCutoffAdvisor() {
 }
 
 export function TransferLauteringPanel({ grainBill }: TransferLauteringPanelProps) {
+  const { t } = useLanguage();
   const totalGrainWeightKg = useMemo(
     () => grainBill.reduce((sum, row) => sum + (Number.isFinite(row.weightKg) ? Math.max(0, row.weightKg) : 0), 0),
     [grainBill],
@@ -140,24 +163,22 @@ export function TransferLauteringPanel({ grainBill }: TransferLauteringPanelProp
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-display text-xl font-bold text-ink">Mash Transfer & Lautering</h2>
-      <p className="font-body text-sm text-amber-800">
-        Quick on-the-go checks for transfer timing, stuck-mash risk, and runoff cutoff during brew day.
-      </p>
+      <h2 className="font-display text-xl font-bold text-ink">{t('transferLautering.heading')}</h2>
+      <p className="font-body text-sm text-amber-800">{t('transferLautering.description')}</p>
       <TutorialCallout
-        title="How to use Transfer & Lautering"
+        title={t('transferLautering.tutorial.title')}
         steps={[
           {
-            lead: '1. Transfer Time',
-            body: 'is a general timing tool -- use it for any pumped transfer (mash to lauter, lauter to kettle, kettle to fermenter), not just lautering specifically.',
+            lead: t('transferLautering.tutorial.step1.lead'),
+            body: t('transferLautering.tutorial.step1.body'),
           },
           {
-            lead: '2. Grain Bed Depth',
-            body: 'flags stuck-mash risk from your lauter tun diameter and grist weight (pulled from the Grain Bill tab) -- a deep, narrow bed is the classic stuck-sparge setup.',
+            lead: t('transferLautering.tutorial.step2.lead'),
+            body: t('transferLautering.tutorial.step2.body'),
           },
           {
-            lead: '3. Runoff / Sparge Cutoff',
-            body: 'tells you when to stop collecting wort: enter your current runnings gravity and your cutoff threshold (commonly ~1.008-1.010) to avoid extracting tannins from the grain husks.',
+            lead: t('transferLautering.tutorial.step3.lead'),
+            body: t('transferLautering.tutorial.step3.body'),
           },
         ]}
       />

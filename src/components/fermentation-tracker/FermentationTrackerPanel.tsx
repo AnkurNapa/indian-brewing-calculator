@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { useShareText } from '@/hooks/useShareText';
 import { FermentationBatch, FermentationEntry, calculateFermentationStats, sortEntriesByTime } from '@/lib/fermentationTracker';
 import { buildFermentationShareText } from '@/lib/fermentationShareText';
@@ -36,38 +37,44 @@ function fromDatetimeLocalValue(value: string): number {
   return Number.isFinite(ms) ? ms : Date.now();
 }
 
-const TUTORIAL_STEPS = [
-  {
-    lead: '1. Create a batch.',
-    body: (
-      <>
-        Type a name (e.g. &quot;IPA Batch 12&quot;) under Batches and tap{' '}
-        <span className="font-semibold">+ Add Batch</span>. It becomes the active batch automatically.
-      </>
-    ),
-  },
-  {
-    lead: '2. Log your first reading at pitch.',
-    body: (
-      <>
-        Set the Date/Time, enter your original gravity and pitching temperature, then tap{' '}
-        <span className="font-semibold">+ Log Reading</span>. This becomes your Original Gravity.
-      </>
-    ),
-  },
-  {
-    lead: '3. Keep logging daily (or twice daily).',
-    body: 'Each new reading updates Current Gravity, ABV So Far, and Apparent Attenuation automatically -- no manual math.',
-  },
-  {
-    lead: '4. Watch for "likely finished".',
-    body: 'Once gravity holds steady for 24h+, the Apparent Attenuation card turns green with a finished note -- that\'s your cue to check for diacetyl/off-flavors before packaging.',
-  },
-  {
-    lead: '5. Switch or delete batches',
-    body: 'any time using the pills under Batches. Everything is saved to this device\'s browser storage only (see footer).',
-  },
-];
+function buildTutorialSteps(t: ReturnType<typeof useLanguage>['t']) {
+  const [bodyPrefix1, bodySuffix1] = t('fermentationTracker.tutorial.step1.body').split('{addBatch}');
+  const [bodyPrefix2, bodySuffix2] = t('fermentationTracker.tutorial.step2.body').split('{logReading}');
+  return [
+    {
+      lead: t('fermentationTracker.tutorial.step1.lead'),
+      body: (
+        <>
+          {bodyPrefix1}
+          <span className="font-semibold">{t('fermentationTracker.batches.add')}</span>
+          {bodySuffix1}
+        </>
+      ),
+    },
+    {
+      lead: t('fermentationTracker.tutorial.step2.lead'),
+      body: (
+        <>
+          {bodyPrefix2}
+          <span className="font-semibold">{t('fermentationTracker.reading.log')}</span>
+          {bodySuffix2}
+        </>
+      ),
+    },
+    {
+      lead: t('fermentationTracker.tutorial.step3.lead'),
+      body: t('fermentationTracker.tutorial.step3.body'),
+    },
+    {
+      lead: t('fermentationTracker.tutorial.step4.lead'),
+      body: t('fermentationTracker.tutorial.step4.body'),
+    },
+    {
+      lead: t('fermentationTracker.tutorial.step5.lead'),
+      body: t('fermentationTracker.tutorial.step5.body'),
+    },
+  ];
+}
 
 interface FermentationTrackerPanelProps {
   batches: FermentationBatch[];
@@ -75,6 +82,7 @@ interface FermentationTrackerPanelProps {
 }
 
 export function FermentationTrackerPanel({ batches, onBatchesChange: setBatches }: FermentationTrackerPanelProps) {
+  const { t } = useLanguage();
   const [activeBatchId, setActiveBatchId] = useState<string | null>(batches[0]?.id ?? null);
   const [newBatchName, setNewBatchName] = useState('');
 
@@ -96,6 +104,7 @@ export function FermentationTrackerPanel({ batches, onBatchesChange: setBatches 
 
   const stats = calculateFermentationStats(activeBatch?.entries ?? []);
   const entriesNewestFirst = activeBatch ? [...sortEntriesByTime(activeBatch.entries)].reverse() : [];
+  const tutorialSteps = useMemo(() => buildTutorialSteps(t), [t]);
 
   const createBatch = () => {
     const trimmed = newBatchName.trim();
@@ -138,19 +147,18 @@ export function FermentationTrackerPanel({ batches, onBatchesChange: setBatches 
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-display text-xl font-bold text-ink">Fermentation Tracker</h2>
-      <p className="font-body text-sm text-amber-800">
-        Log gravity/temperature readings on the go. Saved only in this phone&apos;s browser storage -- see the
-        footer privacy note.
-      </p>
+      <h2 className="font-display text-xl font-bold text-ink">{t('fermentationTracker.title')}</h2>
+      <p className="font-body text-sm text-amber-800">{t('fermentationTracker.intro')}</p>
 
-      <TutorialCallout title="How to use the Fermentation Tracker" steps={TUTORIAL_STEPS} />
+      <TutorialCallout title={t('fermentationTracker.tutorial.title')} steps={tutorialSteps} />
 
       <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
-        <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">Batches</h3>
+        <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">
+          {t('fermentationTracker.batches.title')}
+        </h3>
         <div className="mt-3 flex flex-col gap-3">
           {batches.length === 0 ? (
-            <p className="font-body text-sm text-ink">No batches yet -- create one below.</p>
+            <p className="font-body text-sm text-ink">{t('fermentationTracker.batches.empty')}</p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {batches.map((b) => (
@@ -169,23 +177,28 @@ export function FermentationTrackerPanel({ batches, onBatchesChange: setBatches 
                   <button
                     type="button"
                     onClick={() => deleteBatch(b.id)}
-                    aria-label={`Delete batch ${b.name}`}
+                    aria-label={t('fermentationTracker.batches.deleteLabel', { name: b.name })}
                     className="min-h-[44px] rounded-md border-2 border-red-300 px-2 py-2 text-xs font-semibold text-red-700 hover:bg-red-50"
                   >
-                    Delete
+                    {t('fermentationTracker.batches.delete')}
                   </button>
                 </div>
               ))}
             </div>
           )}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-[2fr_auto]">
-            <Input label="New Batch Name" value={newBatchName} onChange={setNewBatchName} placeholder="e.g. IPA Batch 12" />
+            <Input
+              label={t('fermentationTracker.batches.newNameLabel')}
+              value={newBatchName}
+              onChange={setNewBatchName}
+              placeholder={t('fermentationTracker.batches.newNamePlaceholder')}
+            />
             <button
               type="button"
               onClick={createBatch}
               className="min-h-[44px] self-end rounded-md bg-teal-700 px-4 py-2 font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800"
             >
-              + Add Batch
+              {t('fermentationTracker.batches.add')}
             </button>
           </div>
         </div>
@@ -195,11 +208,13 @@ export function FermentationTrackerPanel({ batches, onBatchesChange: setBatches 
         <>
           <div className="rounded-lg border-2 border-amber-300 bg-amber-50/60 p-4">
             <h3 className="font-display text-sm font-bold uppercase tracking-wide text-amber-900">
-              Add Reading -- {activeBatch.name}
+              {t('fermentationTracker.reading.title', { batchName: activeBatch.name })}
             </h3>
             <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <label className="flex flex-col gap-1">
-                <span className="font-body text-sm font-medium text-amber-900">Date / Time</span>
+                <span className="font-body text-sm font-medium text-amber-900">
+                  {t('fermentationTracker.reading.dateTime')}
+                </span>
                 <input
                   type="datetime-local"
                   value={newTimestampValue}
@@ -207,35 +222,47 @@ export function FermentationTrackerPanel({ batches, onBatchesChange: setBatches 
                   className="min-h-[44px] w-full rounded-md border-2 border-amber-200 bg-parchment px-3 py-2 text-base text-ink shadow-inner outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
                 />
               </label>
-              <GravityField label="Gravity" value={newGravity} onChange={setNewGravity} />
-              <NumberField label="Temperature" unit="°C" value={newTemp} step={0.5} onChange={setNewTemp} allowNegative />
-              <Input label="Note (optional)" value={newNote} onChange={setNewNote} placeholder="e.g. krausen dropping" />
+              <GravityField label={t('fermentationTracker.reading.gravity')} value={newGravity} onChange={setNewGravity} />
+              <NumberField
+                label={t('fermentationTracker.reading.temperature')}
+                unit="°C"
+                value={newTemp}
+                step={0.5}
+                onChange={setNewTemp}
+                allowNegative
+              />
+              <Input
+                label={t('fermentationTracker.reading.noteLabel')}
+                value={newNote}
+                onChange={setNewNote}
+                placeholder={t('fermentationTracker.reading.notePlaceholder')}
+              />
             </div>
             <button
               type="button"
               onClick={addEntry}
               className="mt-3 min-h-[44px] w-full rounded-md bg-teal-700 px-4 py-2 font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800 sm:w-auto"
             >
-              + Log Reading
+              {t('fermentationTracker.reading.log')}
             </button>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <ResultCard
-              title="Original Gravity"
+              title={t('fermentationTracker.stats.originalGravity')}
               value={stats.originalGravity !== null ? roundForDisplay(stats.originalGravity, 3).toString() : '--'}
             />
             <ResultCard
-              title="Current Gravity"
+              title={t('fermentationTracker.stats.currentGravity')}
               value={stats.currentGravity !== null ? roundForDisplay(stats.currentGravity, 3).toString() : '--'}
             />
             <ResultCard
-              title="ABV So Far"
+              title={t('fermentationTracker.stats.abvSoFar')}
               value={stats.abvSoFar !== null ? roundForDisplay(stats.abvSoFar, 2).toString() : '--'}
               unit="%"
             />
             <ResultCard
-              title="Apparent Attenuation"
+              title={t('fermentationTracker.stats.apparentAttenuation')}
               value={
                 stats.apparentAttenuationPercent !== null
                   ? roundForDisplay(stats.apparentAttenuationPercent, 1).toString()
@@ -244,7 +271,7 @@ export function FermentationTrackerPanel({ batches, onBatchesChange: setBatches 
               unit="%"
               tone={stats.likelyComplete ? 'success' : 'default'}
             >
-              {stats.likelyComplete ? 'Gravity stable for 24h+ -- likely finished.' : null}
+              {stats.likelyComplete ? t('fermentationTracker.stats.likelyFinished') : null}
             </ResultCard>
           </div>
 
@@ -255,22 +282,22 @@ export function FermentationTrackerPanel({ batches, onBatchesChange: setBatches 
               className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-md border-2 border-teal-300 px-4 py-2 font-body text-sm font-semibold text-teal-800 hover:bg-teal-50 sm:w-auto"
             >
               <ShareIcon className="h-4 w-4 flex-shrink-0" />
-              Share This Batch&apos;s Log
+              {t('fermentationTracker.share.button')}
             </button>
             <p className="mt-1 font-body text-xs text-amber-700" role="status" aria-live="polite">
               {shareStatus === 'shared'
-                ? 'Shared.'
+                ? t('fermentationTracker.share.shared')
                 : shareStatus === 'copied'
-                  ? 'Copied to clipboard -- paste into any app.'
+                  ? t('fermentationTracker.share.copied')
                   : shareStatus === 'error'
-                    ? 'Sharing not supported on this browser.'
+                    ? t('fermentationTracker.share.error')
                     : ''}
             </p>
           </div>
 
           <div className="flex flex-col gap-2">
             {entriesNewestFirst.length === 0 ? (
-              <p className="font-body text-sm text-amber-800">No readings logged yet.</p>
+              <p className="font-body text-sm text-amber-800">{t('fermentationTracker.entries.empty')}</p>
             ) : (
               entriesNewestFirst.map((entry) => (
                 <div
@@ -279,7 +306,10 @@ export function FermentationTrackerPanel({ batches, onBatchesChange: setBatches 
                 >
                   <div>
                     <p className="font-semibold text-ink">
-                      {roundForDisplay(entry.gravitySg, 3)} SG @ {entry.temperatureC}°C
+                      {t('fermentationTracker.entries.gravityAtTemp', {
+                        gravity: roundForDisplay(entry.gravitySg, 3),
+                        temp: entry.temperatureC,
+                      })}
                     </p>
                     <p className="text-xs text-amber-700">{formatTimestamp(entry.timestampMs)}</p>
                     {entry.note ? <p className="text-xs text-ink/70">{entry.note}</p> : null}
@@ -287,10 +317,10 @@ export function FermentationTrackerPanel({ batches, onBatchesChange: setBatches 
                   <button
                     type="button"
                     onClick={() => deleteEntry(entry.id)}
-                    aria-label="Delete reading"
+                    aria-label={t('fermentationTracker.entries.deleteLabel')}
                     className="min-h-[44px] rounded-md border-2 border-red-300 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-50"
                   >
-                    Delete
+                    {t('fermentationTracker.entries.delete')}
                   </button>
                 </div>
               ))
@@ -299,7 +329,7 @@ export function FermentationTrackerPanel({ batches, onBatchesChange: setBatches 
         </>
       ) : (
         <p className="rounded-md border-2 border-dashed border-amber-300 bg-amber-50 p-4 text-center font-body text-sm text-amber-800">
-          Select or create a batch above to start logging readings.
+          {t('fermentationTracker.noBatch.selectPrompt')}
         </p>
       )}
     </section>

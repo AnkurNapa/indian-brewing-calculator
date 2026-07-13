@@ -20,6 +20,7 @@ import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { OgEstimateCard } from '@/components/ui/OgEstimateCard';
 import { GrainBillEditor } from '@/components/grain-bill/GrainBillEditor';
 import { roundForDisplay } from '@/lib/units';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface MashAdjustmentPanelProps {
   sourceProfile: IonProfile;
@@ -48,6 +49,7 @@ export function MashAdjustmentPanel({
   ogSg,
   onOgChange,
 }: MashAdjustmentPanelProps) {
+  const { t } = useLanguage();
   const [targetMashPh, setTargetMashPh] = useState(5.4);
   const [acidId, setAcidId] = useState(ACID_TYPES[0].id);
 
@@ -93,45 +95,45 @@ export function MashAdjustmentPanel({
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-display text-xl font-bold text-ink">Mash Adjustment</h2>
+      <h2 className="font-display text-xl font-bold text-ink">{t('mashAdjustment.heading')}</h2>
 
       <TutorialCallout
-        title="How to use Mash Adjustment"
+        title={t('mashAdjustment.tutorial.title')}
         steps={[
           {
-            lead: '1. Set batch volume and target style.',
-            body: 'Batch volume is shared across the app; target style picks the salt-addition targets for Predicted Mash pH and Salt Additions below.',
+            lead: t('mashAdjustment.tutorial.step1.lead'),
+            body: t('mashAdjustment.tutorial.step1.body'),
           },
           {
-            lead: '2. Build your Grain Bill here.',
-            body: 'Enter each grain by weight, or switch to "% of Bill" to set a target OG and each malt\'s share -- weights are solved for you. This grist drives Predicted Mash pH below, and is shared with SRM color, Water Volumes, Style Check, and Home.',
+            lead: t('mashAdjustment.tutorial.step2.lead'),
+            body: t('mashAdjustment.tutorial.step2.body'),
           },
           {
-            lead: '3. Check Predicted Mash pH.',
-            body: 'Computed from your Water Report source water and the Grain Bill above.',
+            lead: t('mashAdjustment.tutorial.step3.lead'),
+            body: t('mashAdjustment.tutorial.step3.body'),
           },
           {
-            lead: '4. Add the suggested salts.',
-            body: 'These move your water toward the target style profile; dilution guidance appears automatically if salts alone can\'t reach the target.',
+            lead: t('mashAdjustment.tutorial.step4.lead'),
+            body: t('mashAdjustment.tutorial.step4.body'),
           },
           {
-            lead: '5. Dose acid only if needed.',
-            body: 'Set a Target Mash pH and pick an acid type -- the dose is calculated against your estimated mash water volume, not the full batch volume.',
+            lead: t('mashAdjustment.tutorial.step5.lead'),
+            body: t('mashAdjustment.tutorial.step5.body'),
           },
         ]}
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField
-          label="Batch Volume"
+          label={t('summary.batchVolume')}
           unit="L"
           value={batchVolumeL}
           step={1}
           onChange={onBatchVolumeChange}
-          helperText="Enter commercial volumes in HL x 100 to convert to L."
+          helperText={t('mashAdjustment.batchVolume.helper')}
         />
         <SearchableSelect
-          label="Target Style Profile"
+          label={t('mashAdjustment.targetStyleProfile.label')}
           value={targetStyleId}
           onChange={onTargetStyleChange}
           options={TARGET_STYLE_PROFILES.map((style) => ({ id: style.id, label: style.name }))}
@@ -156,7 +158,7 @@ export function MashAdjustmentPanel({
       />
 
       <ResultCard
-        title="Predicted Mash pH"
+        title={t('mashAdjustment.predictedMashPh.title')}
         value={roundForDisplay(mashPhResult.predictedPh, 2).toString()}
         tone={mashPhResult.isFallback ? 'warning' : 'default'}
       >
@@ -165,16 +167,16 @@ export function MashAdjustmentPanel({
 
       <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
         <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">
-          Salt Additions ({targetStyle.name})
+          {t('mashAdjustment.saltAdditions.title', { style: targetStyle.name })}
         </h3>
         {saltResult.infeasible ? (
           <p className="mt-2 text-sm text-amber-800">
-            Some targets are not achievable by salt addition alone -- see notes below.
+            {t('mashAdjustment.saltAdditions.infeasibleWarning')}
           </p>
         ) : null}
         <ul className="mt-2 flex flex-col gap-1 font-body text-sm text-ink">
           {saltResult.doses.length === 0 ? (
-            <li>No salt additions needed for this target.</li>
+            <li>{t('mashAdjustment.saltAdditions.none')}</li>
           ) : (
             saltResult.doses.map((dose) => (
               <li key={dose.saltId} className="flex justify-between border-b border-teal-100 py-1">
@@ -196,14 +198,14 @@ export function MashAdjustmentPanel({
         {dilutionResult && !dilutionResult.noDilutionNeeded ? (
           <div className="mt-3 rounded-md border border-teal-300 bg-teal-100/60 p-3 text-sm text-teal-900">
             <p>
-              Dilute source water with RO/distilled at{' '}
-              <span className="font-semibold">
-                {roundForDisplay(dilutionResult.sourceFraction * 100, 0)}% source /{' '}
-                {roundForDisplay(dilutionResult.dilutantFraction * 100, 0)}% RO
-              </span>{' '}
-              (for a {batchVolumeL} L batch: {roundForDisplay(dilutionResult.sourceFraction * batchVolumeL, 1)} L source +{' '}
-              {roundForDisplay(dilutionResult.dilutantFraction * batchVolumeL, 1)} L RO) before adding salts, driven by{' '}
-              <span className="font-semibold">{dilutionResult.bindingIon}</span>. Then re-solve salt additions against the diluted profile.
+              {t('mashAdjustment.dilution.instruction', {
+                sourcePercent: roundForDisplay(dilutionResult.sourceFraction * 100, 0),
+                roPercent: roundForDisplay(dilutionResult.dilutantFraction * 100, 0),
+                batchVolume: batchVolumeL,
+                sourceVolume: roundForDisplay(dilutionResult.sourceFraction * batchVolumeL, 1),
+                roVolume: roundForDisplay(dilutionResult.dilutantFraction * batchVolumeL, 1),
+                ion: dilutionResult.bindingIon ?? '',
+              })}
             </p>
           </div>
         ) : null}
@@ -211,11 +213,11 @@ export function MashAdjustmentPanel({
 
       <div className="rounded-lg border-2 border-amber-300 bg-amber-50/60 p-4">
         <h3 className="font-display text-sm font-bold uppercase tracking-wide text-amber-900">
-          Acid Dosing (approximate)
+          {t('mashAdjustment.acidDosing.title')}
         </h3>
         <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <NumberField
-            label="Target Mash pH"
+            label={t('mashAdjustment.targetMashPh.label')}
             value={targetMashPh}
             step={0.05}
             min={4}
@@ -223,7 +225,7 @@ export function MashAdjustmentPanel({
             onChange={setTargetMashPh}
           />
           <SearchableSelect
-            label="Acid Type"
+            label={t('mashAdjustment.acidType.label')}
             value={acidId}
             onChange={setAcidId}
             options={ACID_TYPES.map((a) => ({ id: a.id, label: a.name }))}
@@ -231,13 +233,18 @@ export function MashAdjustmentPanel({
         </div>
         <p className="mt-3 font-body text-sm text-ink">
           {acidDose.alreadyAtTarget
-            ? 'Already at or below target pH -- no acid needed.'
-            : `Add approximately ${roundForDisplay(acidDose.mL, 1)} mL of ${acid.name} to the mash.`}
+            ? t('mashAdjustment.acidDosing.alreadyAtTarget')
+            : t('mashAdjustment.acidDosing.addApprox', {
+                amount: roundForDisplay(acidDose.mL, 1),
+                acidName: acid.name,
+              })}
         </p>
         <p className="mt-1 font-body text-xs text-ink/60">
-          Dosed against an estimated {roundForDisplay(mashWaterVolumeL, 1)} L of mash water (grist weight x{' '}
-          {estimateMashWaterVolumeL(1)} L/kg), not the {batchVolumeL} L total batch volume -- acid goes in the mash
-          tun, sparge water comes later.
+          {t('mashAdjustment.acidDosing.dosedNote', {
+            mashWaterVolume: roundForDisplay(mashWaterVolumeL, 1),
+            factor: estimateMashWaterVolumeL(1),
+            batchVolume: batchVolumeL,
+          })}
         </p>
       </div>
     </section>

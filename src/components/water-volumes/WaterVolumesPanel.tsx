@@ -8,12 +8,14 @@ import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { roundForDisplay } from '@/lib/units';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface WaterVolumesPanelProps {
   grainBill: GrainBillItem[];
 }
 
 function StrikeTemperatureMixCalculator() {
+  const { t } = useLanguage();
   const [startVolumeL, setStartVolumeL] = useState(50);
   const [startTempC, setStartTempC] = useState(40);
   const [targetTempC, setTargetTempC] = useState(60);
@@ -24,41 +26,62 @@ function StrikeTemperatureMixCalculator() {
   return (
     <section className="flex flex-col gap-4 rounded-lg border-2 border-amber-300 bg-amber-50/60 p-4">
       <h3 className="font-display text-sm font-bold uppercase tracking-wide text-amber-900">
-        Water Temperature Mixing
+        {t('waterVolumes.strikeMix.heading')}
       </h3>
-      <p className="font-body text-sm text-ink">
-        How much hot (or cold) water to add to reach a target temperature -- e.g. raising strike/sparge water, or
-        cooling wort with cold water additions.
-      </p>
+      <p className="font-body text-sm text-ink">{t('waterVolumes.strikeMix.description')}</p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <NumberField label="Starting Volume" unit="L" value={startVolumeL} step={1} onChange={setStartVolumeL} />
-        <NumberField label="Starting Temp" unit="°C" value={startTempC} step={1} onChange={setStartTempC} allowNegative />
-        <NumberField label="Target Temp" unit="°C" value={targetTempC} step={1} onChange={setTargetTempC} allowNegative />
         <NumberField
-          label="Addition Water Temp"
+          label={t('waterVolumes.strikeMix.startVolume.label')}
+          unit="L"
+          value={startVolumeL}
+          step={1}
+          onChange={setStartVolumeL}
+        />
+        <NumberField
+          label={t('waterVolumes.strikeMix.startTemp.label')}
+          unit="°C"
+          value={startTempC}
+          step={1}
+          onChange={setStartTempC}
+          allowNegative
+        />
+        <NumberField
+          label={t('waterVolumes.strikeMix.targetTemp.label')}
+          unit="°C"
+          value={targetTempC}
+          step={1}
+          onChange={setTargetTempC}
+          allowNegative
+        />
+        <NumberField
+          label={t('waterVolumes.strikeMix.additionTemp.label')}
           unit="°C"
           value={additionTempC}
           step={1}
           onChange={setAdditionTempC}
           allowNegative
-          helperText="e.g. 100°C for boiling water, or cold tap/ice water to cool down."
+          helperText={t('waterVolumes.strikeMix.additionTemp.helperText')}
         />
       </div>
       <ResultCard
-        title="Water To Add"
+        title={t('waterVolumes.strikeMix.result.title')}
         value={result.infeasible ? '--' : roundForDisplay(result.volumeToAddL, 1).toString()}
         unit="L"
         tone={result.infeasible ? 'warning' : 'default'}
       >
         {result.infeasible
           ? result.notes.join(' ')
-          : `Resulting total volume: ${roundForDisplay(result.totalVolumeL, 1)} L at ${targetTempC}°C.`}
+          : t('waterVolumes.strikeMix.result.totalVolumeNote', {
+              volume: roundForDisplay(result.totalVolumeL, 1),
+              temp: targetTempC,
+            })}
       </ResultCard>
     </section>
   );
 }
 
 export function WaterVolumesPanel({ grainBill }: WaterVolumesPanelProps) {
+  const { t } = useLanguage();
   const totalGrainWeightKg = useMemo(
     () => grainBill.reduce((sum, row) => sum + (Number.isFinite(row.weightKg) ? Math.max(0, row.weightKg) : 0), 0),
     [grainBill],
@@ -83,93 +106,93 @@ export function WaterVolumesPanel({ grainBill }: WaterVolumesPanelProps) {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-display text-xl font-bold text-ink">Mash / Sparge Water Volumes</h2>
+      <h2 className="font-display text-xl font-bold text-ink">{t('waterVolumes.heading')}</h2>
       <p className="font-body text-sm text-amber-800">
-        Using grist weight from the Grain Bill tab: <span className="font-semibold">{totalGrainWeightKg.toFixed(2)} kg</span>
+        {t('waterVolumes.grainWeightNote')} <span className="font-semibold">{totalGrainWeightKg.toFixed(2)} kg</span>
       </p>
 
       <TutorialCallout
-        title="How to use Water Volumes"
+        title={t('waterVolumes.tutorial.title')}
         steps={[
           {
-            lead: '1. Add grain first.',
-            body: 'Grist weight comes from the Water Report tab\'s Grain Bill -- add your grains there so Mash Water and Sparge Water below aren\'t zero.',
+            lead: t('waterVolumes.tutorial.step1.lead'),
+            body: t('waterVolumes.tutorial.step1.body'),
           },
           {
-            lead: '2. Set your target final volume.',
-            body: 'How much you want in the fermenter after the boil -- everything else works backward from this number.',
+            lead: t('waterVolumes.tutorial.step2.lead'),
+            body: t('waterVolumes.tutorial.step2.body'),
           },
           {
-            lead: '3. Calibrate to your system.',
-            body: 'Boil-off rate and post-boil/trub loss vary a lot by kettle and burner -- adjust these to match your actual equipment for accurate numbers.',
+            lead: t('waterVolumes.tutorial.step3.lead'),
+            body: t('waterVolumes.tutorial.step3.body'),
           },
           {
-            lead: '4. Use Water Temperature Mixing separately.',
-            body: 'The card below answers a different question: how much hot or cold water to add to hit a target temperature, for heating strike water or cooling wort.',
+            lead: t('waterVolumes.tutorial.step4.lead'),
+            body: t('waterVolumes.tutorial.step4.body'),
           },
         ]}
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField
-          label="Target Final Volume"
+          label={t('waterVolumes.targetFinalVolume.label')}
           unit="L"
           value={targetFinalVolumeL}
           step={1}
           onChange={setTargetFinalVolumeL}
-          helperText="Volume you want in the fermenter after the boil."
+          helperText={t('waterVolumes.targetFinalVolume.helperText')}
         />
         <NumberField
-          label="Mash Thickness"
+          label={t('waterVolumes.mashThickness.label')}
           unit="L/kg"
           value={mashThicknessLPerKg}
           step={0.1}
           onChange={setMashThicknessLPerKg}
-          helperText="Typical: 2.5-3.5 L/kg."
+          helperText={t('waterVolumes.mashThickness.helperText')}
         />
         <NumberField
-          label="Grain Absorption Rate"
+          label={t('waterVolumes.grainAbsorption.label')}
           unit="L/kg"
           value={grainAbsorptionLPerKg}
           step={0.01}
           onChange={setGrainAbsorptionLPerKg}
-          helperText="Water retained by spent grain. Typical: 1.0-1.1 L/kg."
+          helperText={t('waterVolumes.grainAbsorption.helperText')}
         />
         <NumberField
-          label="Boil Time"
+          label={t('waterVolumes.boilTime.label')}
           unit="min"
           value={boilTimeMinutes}
           step={5}
           onChange={setBoilTimeMinutes}
         />
         <NumberField
-          label="Boil-Off Rate"
+          label={t('waterVolumes.boilOffRate.label')}
           unit="L/hr"
           value={boilOffRateLPerHour}
           step={0.5}
           onChange={setBoilOffRateLPerHour}
-          helperText="Calibrate to your kettle/burner for accuracy."
+          helperText={t('waterVolumes.boilOffRate.helperText')}
         />
         <NumberField
-          label="Post-Boil / Trub Loss"
+          label={t('waterVolumes.postBoilLoss.label')}
           unit="L"
           value={postBoilLossL}
           step={0.5}
           onChange={setPostBoilLossL}
-          helperText="Kettle deadspace, chiller, hose loss after the boil."
+          helperText={t('waterVolumes.postBoilLoss.helperText')}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <ResultCard title="Mash Water" value={roundForDisplay(result.mashWaterL, 1).toString()} unit="L" />
+        <ResultCard title={t('waterVolumes.result.mashWater')} value={roundForDisplay(result.mashWaterL, 1).toString()} unit="L" />
         <ResultCard
-          title="Sparge Water"
+          title={t('waterVolumes.result.spargeWater')}
           value={roundForDisplay(result.spargeWaterL, 1).toString()}
           unit="L"
           tone={result.spargeVolumeClamped ? 'warning' : 'default'}
         />
-        <ResultCard title="Pre-Boil Volume" value={roundForDisplay(result.preBoilVolumeL, 1).toString()} unit="L" />
-        <ResultCard title="Total Water Needed" value={roundForDisplay(result.totalWaterL, 1).toString()} unit="L" />
+        <ResultCard title={t('waterVolumes.result.preBoilVolume')} value={roundForDisplay(result.preBoilVolumeL, 1).toString()} unit="L" />
+        <ResultCard title={t('waterVolumes.result.totalWaterNeeded')} value={roundForDisplay(result.totalWaterL, 1).toString()} unit="L" />
       </div>
 
       {result.notes.length > 0 ? (

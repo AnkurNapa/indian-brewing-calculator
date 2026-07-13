@@ -1,0 +1,294 @@
+import { TranslationDict } from './types';
+
+/**
+ * Mash Adjustment tab: grain bill editor, batch volume / target style /
+ * assumed efficiency inputs, predicted mash pH, and salt/acid dosing.
+ */
+export const mashAdjustmentTranslations = {
+  'mashAdjustment.heading': { en: 'Mash Adjustment', de: 'Maischewasser', hi: 'मैश समायोजन', mr: 'मॅश समायोजन' },
+
+  'mashAdjustment.tutorial.title': {
+    en: 'How to use Mash Adjustment',
+    de: 'So nutzen Sie die Maischewasser-Anpassung',
+    hi: 'मैश समायोजन का उपयोग कैसे करें',
+    mr: 'मॅश समायोजन कसे वापरावे',
+  },
+  'mashAdjustment.tutorial.step1.lead': {
+    en: '1. Set batch volume and target style.',
+    de: '1. Legen Sie Sudvolumen und Zielstil fest.',
+    hi: '1. बैच मात्रा और लक्ष्य शैली सेट करें।',
+    mr: '1. बॅच प्रमाण आणि लक्ष्य शैली सेट करा.',
+  },
+  'mashAdjustment.tutorial.step1.body': {
+    en: 'Batch volume is shared across the app; target style picks the salt-addition targets for Predicted Mash pH and Salt Additions below.',
+    de: 'Das Sudvolumen wird app-weit geteilt; der Zielstil bestimmt die Salzgaben-Zielwerte für den vorhergesagten Maische-pH und die Salzgaben unten.',
+    hi: 'बैच मात्रा पूरे ऐप में साझा होती है; लक्ष्य शैली नीचे दिए गए अनुमानित मैश pH और नमक मिलावट के लिए लक्ष्य तय करती है।',
+    mr: 'बॅच प्रमाण संपूर्ण अ‍ॅपमध्ये सामायिक असते; लक्ष्य शैली खाली दिलेल्या अंदाजित मॅश pH आणि मीठ मिसळणीसाठीचे लक्ष्य ठरवते.',
+  },
+  'mashAdjustment.tutorial.step2.lead': {
+    en: '2. Build your Grain Bill here.',
+    de: '2. Erstellen Sie hier Ihre Schüttung.',
+    hi: '2. यहाँ अपना ग्रेन बिल बनाएँ।',
+    mr: '2. इथे तुमचे ग्रेन बिल तयार करा.',
+  },
+  'mashAdjustment.tutorial.step2.body': {
+    en: 'Enter each grain by weight, or switch to "% of Bill" to set a target OG and each malt\'s share -- weights are solved for you. This grist drives Predicted Mash pH below, and is shared with SRM color, Water Volumes, Style Check, and Home.',
+    de: 'Geben Sie jedes Malz nach Gewicht ein, oder wechseln Sie zu "% der Schüttung", um eine Ziel-SG und den Anteil jedes Malzes festzulegen -- die Gewichte werden für Sie berechnet. Diese Schüttung bestimmt den vorhergesagten Maische-pH unten und wird mit SRM-Farbe, Wassermengen, Stilprüfung und Start geteilt.',
+    hi: 'प्रत्येक माल्ट को वज़न के अनुसार दर्ज करें, या "% बिल का" पर स्विच करके लक्ष्य OG और प्रत्येक माल्ट का हिस्सा सेट करें -- वज़न आपके लिए स्वतः तय हो जाएगा। यह ग्रिस्ट नीचे अनुमानित मैश pH को तय करता है, और SRM रंग, जल मात्रा, शैली जाँच व होम के साथ साझा होता है।',
+    mr: 'प्रत्येक माल्ट वजनानुसार टाका, किंवा "% बिलचे" वर स्विच करून लक्ष्य OG आणि प्रत्येक माल्टचा वाटा सेट करा -- वजने तुमच्यासाठी आपोआप ठरवली जातील. हे ग्रिस्ट खाली अंदाजित मॅश pH ठरवते, आणि SRM रंग, पाण्याचे प्रमाण, शैली तपासणी व होम सोबत सामायिक आहे.',
+  },
+  'mashAdjustment.tutorial.step3.lead': {
+    en: '3. Check Predicted Mash pH.',
+    de: '3. Prüfen Sie den vorhergesagten Maische-pH.',
+    hi: '3. अनुमानित मैश pH जाँचें।',
+    mr: '3. अंदाजित मॅश pH तपासा.',
+  },
+  'mashAdjustment.tutorial.step3.body': {
+    en: 'Computed from your Water Report source water and the Grain Bill above.',
+    de: 'Berechnet aus Ihrem Quellwasser in der Wasseranalyse und der obigen Schüttung.',
+    hi: 'यह आपके जल रिपोर्ट के स्रोत जल और ऊपर दिए गए ग्रेन बिल से गणना की जाती है।',
+    mr: 'हे तुमच्या पाणी अहवालातील स्रोत पाणी आणि वरील ग्रेन बिल यावरून काढले जाते.',
+  },
+  'mashAdjustment.tutorial.step4.lead': {
+    en: '4. Add the suggested salts.',
+    de: '4. Fügen Sie die vorgeschlagenen Salze hinzu.',
+    hi: '4. सुझाए गए नमक मिलाएँ।',
+    mr: '4. सुचवलेली मीठे मिसळा.',
+  },
+  'mashAdjustment.tutorial.step4.body': {
+    en: 'These move your water toward the target style profile; dilution guidance appears automatically if salts alone can\'t reach the target.',
+    de: 'Diese bewegen Ihr Wasser in Richtung des Zielstilprofils; Verdünnungshinweise erscheinen automatisch, wenn Salze allein das Ziel nicht erreichen.',
+    hi: 'ये आपके जल को लक्ष्य शैली प्रोफ़ाइल की ओर ले जाते हैं; यदि केवल नमक से लक्ष्य नहीं मिलता तो कमजोर करने (dilution) का मार्गदर्शन स्वतः दिखाई देगा।',
+    mr: 'हे तुमचे पाणी लक्ष्य शैली प्रोफाइलच्या दिशेने नेतात; फक्त मीठाने लक्ष्य गाठता आले नाही तर सौम्यीकरण (dilution) मार्गदर्शन आपोआप दिसते.',
+  },
+  'mashAdjustment.tutorial.step5.lead': {
+    en: '5. Dose acid only if needed.',
+    de: '5. Dosieren Sie Säure nur bei Bedarf.',
+    hi: '5. आवश्यकता होने पर ही एसिड डालें।',
+    mr: '5. गरज असेल तरच आम्ल टाका.',
+  },
+  'mashAdjustment.tutorial.step5.body': {
+    en: 'Set a Target Mash pH and pick an acid type -- the dose is calculated against your estimated mash water volume, not the full batch volume.',
+    de: 'Legen Sie einen Ziel-Maische-pH fest und wählen Sie eine Säureart -- die Dosis wird anhand Ihres geschätzten Maischwasservolumens berechnet, nicht anhand des gesamten Sudvolumens.',
+    hi: 'लक्ष्य मैश pH सेट करें और एक एसिड प्रकार चुनें -- खुराक की गणना अनुमानित मैश जल मात्रा के आधार पर होती है, पूरी बैच मात्रा के आधार पर नहीं।',
+    mr: 'लक्ष्य मॅश pH सेट करा आणि आम्लाचा प्रकार निवडा -- मात्रा तुमच्या अंदाजित मॅश पाणी प्रमाणावर आधारित मोजली जाते, संपूर्ण बॅच प्रमाणावर नाही.',
+  },
+
+  'mashAdjustment.batchVolume.helper': {
+    en: 'Enter commercial volumes in HL x 100 to convert to L.',
+    de: 'Geben Sie gewerbliche Mengen in HL x 100 ein, um in L umzurechnen.',
+    hi: 'व्यावसायिक मात्रा L में बदलने के लिए HL x 100 के रूप में दर्ज करें।',
+    mr: 'व्यावसायिक प्रमाण L मध्ये रूपांतरित करण्यासाठी HL x 100 म्हणून टाका.',
+  },
+  'mashAdjustment.targetStyleProfile.label': {
+    en: 'Target Style Profile',
+    de: 'Zielstilprofil',
+    hi: 'लक्ष्य शैली प्रोफ़ाइल',
+    mr: 'लक्ष्य शैली प्रोफाइल',
+  },
+
+  'mashAdjustment.predictedMashPh.title': {
+    en: 'Predicted Mash pH',
+    de: 'Vorhergesagter Maische-pH',
+    hi: 'अनुमानित मैश pH',
+    mr: 'अंदाजित मॅश pH',
+  },
+
+  'mashAdjustment.saltAdditions.title': {
+    en: 'Salt Additions ({style})',
+    de: 'Salzgaben ({style})',
+    hi: 'नमक मिलावट ({style})',
+    mr: 'मीठ मिसळणी ({style})',
+  },
+  'mashAdjustment.saltAdditions.infeasibleWarning': {
+    en: 'Some targets are not achievable by salt addition alone -- see notes below.',
+    de: 'Manche Zielwerte sind durch Salzgaben allein nicht erreichbar -- siehe Hinweise unten.',
+    hi: 'कुछ लक्ष्य केवल नमक मिलाने से प्राप्त नहीं किए जा सकते -- नीचे टिप्पणियाँ देखें।',
+    mr: 'काही लक्ष्ये फक्त मीठ मिसळून साध्य होत नाहीत -- खालील टिपा पहा.',
+  },
+  'mashAdjustment.saltAdditions.none': {
+    en: 'No salt additions needed for this target.',
+    de: 'Für dieses Ziel sind keine Salzgaben erforderlich.',
+    hi: 'इस लक्ष्य के लिए किसी नमक मिलावट की आवश्यकता नहीं है।',
+    mr: 'या लक्ष्यासाठी मीठ मिसळण्याची गरज नाही.',
+  },
+  'mashAdjustment.dilution.instruction': {
+    en: 'Dilute source water with RO/distilled at {sourcePercent}% source / {roPercent}% RO (for a {batchVolume} L batch: {sourceVolume} L source + {roVolume} L RO) before adding salts, driven by {ion}. Then re-solve salt additions against the diluted profile.',
+    de: 'Verdünnen Sie das Quellwasser mit RO-/destilliertem Wasser im Verhältnis {sourcePercent}% Quelle / {roPercent}% RO (für einen {batchVolume}-L-Sud: {sourceVolume} L Quelle + {roVolume} L RO), bevor Sie Salze zugeben; maßgeblich ist {ion}. Berechnen Sie die Salzgaben anschließend erneut anhand des verdünnten Profils.',
+    hi: 'नमक डालने से पहले स्रोत जल को RO/डिस्टिल्ड जल के साथ {sourcePercent}% स्रोत / {roPercent}% RO के अनुपात में पतला करें ({batchVolume} L बैच के लिए: {sourceVolume} L स्रोत + {roVolume} L RO), जो {ion} द्वारा निर्धारित होता है। फिर पतले प्रोफ़ाइल के आधार पर नमक मिलावट पुनः तय करें।',
+    mr: 'मीठ टाकण्यापूर्वी स्रोत पाणी RO/डिस्टिल्ड पाण्याने {sourcePercent}% स्रोत / {roPercent}% RO या प्रमाणात सौम्य करा ({batchVolume} L बॅचसाठी: {sourceVolume} L स्रोत + {roVolume} L RO), जे {ion} वर आधारित आहे. त्यानंतर सौम्य प्रोफाइलनुसार मीठ मिसळणी पुन्हा ठरवा.',
+  },
+
+  'mashAdjustment.acidDosing.title': {
+    en: 'Acid Dosing (approximate)',
+    de: 'Säuredosierung (Näherungswert)',
+    hi: 'एसिड खुराक (अनुमानित)',
+    mr: 'आम्ल मात्रा (अंदाजे)',
+  },
+  'mashAdjustment.targetMashPh.label': {
+    en: 'Target Mash pH',
+    de: 'Ziel-Maische-pH',
+    hi: 'लक्ष्य मैश pH',
+    mr: 'लक्ष्य मॅश pH',
+  },
+  'mashAdjustment.acidType.label': { en: 'Acid Type', de: 'Säureart', hi: 'एसिड प्रकार', mr: 'आम्ल प्रकार' },
+  'mashAdjustment.acidDosing.alreadyAtTarget': {
+    en: 'Already at or below target pH -- no acid needed.',
+    de: 'Bereits auf oder unter dem Ziel-pH -- keine Säure erforderlich.',
+    hi: 'पहले से ही लक्ष्य pH पर या उससे नीचे है -- एसिड की आवश्यकता नहीं।',
+    mr: 'आधीच लक्ष्य pH वर किंवा त्याखाली आहे -- आम्लाची गरज नाही.',
+  },
+  'mashAdjustment.acidDosing.addApprox': {
+    en: 'Add approximately {amount} mL of {acidName} to the mash.',
+    de: 'Geben Sie etwa {amount} ml {acidName} in die Maische.',
+    hi: 'मैश में लगभग {amount} mL {acidName} मिलाएँ।',
+    mr: 'मॅशमध्ये सुमारे {amount} mL {acidName} मिसळा.',
+  },
+  'mashAdjustment.acidDosing.dosedNote': {
+    en: 'Dosed against an estimated {mashWaterVolume} L of mash water (grist weight x {factor} L/kg), not the {batchVolume} L total batch volume -- acid goes in the mash tun, sparge water comes later.',
+    de: 'Dosiert für ein geschätztes Maischwasservolumen von {mashWaterVolume} L (Schüttungsgewicht x {factor} L/kg), nicht für das gesamte Sudvolumen von {batchVolume} L -- die Säure kommt in den Maischbottich, Läuterwasser folgt später.',
+    hi: 'यह अनुमानित {mashWaterVolume} L मैश जल (ग्रिस्ट वज़न x {factor} L/kg) के लिए है, न कि {batchVolume} L कुल बैच मात्रा के लिए -- एसिड मैश टन में जाता है, स्पार्ज जल बाद में आता है।',
+    mr: 'हे अंदाजित {mashWaterVolume} L मॅश पाण्यासाठी (ग्रिस्ट वजन x {factor} L/kg) आहे, संपूर्ण {batchVolume} L बॅच प्रमाणासाठी नाही -- आम्ल मॅश टनमध्ये जाते, स्पार्ज पाणी नंतर येते.',
+  },
+
+  'mashAdjustment.grainBill.heading': { en: 'Grain Bill', de: 'Schüttung', hi: 'ग्रेन बिल', mr: 'ग्रेन बिल' },
+  'mashAdjustment.grainBill.addGrain': { en: '+ Add Grain', de: '+ Malz hinzufügen', hi: '+ माल्ट जोड़ें', mr: '+ माल्ट जोडा' },
+  'mashAdjustment.grainBill.enterBy': {
+    en: 'Enter grain bill by',
+    de: 'Schüttung eingeben nach',
+    hi: 'ग्रेन बिल इस आधार पर दर्ज करें',
+    mr: 'ग्रेन बिल याप्रमाणे टाका',
+  },
+  'mashAdjustment.grainBill.modeWeight': { en: 'Weight', de: 'Gewicht', hi: 'वज़न', mr: 'वजन' },
+  'mashAdjustment.grainBill.modePercent': { en: '% of Bill', de: '% der Schüttung', hi: '% बिल का', mr: '% बिलचे' },
+  'mashAdjustment.grainBill.percentModeHelper': {
+    en: 'Set your target OG and each malt\'s share of the bill (base vs. specialty) -- weights are solved for you using batch volume ({batchVolume} L) and assumed efficiency.',
+    de: 'Legen Sie Ihre Ziel-SG und den Anteil jedes Malzes an der Schüttung fest (Basis vs. Spezialmalz) -- die Gewichte werden anhand von Sudvolumen ({batchVolume} L) und angenommener Ausbeute für Sie berechnet.',
+    hi: 'अपना लक्ष्य OG और बिल में प्रत्येक माल्ट का हिस्सा (बेस बनाम स्पेशलिटी) सेट करें -- बैच मात्रा ({batchVolume} L) और मान्य दक्षता का उपयोग करके वज़न आपके लिए स्वतः तय हो जाएगा।',
+    mr: 'तुमचे लक्ष्य OG आणि बिलमधील प्रत्येक माल्टचा वाटा (बेस विरुद्ध स्पेशालिटी) सेट करा -- बॅच प्रमाण ({batchVolume} L) आणि गृहीत कार्यक्षमता वापरून वजने तुमच्यासाठी आपोआप ठरवली जातील.',
+  },
+  'mashAdjustment.targetOg.label': { en: 'Target OG', de: 'Ziel-SG', hi: 'लक्ष्य OG', mr: 'लक्ष्य OG' },
+  'mashAdjustment.assumedEfficiency.label': {
+    en: 'Assumed Efficiency',
+    de: 'Angenommene Ausbeute',
+    hi: 'मान्य दक्षता',
+    mr: 'गृहीत कार्यक्षमता',
+  },
+  'mashAdjustment.percentTotal.label': {
+    en: '{status} Total: {percent}% {balanceNote}',
+    de: '{status} Summe: {percent}% {balanceNote}',
+    hi: '{status} कुल: {percent}% {balanceNote}',
+    mr: '{status} एकूण: {percent}% {balanceNote}',
+  },
+  'mashAdjustment.percentTotal.balanced': { en: '(balanced)', de: '(ausgeglichen)', hi: '(संतुलित)', mr: '(संतुलित)' },
+  'mashAdjustment.percentTotal.shouldSum': {
+    en: '(should sum to 100%)',
+    de: '(sollte 100 % ergeben)',
+    hi: '(योग 100% होना चाहिए)',
+    mr: '(बेरीज 100% असावी)',
+  },
+  'mashAdjustment.normalizeTo100': {
+    en: 'Normalize to 100%',
+    de: 'Auf 100 % normalisieren',
+    hi: '100% पर सामान्य करें',
+    mr: '100% पर्यंत सामान्य करा',
+  },
+  'mashAdjustment.grainBill.empty': {
+    en: 'No grains added yet. Add at least one grain to get a mash pH prediction.',
+    de: 'Noch keine Malze hinzugefügt. Fügen Sie mindestens ein Malz hinzu, um eine Maische-pH-Vorhersage zu erhalten.',
+    hi: 'अभी तक कोई माल्ट नहीं जोड़ा गया है। मैश pH अनुमान पाने के लिए कम से कम एक माल्ट जोड़ें।',
+    mr: 'अजून कोणतेही माल्ट जोडलेले नाही. मॅश pH अंदाज मिळवण्यासाठी किमान एक माल्ट जोडा.',
+  },
+  'mashAdjustment.grainBill.quickFillLabel': {
+    en: 'Quick-fill from Weyermann malts (optional)',
+    de: 'Schnellauswahl aus Weyermann-Malzen (optional)',
+    hi: 'Weyermann माल्ट से त्वरित भरण (वैकल्पिक)',
+    mr: 'Weyermann माल्टमधून जलद भरणे (ऐच्छिक)',
+  },
+  'mashAdjustment.grainBill.quickFillPlaceholder': {
+    en: 'Search Weyermann malts...',
+    de: 'Weyermann-Malze durchsuchen...',
+    hi: 'Weyermann माल्ट खोजें...',
+    mr: 'Weyermann माल्ट शोधा...',
+  },
+  'mashAdjustment.grainBill.notInListHint': {
+    en: 'Not in the list? Just type any grain name, weight, and color directly below.',
+    de: 'Nicht in der Liste? Geben Sie einfach unten einen beliebigen Malznamen, ein Gewicht und eine Farbe ein.',
+    hi: 'सूची में नहीं है? नीचे सीधे कोई भी माल्ट नाम, वज़न और रंग टाइप करें।',
+    mr: 'यादीत नाही? खाली थेट कोणतेही माल्ट नाव, वजन आणि रंग टाइप करा.',
+  },
+  'mashAdjustment.grainBill.grainName.label': { en: 'Grain name', de: 'Malzname', hi: 'माल्ट नाम', mr: 'माल्ट नाव' },
+  'mashAdjustment.grainBill.grainName.placeholder': {
+    en: 'Type any grain name...',
+    de: 'Beliebigen Malznamen eingeben...',
+    hi: 'कोई भी माल्ट नाम टाइप करें...',
+    mr: 'कोणतेही माल्ट नाव टाइप करा...',
+  },
+  'mashAdjustment.grainBill.weight.label': { en: 'Weight', de: 'Gewicht', hi: 'वज़न', mr: 'वजन' },
+  'mashAdjustment.grainBill.percentOfBill.label': { en: '% of Bill', de: '% der Schüttung', hi: '% बिल का', mr: '% बिलचे' },
+  'mashAdjustment.grainBill.color.label': { en: 'Color', de: 'Farbe', hi: 'रंग', mr: 'रंग' },
+  'mashAdjustment.grainBill.maltType.label': { en: 'Malt Type', de: 'Malztyp', hi: 'माल्ट प्रकार', mr: 'माल्ट प्रकार' },
+  'mashAdjustment.grainBill.maltType.autoLabel': {
+    en: 'Malt Type ({category})',
+    de: 'Malztyp ({category})',
+    hi: 'माल्ट प्रकार ({category})',
+    mr: 'माल्ट प्रकार ({category})',
+  },
+  'mashAdjustment.grainBill.extractPotential.label': {
+    en: 'Extract Potential (optional)',
+    de: 'Extraktpotenzial (optional)',
+    hi: 'एक्सट्रैक्ट क्षमता (वैकल्पिक)',
+    mr: 'एक्सट्रॅक्ट क्षमता (ऐच्छिक)',
+  },
+  'mashAdjustment.grainBill.extractPotential.helper': {
+    en: 'Maltster spec, typically 1.026-1.038. Used for OG planning.',
+    de: 'Herstellerangabe, typischerweise 1,026-1,038. Wird für die SG-Planung verwendet.',
+    hi: 'माल्टस्टर विनिर्देश, आमतौर पर 1.026-1.038। OG योजना के लिए उपयोग होता है।',
+    mr: 'माल्टस्टर स्पेक, साधारणपणे 1.026-1.038. OG नियोजनासाठी वापरले जाते.',
+  },
+  'mashAdjustment.grainBill.remove': { en: 'Remove', de: 'Entfernen', hi: 'हटाएँ', mr: 'काढा' },
+  'mashAdjustment.grainBill.removeRowAria': {
+    en: 'Remove {grainName} row',
+    de: 'Zeile {grainName} entfernen',
+    hi: '{grainName} पंक्ति हटाएँ',
+    mr: '{grainName} रांग काढा',
+  },
+  'mashAdjustment.grainBill.totalGristWeight': {
+    en: 'Total grist weight:',
+    de: 'Gesamte Schüttungsmenge:',
+    hi: 'कुल ग्रिस्ट वज़न:',
+    mr: 'एकूण ग्रिस्ट वजन:',
+  },
+
+  'mashAdjustment.maltCategory.auto': {
+    en: 'Auto (by color)',
+    de: 'Automatisch (nach Farbe)',
+    hi: 'स्वतः (रंग के अनुसार)',
+    mr: 'स्वयंचलित (रंगानुसार)',
+  },
+  'mashAdjustment.maltCategory.base': { en: 'Base', de: 'Basismalz', hi: 'बेस', mr: 'बेस' },
+  'mashAdjustment.maltCategory.wheatOrOther': {
+    en: 'Wheat / Other Base',
+    de: 'Weizen / Anderes Basismalz',
+    hi: 'गेहूँ / अन्य बेस',
+    mr: 'गहू / इतर बेस',
+  },
+  'mashAdjustment.maltCategory.crystal': {
+    en: 'Crystal / Caramel',
+    de: 'Karamellmalz',
+    hi: 'क्रिस्टल / कैरामेल',
+    mr: 'क्रिस्टल / कॅरॅमेल',
+  },
+  'mashAdjustment.maltCategory.roasted': {
+    en: 'Roasted / Dark',
+    de: 'Röstmalz / Dunkel',
+    hi: 'रोस्टेड / गहरा',
+    mr: 'रोस्टेड / गडद',
+  },
+  'mashAdjustment.maltCategory.acidulated': {
+    en: 'Acidulated',
+    de: 'Sauermalz',
+    hi: 'एसिडुलेटेड',
+    mr: 'ऍसिड्युलेटेड',
+  },
+} as const satisfies TranslationDict;

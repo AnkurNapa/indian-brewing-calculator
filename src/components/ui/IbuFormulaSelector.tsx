@@ -2,6 +2,7 @@
 
 import { IBU_FORMULAS, IbuFormula, GaretzExtras } from '@/lib/ibu';
 import { NumberField } from './NumberField';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface IbuFormulaSelectorProps {
   formula: IbuFormula;
@@ -24,10 +25,11 @@ export function IbuFormulaSelector({
   garetzExtras,
   onGaretzExtrasChange,
 }: IbuFormulaSelectorProps) {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
-        <span className="font-body text-sm font-medium text-amber-900">IBU Formula</span>
+        <span className="font-body text-sm font-medium text-amber-900">{t('sharedCalc.ibuFormula.label')}</span>
         <div className="flex flex-shrink-0 gap-0.5 rounded-full border border-amber-200 bg-amber-50 p-0.5">
           {IBU_FORMULAS.map((f) => (
             <button
@@ -49,28 +51,28 @@ export function IbuFormulaSelector({
       {formula === 'garetz' ? (
         <div className="grid grid-cols-1 gap-3 rounded-md border border-amber-200 bg-amber-50/60 p-3 sm:grid-cols-3">
           <NumberField
-            label="Altitude"
+            label={t('sharedCalc.ibuFormula.altitude')}
             unit="m"
             value={garetzExtras.altitudeM}
             step={50}
             onChange={(altitudeM) => onGaretzExtrasChange({ ...garetzExtras, altitudeM })}
-            helperText="Brewery elevation above sea level."
+            helperText={t('sharedCalc.ibuFormula.altitudeHelper')}
           />
           <NumberField
-            label="Hop Age Factor"
+            label={t('sharedCalc.ibuFormula.hopAgeFactor')}
             value={garetzExtras.hopAgeFactor}
             step={0.05}
             max={1}
             onChange={(hopAgeFactor) => onGaretzExtrasChange({ ...garetzExtras, hopAgeFactor })}
-            helperText="1.0 = fresh; lower for aged/poorly-stored hops."
+            helperText={t('sharedCalc.ibuFormula.hopAgeFactorHelper')}
           />
           <NumberField
-            label="Boil Volume"
+            label={t('sharedCalc.ibuFormula.boilVolume')}
             unit="L"
             value={garetzExtras.boilVolumeL}
             step={1}
             onChange={(boilVolumeL) => onGaretzExtrasChange({ ...garetzExtras, boilVolumeL })}
-            helperText="Kettle volume at start of boil. Leave 0 to assume = batch volume."
+            helperText={t('sharedCalc.ibuFormula.boilVolumeHelper')}
           />
         </div>
       ) : null}

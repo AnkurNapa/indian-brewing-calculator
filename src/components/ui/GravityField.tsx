@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { NumberField } from './NumberField';
 import { sgToPlato, platoToSg, roundForDisplay } from '@/lib/units';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 type GravityUnit = 'sg' | 'plato' | 'brix';
 
@@ -29,6 +30,7 @@ interface GravityFieldProps {
  * stored in shared state.
  */
 export function GravityField({ label, value, onChange, allowNegative, helperText }: GravityFieldProps) {
+  const { t } = useLanguage();
   const [unit, setUnit] = useState<GravityUnit>('sg');
 
   const displayValue = unit === 'sg' ? value : roundForDisplay(sgToPlato(value), 2);
@@ -64,7 +66,13 @@ export function GravityField({ label, value, onChange, allowNegative, helperText
         step={step}
         onChange={handleChange}
         allowNegative={allowNegative}
-        helperText={unit === 'sg' ? helperText : `${helperText ? helperText + ' ' : ''}Entered in ${unit === 'plato' ? 'Plato' : 'Brix'}, stored as SG.`}
+        helperText={
+          unit === 'sg'
+            ? helperText
+            : `${helperText ? helperText + ' ' : ''}${t('sharedCalc.gravityField.enteredInStoredAsSg', {
+                unit: unit === 'plato' ? t('sharedCalc.gravityField.plato') : t('sharedCalc.gravityField.brix'),
+              })}`
+        }
       />
     </div>
   );

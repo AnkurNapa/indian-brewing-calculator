@@ -4,6 +4,8 @@ import { IonProfile } from '@/lib/waterChemistry';
 import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { roundForDisplay } from '@/lib/units';
+import { useLanguage } from '@/i18n/LanguageContext';
+import { TranslationKey } from '@/i18n/translations';
 
 interface TargetStyleReferenceProps {
   targetStyleId: string;
@@ -11,30 +13,38 @@ interface TargetStyleReferenceProps {
   sourceProfile: IonProfile;
 }
 
-const ION_ROWS: { key: keyof IonProfile; label: string }[] = [
-  { key: 'calcium', label: 'Calcium' },
-  { key: 'magnesium', label: 'Magnesium' },
-  { key: 'sodium', label: 'Sodium' },
-  { key: 'sulfate', label: 'Sulfate' },
-  { key: 'chloride', label: 'Chloride' },
-  { key: 'bicarbonate', label: 'Bicarbonate' },
-  { key: 'alkalinity', label: 'Alkalinity' },
+const ION_ROW_KEYS: { key: keyof IonProfile; labelKey: TranslationKey }[] = [
+  { key: 'calcium', labelKey: 'targetStyleReference.ion.calcium' },
+  { key: 'magnesium', labelKey: 'targetStyleReference.ion.magnesium' },
+  { key: 'sodium', labelKey: 'targetStyleReference.ion.sodium' },
+  { key: 'sulfate', labelKey: 'targetStyleReference.ion.sulfate' },
+  { key: 'chloride', labelKey: 'targetStyleReference.ion.chloride' },
+  { key: 'bicarbonate', labelKey: 'targetStyleReference.ion.bicarbonate' },
+  { key: 'alkalinity', labelKey: 'targetStyleReference.ion.alkalinity' },
 ];
 
 /** Within this +/- percent of target counts as "on target" rather than over/under. */
 const ON_TARGET_TOLERANCE_PERCENT = 15;
 
-function compareToTarget(source: number, target: number): { label: string; tone: 'over' | 'under' | 'onTarget' } {
+type Comparison =
+  | { tone: 'onTarget' }
+  | { tone: 'over'; kind: 'plusValue'; value: number }
+  | { tone: 'over'; kind: 'percent'; value: number }
+  | { tone: 'under'; kind: 'percent'; value: number };
+
+function compareToTarget(source: number, target: number): Comparison {
   if (target <= 0) {
-    return source <= 0 ? { label: 'on target', tone: 'onTarget' } : { label: `+${roundForDisplay(source, 0)}`, tone: 'over' };
+    return source <= 0
+      ? { tone: 'onTarget' }
+      : { tone: 'over', kind: 'plusValue', value: roundForDisplay(source, 0) };
   }
   const percentOff = ((source - target) / target) * 100;
   if (Math.abs(percentOff) <= ON_TARGET_TOLERANCE_PERCENT) {
-    return { label: 'on target', tone: 'onTarget' };
+    return { tone: 'onTarget' };
   }
   return percentOff > 0
-    ? { label: `${roundForDisplay(percentOff, 0)}% over`, tone: 'over' }
-    : { label: `${roundForDisplay(Math.abs(percentOff), 0)}% under`, tone: 'under' };
+    ? { tone: 'over', kind: 'percent', value: roundForDisplay(percentOff, 0) }
+    : { tone: 'under', kind: 'percent', value: roundForDisplay(Math.abs(percentOff), 0) };
 }
 
 /**
@@ -46,20 +56,18 @@ function compareToTarget(source: number, target: number): { label: string; tone:
  * choosing it early doesn't create a second, disconnected setting.
  */
 export function TargetStyleReference({ targetStyleId, onTargetStyleChange, sourceProfile }: TargetStyleReferenceProps) {
+  const { t } = useLanguage();
   const style = TARGET_STYLE_PROFILES.find((s) => s.id === targetStyleId) ?? TARGET_STYLE_PROFILES[0];
 
   return (
     <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
       <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">
-        Which Beer Style Are You Brewing?
+        {t('targetStyleReference.heading')}
       </h3>
-      <p className="mt-1 font-body text-xs text-ink/70">
-        Pick a style to see its target water profile alongside your source water -- this also sets the target for
-        Mash Adjustment&apos;s salt additions.
-      </p>
+      <p className="mt-1 font-body text-xs text-ink/70">{t('targetStyleReference.description')}</p>
       <div className="mt-3">
         <SearchableSelect
-          label="Target Style Profile"
+          label={t('targetStyleReference.picker.label')}
           value={targetStyleId}
           onChange={onTargetStyleChange}
           options={TARGET_STYLE_PROFILES.map((s) => ({ id: s.id, label: s.name }))}
@@ -71,18 +79,28 @@ export function TargetStyleReference({ targetStyleId, onTargetStyleChange, sourc
         <table className="w-full min-w-[320px] text-left text-sm">
           <thead>
             <tr className="border-b border-teal-200 text-xs uppercase tracking-wide text-teal-700">
-              <th className="py-1 pr-2">Ion (mg/L)</th>
-              <th className="py-1 pr-2">Your Source</th>
-              <th className="py-1 pr-2">{style.name.split(' (')[0]} Target</th>
-              <th className="py-1">vs Target</th>
+              <th className="py-1 pr-2">{t('targetStyleReference.table.ion')}</th>
+              <th className="py-1 pr-2">{t('targetStyleReference.table.yourSource')}</th>
+              <th className="py-1 pr-2">
+                {style.name.split(' (')[0]} {t('targetStyleReference.table.target')}
+              </th>
+              <th className="py-1">{t('targetStyleReference.table.vsTarget')}</th>
             </tr>
           </thead>
           <tbody>
-            {ION_ROWS.map(({ key, label }) => {
+            {ION_ROW_KEYS.map(({ key, labelKey }) => {
               const comparison = compareToTarget(sourceProfile[key], style.profile[key]);
+              const label =
+                comparison.tone === 'onTarget'
+                  ? t('targetStyleReference.compare.onTarget')
+                  : comparison.kind === 'plusValue'
+                    ? t('targetStyleReference.compare.plusValue', { value: comparison.value })
+                    : comparison.tone === 'over'
+                      ? t('targetStyleReference.compare.percentOver', { percent: comparison.value })
+                      : t('targetStyleReference.compare.percentUnder', { percent: comparison.value });
               return (
                 <tr key={key} className="border-b border-teal-100">
-                  <td className="py-1 pr-2">{label}</td>
+                  <td className="py-1 pr-2">{t(labelKey)}</td>
                   <td className="py-1 pr-2">{roundForDisplay(sourceProfile[key])}</td>
                   <td className="py-1 pr-2 font-semibold text-teal-800">{roundForDisplay(style.profile[key])}</td>
                   <td
@@ -95,7 +113,7 @@ export function TargetStyleReference({ targetStyleId, onTargetStyleChange, sourc
                     }`}
                   >
                     {comparison.tone === 'onTarget' ? '✓ ' : comparison.tone === 'over' ? '↑ ' : '↓ '}
-                    {comparison.label}
+                    {label}
                   </td>
                 </tr>
               );

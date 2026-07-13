@@ -7,6 +7,8 @@ import { ResultCard } from '@/components/ui/ResultCard';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { SOURCE_WATER_PROFILES } from '@/lib/waterProfiles';
 import { roundForDisplay } from '@/lib/units';
+import { useLanguage } from '@/i18n/LanguageContext';
+import { TranslationKey } from '@/i18n/translations';
 
 interface WaterReportFormProps {
   profile: IonProfile;
@@ -14,27 +16,29 @@ interface WaterReportFormProps {
   title?: string;
 }
 
-const ION_FIELDS: { key: keyof IonProfile; label: string }[] = [
-  { key: 'calcium', label: 'Calcium (Ca)' },
-  { key: 'magnesium', label: 'Magnesium (Mg)' },
-  { key: 'sodium', label: 'Sodium (Na)' },
-  { key: 'sulfate', label: 'Sulfate (SO4)' },
-  { key: 'chloride', label: 'Chloride (Cl)' },
-  { key: 'bicarbonate', label: 'Bicarbonate (HCO3)' },
-  { key: 'alkalinity', label: 'Total Alkalinity (as CaCO3)' },
+const ION_FIELD_KEYS: { key: keyof IonProfile; labelKey: TranslationKey }[] = [
+  { key: 'calcium', labelKey: 'waterReportForm.ion.calcium' },
+  { key: 'magnesium', labelKey: 'waterReportForm.ion.magnesium' },
+  { key: 'sodium', labelKey: 'waterReportForm.ion.sodium' },
+  { key: 'sulfate', labelKey: 'waterReportForm.ion.sulfate' },
+  { key: 'chloride', labelKey: 'waterReportForm.ion.chloride' },
+  { key: 'bicarbonate', labelKey: 'waterReportForm.ion.bicarbonate' },
+  { key: 'alkalinity', labelKey: 'waterReportForm.ion.alkalinity' },
 ];
 
-export function WaterReportForm({ profile, onChange, title = 'Source Water Report' }: WaterReportFormProps) {
+export function WaterReportForm({ profile, onChange, title }: WaterReportFormProps) {
+  const { t } = useLanguage();
   const ra = calculateResidualAlkalinity(profile);
   const [selectedPresetId, setSelectedPresetId] = useState('');
+  const resolvedTitle = title ?? t('waterReportForm.title');
 
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <h2 className="font-display text-xl font-bold text-ink">{title}</h2>
+        <h2 className="font-display text-xl font-bold text-ink">{resolvedTitle}</h2>
         <SearchableSelect
-          label="Quick-fill from a known water type"
-          placeholder="Choose a preset..."
+          label={t('waterReportForm.presetPicker.label')}
+          placeholder={t('waterReportForm.presetPicker.placeholder')}
           value={selectedPresetId}
           options={SOURCE_WATER_PROFILES.map((preset) => ({ id: preset.id, label: preset.name }))}
           onChange={(id) => {
@@ -48,10 +52,10 @@ export function WaterReportForm({ profile, onChange, title = 'Source Water Repor
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {ION_FIELDS.map(({ key, label }) => (
+        {ION_FIELD_KEYS.map(({ key, labelKey }) => (
           <NumberField
             key={key}
-            label={label}
+            label={t(labelKey)}
             unit="mg/L"
             value={profile[key]}
             onChange={(value) => onChange({ ...profile, [key]: value })}
@@ -60,13 +64,12 @@ export function WaterReportForm({ profile, onChange, title = 'Source Water Repor
       </div>
 
       <ResultCard
-        title="Residual Alkalinity"
+        title={t('waterReportForm.residualAlkalinity.title')}
         value={roundForDisplay(ra).toString()}
         unit="mg/L as CaCO3"
         tone={ra > 100 ? 'warning' : 'default'}
       >
-        RA = Alkalinity - (Ca/1.4 + Mg/1.7). Higher RA pushes mash pH up; very low or
-        negative RA (e.g. RO water) allows dark malt acidity to dominate.
+        {t('waterReportForm.residualAlkalinity.explanation')}
       </ResultCard>
     </section>
   );

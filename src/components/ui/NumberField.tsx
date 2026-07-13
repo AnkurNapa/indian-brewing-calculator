@@ -2,6 +2,7 @@
 
 import { useState, useId, useEffect, useRef } from 'react';
 import { parseNonNegative } from '@/lib/units';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface NumberFieldProps {
   label: string;
@@ -35,6 +36,7 @@ export function NumberField({
   helperText,
   ariaLabel,
 }: NumberFieldProps) {
+  const { t } = useLanguage();
   const [raw, setRaw] = useState(String(value));
   const [error, setError] = useState<string | null>(null);
   const inputId = useId();
@@ -62,7 +64,7 @@ export function NumberField({
       : parseNonNegative(text);
 
     if (parsed === null) {
-      setError('Enter a valid number.');
+      setError(t('sharedCalc.numberField.invalidNumber'));
       return;
     }
 

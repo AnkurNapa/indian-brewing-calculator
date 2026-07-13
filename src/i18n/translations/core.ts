@@ -1,22 +1,12 @@
-export type Language = 'en' | 'de' | 'hi' | 'mr';
-
-export const LANGUAGE_NAMES: Record<Language, string> = {
-  en: 'English',
-  de: 'Deutsch',
-  hi: 'हिंदी',
-  mr: 'मराठी',
-};
-
-export const LANGUAGE_ORDER: Language[] = ['en', 'de', 'hi', 'mr'];
+import { TranslationDict } from './types';
 
 /**
- * Flat key -> per-language dictionary. Flat (not nested) so any component
- * can pull a string by a single stable key without caring which tab/panel
- * it lives in -- keys are prefixed by area (nav., home., waterReport., ...)
- * to stay collision-free as translation coverage grows tab by tab.
+ * App chrome shared across every tab: header, nav, footer, session summary
+ * strip, plus the Water Report tutorial callout (translated first as the
+ * pilot slice). Keys are prefixed by area to stay collision-free against
+ * the per-panel fragment files.
  */
-export const translations = {
-  // --- App chrome: header, nav, footer, shared across every tab ---
+export const coreTranslations = {
   'app.title': {
     en: "Indian Brewer's Calculator",
     de: 'Indischer Braurechner',
@@ -57,7 +47,6 @@ export const translations = {
   },
   'app.language.label': { en: 'Language', de: 'Sprache', hi: 'भाषा', mr: 'भाषा' },
 
-  // --- Tab labels (long + short/mobile forms) ---
   'tab.home.label': { en: 'Home', de: 'Start', hi: 'होम', mr: 'होम' },
   'tab.home.short': { en: 'Home', de: 'Start', hi: 'होम', mr: 'होम' },
   'tab.waterReport.label': { en: 'Water Report', de: 'Wasseranalyse', hi: 'जल रिपोर्ट', mr: 'पाणी अहवाल' },
@@ -95,7 +84,6 @@ export const translations = {
   'tab.about.label': { en: 'About', de: 'Über', hi: 'परिचय', mr: 'परिचय' },
   'tab.about.short': { en: 'About', de: 'Über', hi: 'परिचय', mr: 'परिचय' },
 
-  // --- Session summary strip labels (values stay as raw numbers/units) ---
   'summary.targetStyle': { en: 'Target Style', de: 'Zielstil', hi: 'लक्ष्य शैली', mr: 'लक्ष्य शैली' },
   'summary.grainBill': { en: 'Grain Bill', de: 'Schüttung', hi: 'ग्रेन बिल', mr: 'ग्रेन बिल' },
   'summary.batchVolume': { en: 'Batch Volume', de: 'Sudvolumen', hi: 'बैच मात्रा', mr: 'बॅच प्रमाण' },
@@ -103,7 +91,6 @@ export const translations = {
   'summary.og': { en: 'OG', de: 'SG (Stammwürze)', hi: 'OG (प्रारंभिक घनत्व)', mr: 'OG (प्रारंभिक घनता)' },
   'summary.fg': { en: 'FG', de: 'EG (Restextrakt)', hi: 'FG (अंतिम घनत्व)', mr: 'FG (अंतिम घनता)' },
 
-  // --- Water Report tab: tutorial callout ---
   'waterReport.tutorial.title': {
     en: 'How to use Water Report',
     de: 'So nutzen Sie die Wasseranalyse',
@@ -158,6 +145,4 @@ export const translations = {
     hi: 'ग्रेन बिल संपादक मैश समायोजन टैब में, अनुमानित मैश pH के ठीक बगल में है, क्योंकि ग्रिस्ट ही असल में उस संख्या को तय करता है।',
     mr: 'ग्रेन बिल एडिटर मॅश समायोजन टॅबमध्ये, अंदाजित मॅश pH च्या अगदी शेजारी आहे, कारण ग्रिस्टच खरे तर तो आकडा ठरवते.',
   },
-} as const satisfies Record<string, Record<Language, string>>;
-
-export type TranslationKey = keyof typeof translations;
+} as const satisfies TranslationDict;

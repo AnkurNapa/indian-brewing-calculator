@@ -1,5 +1,7 @@
 'use client';
 
+import { useLanguage } from '@/i18n/LanguageContext';
+
 interface SummaryItem {
   label: string;
   value: string;
@@ -18,10 +20,11 @@ interface SessionSummaryProps {
  * whole time, not just on the screen where they were entered.
  */
 export function SessionSummary({ items }: SessionSummaryProps) {
+  const { t } = useLanguage();
   if (items.length === 0) return null;
   return (
     <div
-      aria-label="Current brew session selections"
+      aria-label={t('sharedUi.sessionSummary.ariaLabel')}
       className="-mx-4 flex gap-2 overflow-x-auto border-b border-amber-200 bg-amber-50/70 px-4 py-2 sm:mx-0 sm:flex-wrap sm:justify-center sm:rounded-xl sm:border sm:px-3"
     >
       {items.map((item) => (

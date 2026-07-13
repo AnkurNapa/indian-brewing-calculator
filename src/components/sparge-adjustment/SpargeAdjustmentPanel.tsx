@@ -8,6 +8,7 @@ import { NumberField } from '@/components/ui/NumberField';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 interface SpargeAdjustmentPanelProps {
   sourceProfile: IonProfile;
@@ -20,6 +21,7 @@ export function SpargeAdjustmentPanel({
   spargeVolumeL,
   onSpargeVolumeChange,
 }: SpargeAdjustmentPanelProps) {
+  const { t } = useLanguage();
   const [acidId, setAcidId] = useState(ACID_TYPES[0].id);
   const acid = ACID_TYPES.find((a) => a.id === acidId) ?? ACID_TYPES[0];
 
@@ -28,37 +30,37 @@ export function SpargeAdjustmentPanel({
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-display text-xl font-bold text-ink">Sparge Water Adjustment</h2>
+      <h2 className="font-display text-xl font-bold text-ink">{t('spargeAdjustment.heading')}</h2>
 
       <TutorialCallout
-        title="How to use Sparge Water Adjustment"
+        title={t('spargeAdjustment.tutorial.title')}
         steps={[
           {
-            lead: '1. Enter your sparge volume.',
-            body: 'Use 0 for brew-in-a-bag or no-sparge brewing -- the recommendation adapts automatically.',
+            lead: t('spargeAdjustment.tutorial.step1.lead'),
+            body: t('spargeAdjustment.tutorial.step1.body'),
           },
           {
-            lead: '2. Pick an acid type.',
-            body: 'High-alkalinity sparge water can extract tannins from the grain husk late in lautering; acidifying it prevents that.',
+            lead: t('spargeAdjustment.tutorial.step2.lead'),
+            body: t('spargeAdjustment.tutorial.step2.body'),
           },
           {
-            lead: '3. Follow the Recommendation card.',
-            body: 'Green means your sparge water is already safe as-is; amber means it flags how much acid to add before you sparge.',
+            lead: t('spargeAdjustment.tutorial.step3.lead'),
+            body: t('spargeAdjustment.tutorial.step3.body'),
           },
         ]}
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <NumberField
-          label="Sparge Volume"
+          label={t('spargeAdjustment.spargeVolume.label')}
           unit="L"
           value={spargeVolumeL}
           step={1}
           onChange={onSpargeVolumeChange}
-          helperText="Enter 0 for brew-in-a-bag / no-sparge brewing."
+          helperText={t('spargeAdjustment.spargeVolume.helperText')}
         />
         <SearchableSelect
-          label="Acid Type"
+          label={t('spargeAdjustment.acidType.label')}
           value={acidId}
           onChange={setAcidId}
           options={ACID_TYPES.map((a) => ({ id: a.id, label: a.name }))}
@@ -66,7 +68,7 @@ export function SpargeAdjustmentPanel({
       </div>
 
       <ResultCard
-        title="Recommendation"
+        title={t('spargeAdjustment.recommendation.title')}
         tone={recommendation.needsAcid ? 'warning' : 'success'}
       >
         {recommendation.message}
