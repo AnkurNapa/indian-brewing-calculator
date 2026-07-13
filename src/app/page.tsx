@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Tabs, TabDef } from '@/components/ui/Tabs';
 import { SessionSummary } from '@/components/ui/SessionSummary';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
+import { LanguageToggle } from '@/components/ui/LanguageToggle';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
 import { roundForDisplay } from '@/lib/units';
 import { WaterReportForm } from '@/components/water-report/WaterReportForm';
@@ -39,35 +41,40 @@ import {
   BookmarkIcon,
 } from '@/components/ui/icons';
 
-/**
- * Ordered to mirror an actual brew-day walk-through, from water prep
- * through to packaging and record-keeping, so swiping/tapping forward
- * through the tabs follows the same order a brewer works the floor. Home
- * comes first as the session overview / checkpoint screen.
- */
-const TABS: TabDef[] = [
-  { id: 'home', label: 'Home', shortLabel: 'Home', icon: HomeIcon },
-  { id: 'water-report', label: 'Water Report', shortLabel: 'Water', icon: DropletIcon },
-  { id: 'mash-adjustment', label: 'Mash Adjustment', shortLabel: 'Mash', icon: FlaskIcon },
-  { id: 'sparge-adjustment', label: 'Sparge Adjustment', shortLabel: 'Sparge', icon: FunnelIcon },
-  { id: 'water-volumes', label: 'Water Volumes', shortLabel: 'Volumes', icon: JugIcon },
-  { id: 'transfer-lautering', label: 'Transfer & Lautering', shortLabel: 'Transfer', icon: PipeFlowIcon },
-  { id: 'brewhouse', label: 'Brewhouse Calculators', shortLabel: 'Calcs', icon: CalculatorIcon },
-  { id: 'fermentation-tracker', label: 'Fermentation Tracker', shortLabel: 'Ferment', icon: FermenterIcon },
-  { id: 'style-check', label: 'BJCP Style Check', shortLabel: 'Style', icon: StyleCheckIcon },
-  { id: 'blending', label: 'Blending', shortLabel: 'Blend', icon: BlendIcon },
-  { id: 'recipes', label: 'Recipes', shortLabel: 'Recipes', icon: BookmarkIcon },
-  { id: 'backup', label: 'Backup & Sync', shortLabel: 'Backup', icon: CloudSyncIcon },
-  { id: 'about', label: 'About', shortLabel: 'About', icon: InfoIcon },
-];
-
-const TAB_BY_ID = new Map(TABS.map((tab) => [tab.id, tab]));
-
 export default function Home() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('home');
   const { state, setState } = useWaterProfile();
   const { batches: fermentationBatches, setBatches: setFermentationBatches } = useFermentationBatches();
   const { snapshots: recipeSnapshots, addSnapshot: addRecipeSnapshot, deleteSnapshot: deleteRecipeSnapshot } = useRecipeSnapshots();
+
+  /**
+   * Ordered to mirror an actual brew-day walk-through, from water prep
+   * through to packaging and record-keeping, so swiping/tapping forward
+   * through the tabs follows the same order a brewer works the floor. Home
+   * comes first as the session overview / checkpoint screen. Rebuilt on
+   * every language change so labels stay in sync with the toggle.
+   */
+  const TABS: TabDef[] = useMemo(
+    () => [
+      { id: 'home', label: t('tab.home.label'), shortLabel: t('tab.home.short'), icon: HomeIcon },
+      { id: 'water-report', label: t('tab.waterReport.label'), shortLabel: t('tab.waterReport.short'), icon: DropletIcon },
+      { id: 'mash-adjustment', label: t('tab.mashAdjustment.label'), shortLabel: t('tab.mashAdjustment.short'), icon: FlaskIcon },
+      { id: 'sparge-adjustment', label: t('tab.spargeAdjustment.label'), shortLabel: t('tab.spargeAdjustment.short'), icon: FunnelIcon },
+      { id: 'water-volumes', label: t('tab.waterVolumes.label'), shortLabel: t('tab.waterVolumes.short'), icon: JugIcon },
+      { id: 'transfer-lautering', label: t('tab.transferLautering.label'), shortLabel: t('tab.transferLautering.short'), icon: PipeFlowIcon },
+      { id: 'brewhouse', label: t('tab.brewhouse.label'), shortLabel: t('tab.brewhouse.short'), icon: CalculatorIcon },
+      { id: 'fermentation-tracker', label: t('tab.fermentationTracker.label'), shortLabel: t('tab.fermentationTracker.short'), icon: FermenterIcon },
+      { id: 'style-check', label: t('tab.styleCheck.label'), shortLabel: t('tab.styleCheck.short'), icon: StyleCheckIcon },
+      { id: 'blending', label: t('tab.blending.label'), shortLabel: t('tab.blending.short'), icon: BlendIcon },
+      { id: 'recipes', label: t('tab.recipes.label'), shortLabel: t('tab.recipes.short'), icon: BookmarkIcon },
+      { id: 'backup', label: t('tab.backup.label'), shortLabel: t('tab.backup.short'), icon: CloudSyncIcon },
+      { id: 'about', label: t('tab.about.label'), shortLabel: t('tab.about.short'), icon: InfoIcon },
+    ],
+    [t],
+  );
+
+  const TAB_BY_ID = useMemo(() => new Map(TABS.map((tab) => [tab.id, tab])), [TABS]);
   const activeTabDef = TAB_BY_ID.get(activeTab) ?? TABS[0];
 
   const targetStyleName = TARGET_STYLE_PROFILES.find((s) => s.id === state.targetStyleId)?.name ?? '--';
@@ -82,29 +89,29 @@ export default function Home() {
   const summaryItemsByTab: Record<string, { label: string; value: string }[]> = {
     home: [],
     'water-report': [
-      { label: 'Target Style', value: targetStyleName },
-      ...(totalGrainKg > 0 ? [{ label: 'Grain Bill', value: `${totalGrainKg.toFixed(2)} kg` }] : []),
+      { label: t('summary.targetStyle'), value: targetStyleName },
+      ...(totalGrainKg > 0 ? [{ label: t('summary.grainBill'), value: `${totalGrainKg.toFixed(2)} kg` }] : []),
     ],
     'mash-adjustment': [
-      { label: 'Batch Volume', value: `${state.batchVolumeL} L` },
-      { label: 'Target Style', value: targetStyleName },
+      { label: t('summary.batchVolume'), value: `${state.batchVolumeL} L` },
+      { label: t('summary.targetStyle'), value: targetStyleName },
     ],
-    'sparge-adjustment': [{ label: 'Sparge Volume', value: `${state.spargeVolumeL} L` }],
+    'sparge-adjustment': [{ label: t('summary.spargeVolume'), value: `${state.spargeVolumeL} L` }],
     'water-volumes': [
-      { label: 'Batch Volume', value: `${state.batchVolumeL} L` },
-      { label: 'Grain Bill', value: `${totalGrainKg.toFixed(2)} kg` },
+      { label: t('summary.batchVolume'), value: `${state.batchVolumeL} L` },
+      { label: t('summary.grainBill'), value: `${totalGrainKg.toFixed(2)} kg` },
     ],
-    'transfer-lautering': [{ label: 'Grain Bill', value: `${totalGrainKg.toFixed(2)} kg` }],
+    'transfer-lautering': [{ label: t('summary.grainBill'), value: `${totalGrainKg.toFixed(2)} kg` }],
     brewhouse: [
-      { label: 'Batch Volume', value: `${state.batchVolumeL} L` },
-      { label: 'OG', value: roundForDisplay(state.ogSg, 3).toString() },
-      { label: 'FG', value: roundForDisplay(state.fgSg, 3).toString() },
+      { label: t('summary.batchVolume'), value: `${state.batchVolumeL} L` },
+      { label: t('summary.og'), value: roundForDisplay(state.ogSg, 3).toString() },
+      { label: t('summary.fg'), value: roundForDisplay(state.fgSg, 3).toString() },
     ],
     'fermentation-tracker': [],
     'style-check': [
-      { label: 'Target Style', value: targetStyleName },
-      { label: 'OG', value: roundForDisplay(state.ogSg, 3).toString() },
-      { label: 'FG', value: roundForDisplay(state.fgSg, 3).toString() },
+      { label: t('summary.targetStyle'), value: targetStyleName },
+      { label: t('summary.og'), value: roundForDisplay(state.ogSg, 3).toString() },
+      { label: t('summary.fg'), value: roundForDisplay(state.fgSg, 3).toString() },
     ],
     blending: [],
     recipes: [],
@@ -117,22 +124,18 @@ export default function Home() {
   const nextTab = activeIndex >= 0 && activeIndex < TABS.length - 1 ? TABS[activeIndex + 1] : null;
 
   useEffect(() => {
-    document.title =
-      activeTab === 'home' ? "Indian Brewer's Calculator" : `${activeTabDef.label} - Indian Brewer's Calculator`;
-  }, [activeTab, activeTabDef.label]);
+    document.title = activeTab === 'home' ? t('app.title') : `${activeTabDef.label} - ${t('app.title')}`;
+  }, [activeTab, activeTabDef.label, t]);
 
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-24 pt-2 sm:px-6 sm:pb-16 sm:pt-6">
-      <header className="hidden flex-col items-center gap-1 text-center sm:flex">
+      <header className="relative hidden flex-col items-center gap-1 text-center sm:flex">
+        <LanguageToggle className="absolute right-0 top-0" />
         <div className="flex items-center gap-2">
           <DropletIcon className="h-7 w-7 flex-shrink-0 text-teal-700" />
-          <h1 className="font-display text-2xl font-extrabold text-amber-900 sm:text-3xl">
-            Indian Brewer&apos;s Calculator
-          </h1>
+          <h1 className="font-display text-2xl font-extrabold text-amber-900 sm:text-3xl">{t('app.title')}</h1>
         </div>
-        <p className="font-body text-sm text-amber-800">
-          A metric (L / HL / mg / g / °C) brewing water chemistry lab notebook.
-        </p>
+        <p className="font-body text-sm text-amber-800">{t('app.tagline')}</p>
       </header>
 
       {/* Compact native-style app bar on phones: a short (2-3 word) screen
@@ -146,7 +149,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setActiveTab('home')}
-              aria-label="Go to Home overview"
+              aria-label={t('app.goHome')}
               className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-teal-700 hover:bg-teal-50 active:bg-teal-100"
             >
               <HomeIcon className="h-5 w-5" />
@@ -158,11 +161,14 @@ export default function Home() {
             {activeTabDef.shortLabel ?? activeTabDef.label}
           </h1>
         </div>
-        {activeTab !== 'home' ? (
-          <span className="flex-shrink-0 rounded-full bg-amber-100 px-2 py-1 font-body text-[0.65rem] font-semibold text-amber-700">
-            Step {activeIndex} of {TABS.length - 1}
-          </span>
-        ) : null}
+        <div className="flex flex-shrink-0 items-center gap-2">
+          {activeTab !== 'home' ? (
+            <span className="rounded-full bg-amber-100 px-2 py-1 font-body text-[0.65rem] font-semibold text-amber-700">
+              {t('app.stepOf', { current: activeIndex, total: TABS.length - 1 })}
+            </span>
+          ) : null}
+          <LanguageToggle />
+        </div>
       </div>
 
       <Tabs tabs={TABS} activeId={activeTab} onChange={setActiveTab} />
@@ -182,24 +188,12 @@ export default function Home() {
         {activeTab === 'water-report' ? (
           <div className="flex flex-col gap-8">
             <TutorialCallout
-              title="How to use Water Report"
+              title={t('waterReport.tutorial.title')}
               steps={[
-                {
-                  lead: '1. Pick which style you\'re brewing.',
-                  body: 'This shows a matching target water profile right away, and sets the same target Mash Adjustment uses for salt additions.',
-                },
-                {
-                  lead: '2. Quick-fill or enter your source water.',
-                  body: 'Pick a known water type from the preset, or type your own ion values (Ca, Mg, Na, SO4, Cl, HCO3, alkalinity) from a water report/COA.',
-                },
-                {
-                  lead: '3. Check Residual Alkalinity.',
-                  body: 'Higher RA pushes mash pH up; very low or negative RA (like RO water) lets dark malt acidity dominate -- this feeds directly into Mash Adjustment.',
-                },
-                {
-                  lead: '4. Build your Grain Bill on Mash Adjustment.',
-                  body: 'The Grain Bill editor lives on the Mash Adjustment tab, right next to Predicted Mash pH, since grist is what actually drives that number.',
-                },
+                { lead: t('waterReport.tutorial.step1.lead'), body: t('waterReport.tutorial.step1.body') },
+                { lead: t('waterReport.tutorial.step2.lead'), body: t('waterReport.tutorial.step2.body') },
+                { lead: t('waterReport.tutorial.step3.lead'), body: t('waterReport.tutorial.step3.body') },
+                { lead: t('waterReport.tutorial.step4.lead'), body: t('waterReport.tutorial.step4.body') },
               ]}
             />
             <TargetStyleReference
@@ -325,7 +319,7 @@ export default function Home() {
               className="flex min-h-[52px] w-full items-center justify-between gap-2 rounded-xl bg-teal-700 px-4 py-3 text-left font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800 active:bg-teal-900"
             >
               <span className="flex flex-col">
-                <span className="text-xs font-normal uppercase tracking-wide text-parchment/70">Next Step</span>
+                <span className="text-xs font-normal uppercase tracking-wide text-parchment/70">{t('app.nextStep')}</span>
                 <span className="flex items-center gap-1.5">
                   <nextTab.icon className="h-4 w-4 flex-shrink-0" />
                   {nextTab.label}
@@ -340,10 +334,10 @@ export default function Home() {
       </div>
 
       <footer className="flex flex-col items-center gap-2 border-t border-amber-200 pt-6 text-center font-body text-xs text-amber-700/70">
-        <p className="font-display text-sm font-bold text-amber-900">Indian Brewer&apos;s Calculator</p>
-        <p>All units metric: Liters, Hectoliters, milligrams, grams, °Celsius, °Lovibond for grain color.</p>
+        <p className="font-display text-sm font-bold text-amber-900">{t('app.title')}</p>
+        <p>{t('app.footer.units')}</p>
         <p>
-          Built by Ankur Napa &middot;{' '}
+          {t('app.footer.builtBy')} &middot;{' '}
           <a
             href="https://www.linkedin.com/in/ankur-napa"
             target="_blank"
@@ -357,13 +351,7 @@ export default function Home() {
             napaankur@gmail.com
           </a>
         </p>
-        <p className="max-w-md text-amber-700/60">
-          By default, this app does not collect or transmit your data anywhere -- all entries are saved only in
-          your own browser&apos;s local storage on this device, and clearing your browser data will erase it. If
-          you choose to use Google Sync (Backup &amp; Sync tab), your data is written to a private spreadsheet
-          in your own Google Drive -- never to any server we run. We take no responsibility for the
-          confidentiality or backup of data stored either way.
-        </p>
+        <p className="max-w-md text-amber-700/60">{t('app.footer.privacy')}</p>
       </footer>
     </main>
   );
