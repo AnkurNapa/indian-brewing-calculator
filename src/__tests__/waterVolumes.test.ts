@@ -70,4 +70,51 @@ describe('calculateWaterVolumes', () => {
     const result = calculateWaterVolumes({ grainWeightKg: 5, targetFinalVolumeL: 20 });
     expect(result.mashWaterL + result.spargeWaterL).toBeCloseTo(result.totalWaterL, 5);
   });
+
+  it('defaults to fly sparge with a single batch (backward compatible)', () => {
+    const result = calculateWaterVolumes({ grainWeightKg: 5, targetFinalVolumeL: 20 });
+    expect(result.spargeMethod).toBe('fly');
+    expect(result.spargeBatchCount).toBe(1);
+    expect(result.spargeBatchVolumeL).toBeCloseTo(result.spargeWaterL, 5);
+  });
+});
+
+describe('calculateWaterVolumes sparge methods', () => {
+  const base = { grainWeightKg: 5, targetFinalVolumeL: 20 }; // sparge = 15.7 L with defaults
+
+  it('batch sparge splits the same total sparge water into N equal batches', () => {
+    const fly = calculateWaterVolumes(base);
+    const batch = calculateWaterVolumes({ ...base, spargeMethod: 'batch', spargeBatchCount: 2 });
+    // Same mash and same total sparge water as fly -- only the split differs.
+    expect(batch.mashWaterL).toBeCloseTo(fly.mashWaterL, 5);
+    expect(batch.spargeWaterL).toBeCloseTo(fly.spargeWaterL, 5);
+    expect(batch.spargeBatchCount).toBe(2);
+    expect(batch.spargeBatchVolumeL).toBeCloseTo(fly.spargeWaterL / 2, 5);
+    // Each batch summed back equals the total sparge water.
+    expect(batch.spargeBatchVolumeL * batch.spargeBatchCount).toBeCloseTo(batch.spargeWaterL, 5);
+  });
+
+  it('batch count is clamped to at least 1 and floored to a whole number', () => {
+    const zero = calculateWaterVolumes({ ...base, spargeMethod: 'batch', spargeBatchCount: 0 });
+    expect(zero.spargeBatchCount).toBeGreaterThanOrEqual(1);
+    const frac = calculateWaterVolumes({ ...base, spargeMethod: 'batch', spargeBatchCount: 3.9 });
+    expect(frac.spargeBatchCount).toBe(3);
+  });
+
+  it('no-sparge puts all water in the mash and zeroes the sparge', () => {
+    const result = calculateWaterVolumes({ ...base, spargeMethod: 'noSparge' });
+    expect(result.spargeWaterL).toBe(0);
+    expect(result.spargeBatchCount).toBe(0);
+    expect(result.mashWaterL).toBeCloseTo(result.totalWaterL, 5);
+    // Effective thickness is total water / grist, thinner than a fly mash.
+    expect(result.effectiveMashThicknessLPerKg).toBeCloseTo(result.totalWaterL / 5, 5);
+    expect(result.notes.some((n) => n.toLowerCase().includes('no-sparge'))).toBe(true);
+  });
+
+  it('mash + sparge == total for every method (mass balance holds)', () => {
+    for (const spargeMethod of ['fly', 'batch', 'noSparge'] as const) {
+      const r = calculateWaterVolumes({ ...base, spargeMethod, spargeBatchCount: 3 });
+      expect(r.mashWaterL + r.spargeWaterL).toBeCloseTo(r.totalWaterL, 5);
+    }
+  });
 });
