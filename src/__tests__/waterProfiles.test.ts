@@ -18,18 +18,18 @@ describe('seed water profiles', () => {
     expect(medium.profile.alkalinity).toBeLessThan(hard.profile.alkalinity);
   });
 
-  it('includes Bengaluru, Mumbai, and Delhi city profiles ordered soft -> hard by alkalinity', () => {
+  it('includes Bengaluru, Mumbai, Delhi, and Hyderabad city profiles ordered soft -> hard by alkalinity', () => {
     const blr = SOURCE_WATER_PROFILES.find((p) => p.id === 'bengaluru-cauvery')!;
     const mumbai = SOURCE_WATER_PROFILES.find((p) => p.id === 'mumbai-lakes')!;
     const delhi = SOURCE_WATER_PROFILES.find((p) => p.id === 'delhi-yamuna')!;
-    expect(blr).toBeDefined();
-    expect(mumbai).toBeDefined();
-    expect(delhi).toBeDefined();
-    // Mumbai (soft lakes) < Bengaluru (medium Cauvery) < Delhi (hard Yamuna/groundwater).
+    const hyd = SOURCE_WATER_PROFILES.find((p) => p.id === 'hyderabad-krishna')!;
+    for (const c of [blr, mumbai, delhi, hyd]) expect(c).toBeDefined();
+    // Mumbai (soft) < Bengaluru (medium) < Hyderabad (hard) < Delhi (hardest).
     expect(mumbai.profile.alkalinity).toBeLessThan(blr.profile.alkalinity);
-    expect(blr.profile.alkalinity).toBeLessThan(delhi.profile.alkalinity);
+    expect(blr.profile.alkalinity).toBeLessThan(hyd.profile.alkalinity);
+    expect(hyd.profile.alkalinity).toBeLessThan(delhi.profile.alkalinity);
     // All ions non-negative.
-    for (const city of [blr, mumbai, delhi]) {
+    for (const city of [blr, mumbai, delhi, hyd]) {
       for (const v of Object.values(city.profile)) expect(v).toBeGreaterThanOrEqual(0);
     }
   });

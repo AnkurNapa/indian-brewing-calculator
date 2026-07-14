@@ -117,6 +117,20 @@ export const SOURCE_WATER_PROFILES: NamedWaterProfile[] = [
       alkalinity: 245,
     },
   },
+  {
+    id: 'hyderabad-krishna',
+    name: 'Hyderabad (Krishna/Godavari) Tap',
+    description: 'HMWSSB Krishna/Godavari + reservoir supply: hard with moderately high alkalinity and chloride; city borewells run harder still.',
+    profile: {
+      calcium: 70,
+      magnesium: 28,
+      sodium: 48,
+      sulfate: 50,
+      chloride: 75,
+      bicarbonate: 240,
+      alkalinity: 195,
+    },
+  },
 ];
 
 export const TARGET_STYLE_PROFILES: NamedWaterProfile[] = [
