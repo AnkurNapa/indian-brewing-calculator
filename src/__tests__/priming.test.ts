@@ -1,6 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { calculatePrimingDose, estimateResidualCo2Volumes, PRIMING_SUGARS } from '@/lib/priming';
 
+describe('estimateResidualCo2Volumes (°F fit applied to °C input)', () => {
+  it('returns ~0.86 volumes at 20 °C (the published value), not the raw-°C ~2.14', () => {
+    // 20 °C = 68 °F -> 3.0378 - 0.050062*68 + 0.00026555*68^2 = 0.8615 vol.
+    expect(estimateResidualCo2Volumes(20)).toBeCloseTo(0.86, 1);
+  });
+  it('returns ~0.76 volumes at 25 °C', () => {
+    expect(estimateResidualCo2Volumes(25)).toBeCloseTo(0.76, 1);
+  });
+});
+
 describe('estimateResidualCo2Volumes', () => {
   it('decreases as temperature increases (less CO2 stays dissolved when warm)', () => {
     const cold = estimateResidualCo2Volumes(2);

@@ -86,17 +86,21 @@ export function tinsethUtilization(wortGravity: number, boilTimeMinutes: number)
 
 /**
  * Rager utilization (published formula): a tanh curve over boil time,
- * with a subtractive high-gravity correction -- for worts over 1.050
- * SG, utilization is reduced roughly 1 percentage point per 0.020 SG
- * above that threshold, per Rager's original published adjustment.
+ * with a high-gravity correction. Rager's published gravity adjustment
+ * is GA = (OG - 1.050) / 0.2 for worts over 1.050 SG, and the base
+ * utilization is DIVIDED by (1 + GA) -- not reduced by GA percentage
+ * points. Dividing is what Rager specifies and keeps the correction
+ * proportional (a 1.090 wort is penalized far more than a 1.055 wort),
+ * whereas subtracting GA*100 points collapses utilization to ~0 for
+ * strong worts and badly under-predicts their bitterness.
  */
 export function ragerUtilization(wortGravity: number, boilTimeMinutes: number): number {
   const safeTime = Number.isFinite(boilTimeMinutes) ? Math.max(0, boilTimeMinutes) : 0;
   const safeGravity = safePositive(wortGravity, 1.0);
 
   const utilizationPercent = 18.11 + 13.86 * Math.tanh((safeTime - 31.32) / 18.27);
-  const gravityAdjustmentPercent = safeGravity > 1.05 ? ((safeGravity - 1.05) / 0.2) * 100 : 0;
-  const adjustedPercent = Math.max(0, utilizationPercent - gravityAdjustmentPercent);
+  const gravityAdjustment = safeGravity > 1.05 ? (safeGravity - 1.05) / 0.2 : 0;
+  const adjustedPercent = Math.max(0, utilizationPercent / (1 + gravityAdjustment));
 
   return adjustedPercent / 100;
 }

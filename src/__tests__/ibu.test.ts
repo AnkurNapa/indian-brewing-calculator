@@ -128,6 +128,13 @@ describe('ragerUtilization', () => {
     expect(long).toBeGreaterThan(short);
   });
 
+  it('applies the gravity correction as a divisor by (1 + GA), not a point subtraction', () => {
+    // 60 min base util = 18.11 + 13.86*tanh((60-31.32)/18.27) = 30.82%.
+    // At 1.090: GA = (0.090-0.050)/0.2 = 0.2 -> 30.82 / 1.2 = 25.68% -> 0.2568.
+    // (The old subtractive bug gave (30.82 - 20)/100 = 0.108, ~2.4x too low.)
+    expect(ragerUtilization(1.09, 60)).toBeCloseTo(0.2568, 3);
+  });
+
   it('is reduced by high gravity above 1.050', () => {
     const lowGravity = ragerUtilization(1.04, 60);
     const highGravity = ragerUtilization(1.08, 60);

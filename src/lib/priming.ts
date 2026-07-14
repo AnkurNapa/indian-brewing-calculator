@@ -10,10 +10,12 @@
  *
  * Residual CO2 (volumes) as a function of temperature is estimated with
  * the standard published approximation:
- *   residualCO2 = 3.0378 - 0.050062*T + 0.00026555*T^2   (T in °C)
+ *   residualCO2 = 3.0378 - 0.050062*Tf + 0.00026555*Tf^2   (Tf in °F)
  * This is a widely-cited empirical fit to CO2 solubility in beer at
  * atmospheric pressure across normal fermentation/conditioning
- * temperatures.
+ * temperatures. The published fit is defined in °Fahrenheit, so the °C
+ * input is converted to °F before applying it (this app is otherwise
+ * metric; the temperature field is °C).
  */
 
 function safeNonNegative(value: number, fallback = 0): number {
@@ -26,8 +28,10 @@ function safeNonNegative(value: number, fallback = 0): number {
  * solution from fermentation before any priming/forced carbonation.
  */
 export function estimateResidualCo2Volumes(temperatureC: number): number {
-  const t = Number.isFinite(temperatureC) ? temperatureC : 20;
-  const volumes = 3.0378 - 0.050062 * t + 0.00026555 * t ** 2;
+  const tC = Number.isFinite(temperatureC) ? temperatureC : 20;
+  // The empirical fit is published for °F; convert from the °C input.
+  const tF = tC * 1.8 + 32;
+  const volumes = 3.0378 - 0.050062 * tF + 0.00026555 * tF ** 2;
   return Math.max(0, volumes);
 }
 

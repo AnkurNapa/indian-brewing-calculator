@@ -7,10 +7,19 @@
  * is the fraction of that theoretical maximum actually captured into
  * the kettle/fermenter for a given batch, measured via actual gravity.
  *
- * Gravity "points" convention: SG 1.050 = 50 points. This module uses
- * metric units throughout (kg grain, L wort), computing efficiency from
- * gravity points rather than the imperial PPG convention.
+ * Gravity "points" convention: SG 1.050 = 50 points. This module accepts
+ * grain in kg and wort in L, but malt `potentialSg` is specified in the
+ * standard maltster IMPERIAL convention -- PPG, points per pound per US
+ * gallon (e.g. 1.037 = 37 PPG for base malt). A given mass/volume yields
+ * more gravity in kg/L than in lb/gal, so the per-(kg/L) figure is scaled
+ * up by the lb->kg (2.20462) and gal->L (0.264172) unit ratio to get real
+ * SG points. Without this factor, predicted OG and efficiency come out
+ * ~8.3x wrong (a 5 kg / 20 L batch would predict OG ~1.007 instead of the
+ * correct ~1.058).
  */
+
+/** PPG (points/lb/gal) -> points per (kg/L). = 2.20462 / 0.264172 ≈ 8.3454. */
+const PPG_TO_POINTS_PER_KG_PER_L = 2.20462 / 0.264172;
 
 function safePositive(value: number, fallback = 0): number {
   return Number.isFinite(value) && value >= 0 ? value : fallback;
@@ -32,9 +41,10 @@ export interface GrainPotentialItem {
   name: string;
   weightKg: number;
   /**
-   * Potential extract, expressed as the SG this malt would produce if
-   * 1 kg were fully converted into 1 L of water (a standard maltster
-   * "potential" spec, typically 1.030-1.038 for base malts).
+   * Potential extract in the standard maltster PPG convention, expressed
+   * as SG: the gravity 1 lb of this malt would yield fully converted into
+   * 1 US gallon (e.g. 1.037 = 37 PPG, typical for base malts). Converted
+   * to metric points per (kg/L) internally via PPG_TO_POINTS_PER_KG_PER_L.
    */
   potentialSg: number;
 }
@@ -77,7 +87,7 @@ export function calculateBrewhouseEfficiency(
     return { maxTheoreticalPoints: 0, actualPoints: 0, efficiencyPercent: 0 };
   }
 
-  const maxTheoreticalPoints = totalPotentialPointsPerLiter / safeVolume;
+  const maxTheoreticalPoints = (totalPotentialPointsPerLiter / safeVolume) * PPG_TO_POINTS_PER_KG_PER_L;
   const actualPoints = sgToPoints(safePositive(actualMeasuredSg, 1.0));
 
   const efficiencyPercent =
@@ -115,7 +125,7 @@ export function predictOriginalGravity(
 
   if (safeVolume <= 0 || totalPotentialPointsPerLiter <= 0) return 1.0;
 
-  const maxTheoreticalPoints = totalPotentialPointsPerLiter / safeVolume;
+  const maxTheoreticalPoints = (totalPotentialPointsPerLiter / safeVolume) * PPG_TO_POINTS_PER_KG_PER_L;
   const predictedPoints = maxTheoreticalPoints * (safeEfficiency / 100);
 
   return pointsToSg(predictedPoints);
@@ -177,6 +187,6 @@ export function solveGrainWeightsByPercent(
     if (potentialPoints <= 0) return 0;
 
     const maltPoints = totalPoints * normalizedPercent;
-    return maltPoints / (potentialPoints * efficiencyDecimal);
+    return maltPoints / (potentialPoints * efficiencyDecimal * PPG_TO_POINTS_PER_KG_PER_L);
   });
 }
