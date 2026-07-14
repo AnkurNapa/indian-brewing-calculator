@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { ShareIcon } from './icons';
@@ -20,7 +21,11 @@ type Status = 'idle' | 'shared' | 'copied';
 export function ShareAppButton({ className = '', compact = false }: { className?: string; compact?: boolean }) {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
+
+  // Portals need document.body, absent during the static-export prerender.
+  useEffect(() => setMounted(true), []);
   // Lazy initializer: read the URL synchronously on the client's first
   // render so the QR value is present immediately (no blank first frame).
   // During the static-export prerender `window` is undefined -> '', but the
@@ -85,12 +90,13 @@ export function ShareAppButton({ className = '', compact = false }: { className?
         {!compact ? <span>{t('app.share.label')}</span> : null}
       </button>
 
-      {open ? (
+      {open && mounted
+        ? createPortal(
         <div
           role="dialog"
           aria-modal="true"
           aria-label={t('app.share.dialogTitle')}
-          className="fixed inset-0 z-50 overflow-y-auto bg-ink/50"
+          className="fixed inset-0 z-[100] overflow-y-auto bg-ink/50"
           onClick={() => setOpen(false)}
         >
           {/* min-h-full + centering inside a scrollable overlay: the dialog
@@ -134,8 +140,10 @@ export function ShareAppButton({ className = '', compact = false }: { className?
             </button>
             </div>
           </div>
-        </div>
-      ) : null}
+        </div>,
+            document.body,
+          )
+        : null}
     </>
   );
 }
