@@ -77,6 +77,8 @@ export const coreTranslations = {
   'tab.styleCheck.short': { en: 'Style', de: 'Stil', hi: 'शैली', mr: 'शैली' },
   'tab.blending.label': { en: 'Blending', de: 'Verschneiden', hi: 'मिश्रण', mr: 'मिश्रण' },
   'tab.blending.short': { en: 'Blend', de: 'Mischen', hi: 'मिश्रण', mr: 'मिश्रण' },
+  'tab.mixingCross.label': { en: 'Mixing Cross', de: 'Mischungskreuz', hi: 'मिश्रण क्रॉस', mr: 'मिश्रण क्रॉस' },
+  'tab.mixingCross.short': { en: 'Cross', de: 'Kreuz', hi: 'क्रॉस', mr: 'क्रॉस' },
   'tab.recipes.label': { en: 'Recipes', de: 'Rezepte', hi: 'रेसिपी', mr: 'पाककृती' },
   'tab.recipes.short': { en: 'Recipes', de: 'Rezepte', hi: 'रेसिपी', mr: 'पाककृती' },
   'tab.backup.label': { en: 'Backup & Sync', de: 'Sicherung & Sync', hi: 'बैकअप व सिंक', mr: 'बॅकअप व सिंक' },

@@ -57,6 +57,16 @@ export function BlendIcon({ className }: IconProps) {
   );
 }
 
+/** Pearson square: crossing arms with a target node -- Mixing Cross. */
+export function MixingCrossIcon({ className }: IconProps) {
+  return (
+    <svg {...commonProps} className={className} aria-hidden="true">
+      <path d="M5 5l5.5 5.5M19 5l-5.5 5.5M5 19l5.5-5.5M19 19l-5.5-5.5" />
+      <circle cx="12" cy="12" r="2.5" />
+    </svg>
+  );
+}
+
 /** Measuring jug -- Water Volumes. */
 export function JugIcon({ className }: IconProps) {
   return (

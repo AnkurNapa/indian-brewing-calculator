@@ -13,6 +13,7 @@ import { TargetStyleReference } from '@/components/water-report/TargetStyleRefer
 import { MashAdjustmentPanel } from '@/components/mash-adjustment/MashAdjustmentPanel';
 import { SpargeAdjustmentPanel } from '@/components/sparge-adjustment/SpargeAdjustmentPanel';
 import { BlendingPanel } from '@/components/blending/BlendingPanel';
+import { MixingCrossPanel } from '@/components/mixing-cross/MixingCrossPanel';
 import { WaterVolumesPanel } from '@/components/water-volumes/WaterVolumesPanel';
 import { BrewhouseCalculatorsPanel } from '@/components/brewhouse/BrewhouseCalculatorsPanel';
 import { TransferLauteringPanel } from '@/components/transfer-lautering/TransferLauteringPanel';
@@ -31,6 +32,7 @@ import {
   FlaskIcon,
   FunnelIcon,
   BlendIcon,
+  MixingCrossIcon,
   JugIcon,
   PipeFlowIcon,
   FermenterIcon,
@@ -67,6 +69,7 @@ export default function Home() {
       { id: 'fermentation-tracker', label: t('tab.fermentationTracker.label'), shortLabel: t('tab.fermentationTracker.short'), icon: FermenterIcon },
       { id: 'style-check', label: t('tab.styleCheck.label'), shortLabel: t('tab.styleCheck.short'), icon: StyleCheckIcon },
       { id: 'blending', label: t('tab.blending.label'), shortLabel: t('tab.blending.short'), icon: BlendIcon },
+      { id: 'mixing-cross', label: t('tab.mixingCross.label'), shortLabel: t('tab.mixingCross.short'), icon: MixingCrossIcon },
       { id: 'recipes', label: t('tab.recipes.label'), shortLabel: t('tab.recipes.short'), icon: BookmarkIcon },
       { id: 'backup', label: t('tab.backup.label'), shortLabel: t('tab.backup.short'), icon: CloudSyncIcon },
       { id: 'about', label: t('tab.about.label'), shortLabel: t('tab.about.short'), icon: InfoIcon },
@@ -114,6 +117,7 @@ export default function Home() {
       { label: t('summary.fg'), value: roundForDisplay(state.fgSg, 3).toString() },
     ],
     blending: [],
+    'mixing-cross': [],
     recipes: [],
     backup: [],
     about: [],
@@ -242,6 +246,8 @@ export default function Home() {
             onPercentAChange={(blendPercentA) => setState((prev) => ({ ...prev, blendPercentA }))}
           />
         ) : null}
+
+        {activeTab === 'mixing-cross' ? <MixingCrossPanel /> : null}
 
         {activeTab === 'water-volumes' ? <WaterVolumesPanel grainBill={state.grainBill} /> : null}
 

@@ -9,6 +9,7 @@ import { brewhouseTranslations } from './brewhouse';
 import { fermentationTrackerTranslations } from './fermentationTracker';
 import { styleCheckTranslations } from './styleCheck';
 import { blendingTranslations } from './blending';
+import { mixingCrossTranslations } from './mixingCross';
 import { recipesTranslations } from './recipes';
 import { backupTranslations } from './backup';
 import { aboutTranslations } from './about';
@@ -36,6 +37,7 @@ export const translations = {
   ...fermentationTrackerTranslations,
   ...styleCheckTranslations,
   ...blendingTranslations,
+  ...mixingCrossTranslations,
   ...recipesTranslations,
   ...backupTranslations,
   ...aboutTranslations,
