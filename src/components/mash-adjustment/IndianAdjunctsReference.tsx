@@ -63,7 +63,9 @@ export function IndianAdjunctsReference() {
                     ? `${roundForDisplay(a.potentialSg, 3)}`
                     : <span className="text-ink/40">{t('mashAdjustment.indianAdjuncts.noExtract')}</span>}
                 </td>
-                <td className="py-1.5 pr-3 whitespace-nowrap">~{roundForDisplay(a.typicalRateGPerL, 1)} g/L</td>
+                <td className="py-1.5 pr-3 whitespace-nowrap">
+                  ~{roundForDisplay(a.typicalRateGPerL, a.typicalRateGPerL < 1 ? 2 : 1)} g/L
+                </td>
                 <td className="py-1.5 pr-3 whitespace-nowrap font-medium text-teal-800">{t(STAGE_KEY[a.stage])}</td>
                 <td className="py-1.5 text-xs text-ink/70">{a.flavor}</td>
               </tr>
