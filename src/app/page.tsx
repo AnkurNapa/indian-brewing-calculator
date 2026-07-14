@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Tabs, TabDef } from '@/components/ui/Tabs';
 import { SessionSummary } from '@/components/ui/SessionSummary';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
@@ -26,6 +26,7 @@ import { AboutPanel } from '@/components/about/AboutPanel';
 import { BackupPanel } from '@/components/backup/BackupPanel';
 import { HomeSummaryPanel } from '@/components/home/HomeSummaryPanel';
 import { RecipeSnapshotsPanel } from '@/components/recipes/RecipeSnapshotsPanel';
+import { trackTabView } from '@/lib/analytics';
 import { useWaterProfile } from '@/hooks/useWaterProfile';
 import { useFermentationBatches } from '@/hooks/useFermentationBatches';
 import { useRecipeSnapshots } from '@/hooks/useRecipeSnapshots';
@@ -136,6 +137,19 @@ export default function Home() {
   useEffect(() => {
     document.title = activeTab === 'home' ? t('app.title') : `${activeTabDef.label} - ${t('app.title')}`;
   }, [activeTab, activeTabDef.label, t]);
+
+  // Per-tab analytics. The initial home load is already captured by GA's
+  // automatic pageview (in layout), so we skip the first effect run and
+  // send a virtual pageview only on subsequent tab switches -- this is what
+  // makes each calculator show up separately in GA's "Pages and screens".
+  const analyticsFirstRun = useRef(true);
+  useEffect(() => {
+    if (analyticsFirstRun.current) {
+      analyticsFirstRun.current = false;
+      return;
+    }
+    trackTabView(activeTab, activeTabDef.label);
+  }, [activeTab, activeTabDef.label]);
 
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-24 pt-2 sm:px-6 sm:pb-16 sm:pt-6">

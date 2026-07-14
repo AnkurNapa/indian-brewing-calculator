@@ -2,9 +2,8 @@ import type { Metadata, Viewport } from 'next';
 import { Archivo } from 'next/font/google';
 import Script from 'next/script';
 import { LanguageProvider } from '@/i18n/LanguageContext';
+import { GA_MEASUREMENT_ID } from '@/lib/analytics';
 import './globals.css';
-
-const GA_MEASUREMENT_ID = 'G-1ZHW47YJDC';
 
 const brandFont = Archivo({
   subsets: ['latin'],
