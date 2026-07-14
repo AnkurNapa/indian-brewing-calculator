@@ -21,13 +21,21 @@ export function ShareAppButton({ className = '', compact = false }: { className?
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
-  const [url, setUrl] = useState('');
+  // Lazy initializer: read the URL synchronously on the client's first
+  // render so the QR value is present immediately (no blank first frame).
+  // During the static-export prerender `window` is undefined -> '', but the
+  // dialog is closed then, so the QR never renders empty in practice.
+  const [url, setUrl] = useState(() =>
+    typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}` : '',
+  );
 
+  // Safety net: if the very first render happened server-side ('' url),
+  // fill it in once mounted on the client.
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (!url && typeof window !== 'undefined') {
       setUrl(`${window.location.origin}${window.location.pathname}`);
     }
-  }, []);
+  }, [url]);
 
   useEffect(() => {
     if (status === 'idle') return;
@@ -82,22 +90,27 @@ export function ShareAppButton({ className = '', compact = false }: { className?
           role="dialog"
           aria-modal="true"
           aria-label={t('app.share.dialogTitle')}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4"
+          className="fixed inset-0 z-50 overflow-y-auto bg-ink/50"
           onClick={() => setOpen(false)}
         >
-          <div
-            className="flex w-full max-w-xs flex-col items-center gap-4 rounded-2xl border border-amber-200 bg-parchment p-6 text-center shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="font-display text-lg font-bold text-amber-900">{t('app.share.dialogTitle')}</h2>
+          {/* min-h-full + centering inside a scrollable overlay: the dialog
+              centers when it fits and stays fully scrollable (top never
+              clipped) when the content is taller than the viewport -- e.g.
+              a tall phone screen. */}
+          <div className="flex min-h-full items-center justify-center p-4">
+            <div
+              className="my-auto flex w-full max-w-xs flex-col items-center gap-3 rounded-2xl border border-amber-200 bg-parchment p-5 text-center shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="font-display text-lg font-bold text-amber-900">{t('app.share.dialogTitle')}</h2>
 
-            <div className="rounded-xl border-2 border-amber-200 bg-white p-3 shadow-inner">
-              {url ? (
-                <QRCodeSVG value={url} size={180} level="M" bgColor="#ffffff" fgColor="#0f766e" />
-              ) : (
-                <div className="h-[180px] w-[180px]" aria-hidden="true" />
-              )}
-            </div>
+              <div className="rounded-xl border-2 border-amber-200 bg-white p-3 shadow-inner">
+                {url ? (
+                  <QRCodeSVG value={url} size={160} level="M" bgColor="#ffffff" fgColor="#0f766e" />
+                ) : (
+                  <div className="h-[160px] w-[160px]" aria-hidden="true" />
+                )}
+              </div>
 
             <p className="font-body text-sm text-ink/70">{t('app.share.scanHint')}</p>
 
@@ -119,6 +132,7 @@ export function ShareAppButton({ className = '', compact = false }: { className?
             >
               {t('app.share.close')}
             </button>
+            </div>
           </div>
         </div>
       ) : null}
