@@ -79,6 +79,8 @@ export const coreTranslations = {
   'tab.blending.short': { en: 'Blend', de: 'Mischen', hi: 'मिश्रण', mr: 'मिश्रण' },
   'tab.mixingCross.label': { en: 'Mixing Cross', de: 'Mischungskreuz', hi: 'मिश्रण क्रॉस', mr: 'मिश्रण क्रॉस' },
   'tab.mixingCross.short': { en: 'Cross', de: 'Kreuz', hi: 'क्रॉस', mr: 'क्रॉस' },
+  'tab.brewhouseYield.label': { en: 'Brewhouse Yield', de: 'Sudhausausbeute', hi: 'ब्रूहाउस यील्ड', mr: 'ब्रूहाउस यील्ड' },
+  'tab.brewhouseYield.short': { en: 'Yield', de: 'Ausbeute', hi: 'यील्ड', mr: 'यील्ड' },
   'tab.recipes.label': { en: 'Recipes', de: 'Rezepte', hi: 'रेसिपी', mr: 'पाककृती' },
   'tab.recipes.short': { en: 'Recipes', de: 'Rezepte', hi: 'रेसिपी', mr: 'पाककृती' },
   'tab.backup.label': { en: 'Backup & Sync', de: 'Sicherung & Sync', hi: 'बैकअप व सिंक', mr: 'बॅकअप व सिंक' },

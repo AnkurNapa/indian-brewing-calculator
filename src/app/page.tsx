@@ -14,6 +14,7 @@ import { MashAdjustmentPanel } from '@/components/mash-adjustment/MashAdjustment
 import { SpargeAdjustmentPanel } from '@/components/sparge-adjustment/SpargeAdjustmentPanel';
 import { BlendingPanel } from '@/components/blending/BlendingPanel';
 import { MixingCrossPanel } from '@/components/mixing-cross/MixingCrossPanel';
+import { BrewhouseYieldPanel } from '@/components/brewhouse-yield/BrewhouseYieldPanel';
 import { WaterVolumesPanel } from '@/components/water-volumes/WaterVolumesPanel';
 import { BrewhouseCalculatorsPanel } from '@/components/brewhouse/BrewhouseCalculatorsPanel';
 import { TransferLauteringPanel } from '@/components/transfer-lautering/TransferLauteringPanel';
@@ -33,6 +34,7 @@ import {
   FunnelIcon,
   BlendIcon,
   MixingCrossIcon,
+  KettleIcon,
   JugIcon,
   PipeFlowIcon,
   FermenterIcon,
@@ -66,6 +68,7 @@ export default function Home() {
       { id: 'water-volumes', label: t('tab.waterVolumes.label'), shortLabel: t('tab.waterVolumes.short'), icon: JugIcon },
       { id: 'transfer-lautering', label: t('tab.transferLautering.label'), shortLabel: t('tab.transferLautering.short'), icon: PipeFlowIcon },
       { id: 'brewhouse', label: t('tab.brewhouse.label'), shortLabel: t('tab.brewhouse.short'), icon: CalculatorIcon },
+      { id: 'brewhouse-yield', label: t('tab.brewhouseYield.label'), shortLabel: t('tab.brewhouseYield.short'), icon: KettleIcon },
       { id: 'fermentation-tracker', label: t('tab.fermentationTracker.label'), shortLabel: t('tab.fermentationTracker.short'), icon: FermenterIcon },
       { id: 'style-check', label: t('tab.styleCheck.label'), shortLabel: t('tab.styleCheck.short'), icon: StyleCheckIcon },
       { id: 'blending', label: t('tab.blending.label'), shortLabel: t('tab.blending.short'), icon: BlendIcon },
@@ -118,6 +121,7 @@ export default function Home() {
     ],
     blending: [],
     'mixing-cross': [],
+    'brewhouse-yield': [],
     recipes: [],
     backup: [],
     about: [],
@@ -248,6 +252,8 @@ export default function Home() {
         ) : null}
 
         {activeTab === 'mixing-cross' ? <MixingCrossPanel /> : null}
+
+        {activeTab === 'brewhouse-yield' ? <BrewhouseYieldPanel /> : null}
 
         {activeTab === 'water-volumes' ? <WaterVolumesPanel grainBill={state.grainBill} /> : null}
 

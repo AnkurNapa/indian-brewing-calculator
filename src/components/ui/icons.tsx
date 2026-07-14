@@ -57,6 +57,17 @@ export function BlendIcon({ className }: IconProps) {
   );
 }
 
+/** Brew kettle with rising vapor -- Brewhouse Yield. */
+export function KettleIcon({ className }: IconProps) {
+  return (
+    <svg {...commonProps} className={className} aria-hidden="true">
+      <path d="M5 10h14l-1.2 9a1 1 0 0 1-1 .9H7.2a1 1 0 0 1-1-.9L5 10z" />
+      <path d="M4 10h16" />
+      <path d="M9 6c0-1 1-1 1-2M13 6c0-1 1-1 1-2" />
+    </svg>
+  );
+}
+
 /** Pearson square: crossing arms with a target node -- Mixing Cross. */
 export function MixingCrossIcon({ className }: IconProps) {
   return (
