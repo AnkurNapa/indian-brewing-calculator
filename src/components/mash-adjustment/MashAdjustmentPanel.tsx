@@ -19,6 +19,7 @@ import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { OgEstimateCard } from '@/components/ui/OgEstimateCard';
 import { GrainBillEditor } from '@/components/grain-bill/GrainBillEditor';
+import { IndianAdjunctsReference } from '@/components/mash-adjustment/IndianAdjunctsReference';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { StatHero } from '@/components/ui/StatHero';
 import { StatTile } from '@/components/ui/StatTile';
@@ -216,6 +217,8 @@ export function MashAdjustmentPanel({
         assumedEfficiencyPercent={assumedEfficiencyPercent}
         onAssumedEfficiencyChange={onAssumedEfficiencyChange}
       />
+
+      <IndianAdjunctsReference />
 
       <ResultCard
         title={t('mashAdjustment.predictedMashPh.title')}

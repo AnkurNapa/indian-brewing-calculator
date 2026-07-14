@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { GrainBillItem, MaltCategory, classifyMaltCategory } from '@/lib/waterChemistry';
 import { WEYERMANN_MALTS } from '@/lib/weyermannMalts';
+import { INDIAN_GRAINS } from '@/lib/indianIngredients';
 import { solveGrainWeightsByPercent } from '@/lib/efficiency';
 import { Input } from '@/components/ui/Input';
 import { NumberField } from '@/components/ui/NumberField';
@@ -10,6 +11,9 @@ import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { GravityField } from '@/components/ui/GravityField';
 import { roundForDisplay } from '@/lib/units';
 import { useLanguage } from '@/i18n/LanguageContext';
+
+/** Weyermann malts plus the local Indian grains, for the grain-bill quick-fill picker. */
+const GRAIN_PRESETS = [...WEYERMANN_MALTS, ...INDIAN_GRAINS];
 
 interface GrainBillEditorProps {
   grainBill: GrainBillItem[];
@@ -194,10 +198,10 @@ export function GrainBillEditor({
             <SearchableSelect
               label={t('mashAdjustment.grainBill.quickFillLabel')}
               placeholder={t('mashAdjustment.grainBill.quickFillPlaceholder')}
-              value={WEYERMANN_MALTS.find((m) => m.name === row.name)?.id ?? ''}
-              options={WEYERMANN_MALTS.map((malt) => ({ id: malt.id, label: malt.name }))}
+              value={GRAIN_PRESETS.find((m) => m.name === row.name)?.id ?? ''}
+              options={GRAIN_PRESETS.map((malt) => ({ id: malt.id, label: malt.name }))}
               onChange={(id) => {
-                const malt = WEYERMANN_MALTS.find((m) => m.id === id);
+                const malt = GRAIN_PRESETS.find((m) => m.id === id);
                 if (malt) {
                   updateRow(index, {
                     name: malt.name,
