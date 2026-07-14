@@ -5,6 +5,7 @@ import { Tabs, TabDef } from '@/components/ui/Tabs';
 import { SessionSummary } from '@/components/ui/SessionSummary';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { LanguageToggle } from '@/components/ui/LanguageToggle';
+import { ShareAppButton } from '@/components/ui/ShareAppButton';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
 import { roundForDisplay } from '@/lib/units';
@@ -138,6 +139,7 @@ export default function Home() {
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-24 pt-2 sm:px-6 sm:pb-16 sm:pt-6">
       <header className="relative hidden flex-col items-center gap-1 text-center sm:flex">
+        <ShareAppButton className="absolute left-0 top-0" />
         <LanguageToggle className="absolute right-0 top-0" />
         <div className="flex items-center gap-2">
           <DropletIcon className="h-7 w-7 flex-shrink-0 text-teal-700" />
@@ -175,6 +177,7 @@ export default function Home() {
               {t('app.stepOf', { current: activeIndex, total: TABS.length - 1 })}
             </span>
           ) : null}
+          <ShareAppButton compact />
           <LanguageToggle />
         </div>
       </div>
