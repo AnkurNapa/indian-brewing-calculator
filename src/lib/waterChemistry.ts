@@ -188,13 +188,20 @@ export function classifyMaltCategory(colorLovibond: number): MaltCategory {
   return 'roasted';
 }
 
+/**
+ * Note codes rather than English messages -- this module has no access to
+ * the i18n `t()` function, so the one component that renders `note`
+ * (MashAdjustmentPanel) maps a code to a translated string.
+ */
+export type MashPhNoteCode = 'noGrainBill' | 'clamped' | 'normal';
+
 export interface MashPhResult {
   /** Predicted mash pH, clamped to the physically plausible range 4.0-6.5 */
   predictedPh: number;
   /** Whether a fallback was used because the grist was empty */
   isFallback: boolean;
-  /** Human-readable note about the calculation */
-  note: string;
+  /** Note code about the calculation -- see MashPhNoteCode */
+  note: MashPhNoteCode;
   /** Weighted average grist color used in the calculation, °L */
   weightedColorLovibond: number;
   /** Total grist weight, kg */
@@ -297,7 +304,7 @@ export function predictMashPh(
     return {
       predictedPh: BASE_MALT_DISTILLED_PH,
       isFallback: true,
-      note: 'No grain bill entered -- showing base distilled-water malt pH as a fallback. Add grain weights to get a real prediction.',
+      note: 'noGrainBill',
       weightedColorLovibond: 0,
       totalGristWeightKg: 0,
       weightedDiPh: BASE_MALT_DISTILLED_PH,
@@ -335,10 +342,7 @@ export function predictMashPh(
   return {
     predictedPh,
     isFallback: false,
-    note:
-      predictedPh !== rawPredictedPh
-        ? 'Predicted pH was clamped to the plausible brewing range (4.0-6.5).'
-        : 'Predicted using per-malt-category DI pH and buffering-capacity model -- verify with a pH meter.',
+    note: predictedPh !== rawPredictedPh ? 'clamped' : 'normal',
     weightedColorLovibond,
     totalGristWeightKg,
     weightedDiPh,

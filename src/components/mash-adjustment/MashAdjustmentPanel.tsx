@@ -9,7 +9,7 @@ import {
   predictMashPh,
   estimateMashWaterVolumeL,
 } from '@/lib/waterChemistry';
-import { solveSaltAdditions } from '@/lib/saltAdditions';
+import { solveSaltAdditions, SaltNote } from '@/lib/saltAdditions';
 import { ACID_TYPES, calculateAcidDose } from '@/lib/acidAdditions';
 import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
 import { solveDilutionRatio } from '@/lib/dilutionOptimizer';
@@ -19,8 +19,33 @@ import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { OgEstimateCard } from '@/components/ui/OgEstimateCard';
 import { GrainBillEditor } from '@/components/grain-bill/GrainBillEditor';
+import { SectionCard } from '@/components/ui/SectionCard';
+import { StatHero } from '@/components/ui/StatHero';
+import { StatTile } from '@/components/ui/StatTile';
+import { FlaskIcon, DropletIcon } from '@/components/ui/icons';
+import { predictOriginalGravity } from '@/lib/efficiency';
 import { roundForDisplay } from '@/lib/units';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { TranslationKey } from '@/i18n/translations';
+
+type Translate = (key: TranslationKey, vars?: Record<string, string | number>) => string;
+
+function formatSaltNote(note: SaltNote, t: Translate): string {
+  switch (note.code) {
+    case 'invalidVolume':
+      return t('mashAdjustment.saltAdditions.note.invalidVolume');
+    case 'ionBelowSource':
+      return t('mashAdjustment.saltAdditions.note.ionBelowSource', {
+        ion: note.ion,
+        target: note.targetValue.toFixed(1),
+        source: note.sourceValue.toFixed(1),
+      });
+    case 'multiSaltApproximate':
+      return t('mashAdjustment.saltAdditions.note.multiSaltApproximate', { ions: note.ions.join(', ') });
+    case 'noAdditionsNeeded':
+      return t('mashAdjustment.saltAdditions.note.noAdditionsNeeded');
+  }
+}
 
 interface MashAdjustmentPanelProps {
   sourceProfile: IonProfile;
@@ -93,9 +118,44 @@ export function MashAdjustmentPanel({
       })
     : null;
 
+  const predictedOg = predictOriginalGravity(
+    grainBill.map((row) => ({ name: row.name, weightKg: row.weightKg, potentialSg: row.potentialSg ?? 0 })),
+    batchVolumeL,
+    assumedEfficiencyPercent,
+  );
+  const mashPhInRange = mashPhResult.predictedPh >= 5.2 && mashPhResult.predictedPh <= 5.6;
+  const hasMashData = grainBill.some((row) => row.weightKg > 0);
+
   return (
     <section className="flex flex-col gap-4">
       <h2 className="font-display text-xl font-bold text-ink">{t('mashAdjustment.heading')}</h2>
+
+      {/* Mash Vitals hero: predicted mash pH is the headline decision on
+          this page; RA, est. OG, and mash water frame it. Shared StatHero /
+          StatTile primitives (see docs/DESIGN.md). */}
+      <StatHero
+        title={t('mashAdjustment.vitals.title')}
+        empty={!hasMashData ? <p className="font-body text-sm text-ink/60">{t('mashAdjustment.vitals.emptyHint')}</p> : undefined}
+      >
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          <StatTile
+            label={t('mashAdjustment.vitals.mashPh')}
+            value={roundForDisplay(mashPhResult.predictedPh, 2).toString()}
+            tone={mashPhInRange ? 'good' : 'warn'}
+            hint={mashPhInRange ? t('mashAdjustment.vitals.phInRange') : t('mashAdjustment.vitals.phOutRange')}
+          />
+          <StatTile
+            label={t('mashAdjustment.vitals.ra')}
+            value={roundForDisplay(residualAlkalinity, 0).toString()}
+            tone={residualAlkalinity > 100 ? 'warn' : 'default'}
+          />
+          <StatTile
+            label={t('mashAdjustment.vitals.og')}
+            value={predictedOg > 1 ? roundForDisplay(predictedOg, 3).toString() : '--'}
+          />
+          <StatTile label={t('mashAdjustment.vitals.mashWater')} value={roundForDisplay(mashWaterVolumeL, 1).toString()} unit="L" />
+        </div>
+      </StatHero>
 
       <TutorialCallout
         title={t('mashAdjustment.tutorial.title')}
@@ -162,13 +222,10 @@ export function MashAdjustmentPanel({
         value={roundForDisplay(mashPhResult.predictedPh, 2).toString()}
         tone={mashPhResult.isFallback ? 'warning' : 'default'}
       >
-        {mashPhResult.note}
+        {t(`mashAdjustment.predictedMashPh.note.${mashPhResult.note}`)}
       </ResultCard>
 
-      <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
-        <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">
-          {t('mashAdjustment.saltAdditions.title', { style: targetStyle.name })}
-        </h3>
+      <SectionCard title={t('mashAdjustment.saltAdditions.title', { style: targetStyle.name })} icon={DropletIcon} tone="teal">
         {saltResult.infeasible ? (
           <p className="mt-2 text-sm text-amber-800">
             {t('mashAdjustment.saltAdditions.infeasibleWarning')}
@@ -191,7 +248,7 @@ export function MashAdjustmentPanel({
         {saltResult.notes.length > 0 ? (
           <ul className="mt-3 flex flex-col gap-1 text-xs text-amber-800">
             {saltResult.notes.map((note, i) => (
-              <li key={i}>* {note}</li>
+              <li key={i}>* {formatSaltNote(note, t)}</li>
             ))}
           </ul>
         ) : null}
@@ -215,13 +272,10 @@ export function MashAdjustmentPanel({
             </p>
           </div>
         ) : null}
-      </div>
+      </SectionCard>
 
-      <div className="rounded-lg border-2 border-amber-300 bg-amber-50/60 p-4">
-        <h3 className="font-display text-sm font-bold uppercase tracking-wide text-amber-900">
-          {t('mashAdjustment.acidDosing.title')}
-        </h3>
-        <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <SectionCard title={t('mashAdjustment.acidDosing.title')} icon={FlaskIcon} tone="warning">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <NumberField
             label={t('mashAdjustment.targetMashPh.label')}
             value={targetMashPh}
@@ -252,7 +306,7 @@ export function MashAdjustmentPanel({
             batchVolume: batchVolumeL,
           })}
         </p>
-      </div>
+      </SectionCard>
     </section>
   );
 }

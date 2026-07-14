@@ -94,14 +94,25 @@ export interface SaltDoseResult {
   approximate: boolean;
 }
 
+/**
+ * Note codes rather than English messages -- this module has no access to
+ * the i18n `t()` function, so the one component that renders `notes`
+ * (MashAdjustmentPanel) maps each code + its params to a translated string.
+ */
+export type SaltNote =
+  | { code: 'invalidVolume' }
+  | { code: 'ionBelowSource'; ion: string; targetValue: number; sourceValue: number }
+  | { code: 'multiSaltApproximate'; ions: string[] }
+  | { code: 'noAdditionsNeeded' };
+
 export interface SaltSolverResult {
   doses: SaltDoseResult[];
   /** Resulting ion profile (mg/L) after all doses are applied. */
   resultingProfile: IonProfile;
   /** True if any target ion cannot be reached by addition alone. */
   infeasible: boolean;
-  /** Human-readable notes, including infeasibility / approximation flags. */
-  notes: string[];
+  /** Notes, including infeasibility / approximation flags -- see SaltNote. */
+  notes: SaltNote[];
 }
 
 const ION_KEYS: (keyof SaltDoseRates)[] = [
@@ -126,7 +137,7 @@ export function solveSaltAdditions(
   target: Partial<Record<keyof SaltDoseRates, number>>,
   batchVolumeL: number,
 ): SaltSolverResult {
-  const notes: string[] = [];
+  const notes: SaltNote[] = [];
   const volume = Number.isFinite(batchVolumeL) && batchVolumeL > 0 ? batchVolumeL : 0;
 
   if (volume <= 0) {
@@ -134,7 +145,7 @@ export function solveSaltAdditions(
       doses: [],
       resultingProfile: { ...source },
       infeasible: true,
-      notes: ['Batch volume must be greater than zero to compute salt additions.'],
+      notes: [{ code: 'invalidVolume' }],
     };
   }
 
@@ -152,11 +163,7 @@ export function solveSaltAdditions(
     ];
     if (targetValue < sourceValue - 1e-9) {
       infeasible = true;
-      notes.push(
-        `Target ${ion} (${targetValue.toFixed(1)} mg/L) is below the source value (${sourceValue.toFixed(
-          1,
-        )} mg/L). No salt addition can lower an ion -- consider diluting with RO/distilled water or blending with a lower-mineral source.`,
-      );
+      notes.push({ code: 'ionBelowSource', ion, targetValue, sourceValue });
     }
   }
 
@@ -219,15 +226,11 @@ export function solveSaltAdditions(
   }));
 
   if (approximateIons.length > 0) {
-    notes.push(
-      `Multiple salts affect ${approximateIons.join(
-        ', ',
-      )}; the result is a best-fit approximation, not an exact multi-ion solve. Fine-tune manually if precise targets matter.`,
-    );
+    notes.push({ code: 'multiSaltApproximate', ions: approximateIons });
   }
 
   if (doses.length === 0 && !infeasible) {
-    notes.push('Source water already meets or exceeds all specified targets -- no salt additions needed.');
+    notes.push({ code: 'noAdditionsNeeded' });
   }
 
   return {

@@ -6,6 +6,19 @@ import { TranslationDict } from './types';
  */
 export const mashAdjustmentTranslations = {
   'mashAdjustment.heading': { en: 'Mash Adjustment', de: 'Maischewasser', hi: 'मैश समायोजन', mr: 'मॅश समायोजन' },
+  'mashAdjustment.vitals.title': { en: 'Mash Vitals', de: 'Maische-Kennzahlen', hi: 'मैश विटल्स', mr: 'मॅश विटल्स' },
+  'mashAdjustment.vitals.mashPh': { en: 'Mash pH', de: 'Maische-pH', hi: 'मैश pH', mr: 'मॅश pH' },
+  'mashAdjustment.vitals.ra': { en: 'Residual alk.', de: 'Restalkalität', hi: 'अवशिष्ट क्षार.', mr: 'अवशिष्ट क्षार.' },
+  'mashAdjustment.vitals.og': { en: 'Est. OG', de: 'Erw. SG', hi: 'अनुमानित OG', mr: 'अंदाजित OG' },
+  'mashAdjustment.vitals.mashWater': { en: 'Mash water', de: 'Maischewasser', hi: 'मैश जल', mr: 'मॅश पाणी' },
+  'mashAdjustment.vitals.phInRange': { en: 'in range', de: 'im Bereich', hi: 'सीमा में', mr: 'श्रेणीत' },
+  'mashAdjustment.vitals.phOutRange': { en: 'adjust', de: 'anpassen', hi: 'समायोजित करें', mr: 'समायोजित करा' },
+  'mashAdjustment.vitals.emptyHint': {
+    en: 'Add your grain bill below to predict mash pH and see the salts you need.',
+    de: 'Fügen Sie unten Ihre Schüttung hinzu, um den Maische-pH vorherzusagen und die benötigten Salze zu sehen.',
+    hi: 'मैश pH का अनुमान लगाने और आवश्यक लवण देखने के लिए नीचे अपना ग्रेन बिल जोड़ें।',
+    mr: 'मॅश pH चा अंदाज घेण्यासाठी आणि आवश्यक क्षार पाहण्यासाठी खाली तुमचे ग्रेन बिल जोडा.',
+  },
 
   'mashAdjustment.tutorial.title': {
     en: 'How to use Mash Adjustment',
@@ -93,6 +106,24 @@ export const mashAdjustmentTranslations = {
     hi: 'अनुमानित मैश pH',
     mr: 'अंदाजित मॅश pH',
   },
+  'mashAdjustment.predictedMashPh.note.noGrainBill': {
+    en: 'No grain bill entered -- showing base distilled-water malt pH as a fallback. Add grain weights to get a real prediction.',
+    de: 'Keine Schüttung eingegeben -- zeigt den Basis-Malz-pH mit destilliertem Wasser als Fallback. Fügen Sie Malzgewichte hinzu, um eine echte Vorhersage zu erhalten.',
+    hi: 'कोई ग्रेन बिल दर्ज नहीं किया गया -- फ़ॉलबैक के रूप में बेस डिस्टिल्ड-वाटर माल्ट pH दिखाया जा रहा है। वास्तविक अनुमान पाने के लिए अनाज का वज़न जोड़ें।',
+    mr: 'कोणतेही ग्रेन बिल टाकलेले नाही -- फॉलबॅक म्हणून बेस डिस्टिल्ड-वॉटर माल्ट pH दाखवत आहे. खरा अंदाज मिळवण्यासाठी धान्याचे वजन टाका.',
+  },
+  'mashAdjustment.predictedMashPh.note.clamped': {
+    en: 'Predicted pH was clamped to the plausible brewing range (4.0-6.5).',
+    de: 'Der vorhergesagte pH-Wert wurde auf den plausiblen Braubereich (4,0-6,5) begrenzt.',
+    hi: 'अनुमानित pH को संभावित ब्रूइंग रेंज (4.0-6.5) तक सीमित किया गया।',
+    mr: 'अंदाजित pH शक्य ब्रूइंग रेंज (4.0-6.5) पर्यंत मर्यादित केले.',
+  },
+  'mashAdjustment.predictedMashPh.note.normal': {
+    en: 'Predicted using per-malt-category DI pH and buffering-capacity model -- verify with a pH meter.',
+    de: 'Berechnet mit dem malzkategorie-spezifischen DI-pH- und Pufferkapazitätsmodell -- mit einem pH-Messgerät überprüfen.',
+    hi: 'प्रति-माल्ट-श्रेणी DI pH और बफरिंग-क्षमता मॉडल का उपयोग करके अनुमानित -- pH मीटर से सत्यापित करें।',
+    mr: 'प्रति-माल्ट-श्रेणी DI pH आणि बफरिंग-क्षमता मॉडेल वापरून अंदाजित -- pH मीटरने पडताळणी करा.',
+  },
 
   'mashAdjustment.saltAdditions.title': {
     en: 'Salt Additions ({style})',
@@ -111,6 +142,30 @@ export const mashAdjustmentTranslations = {
     de: 'Für dieses Ziel sind keine Salzgaben erforderlich.',
     hi: 'इस लक्ष्य के लिए किसी नमक मिलावट की आवश्यकता नहीं है।',
     mr: 'या लक्ष्यासाठी मीठ मिसळण्याची गरज नाही.',
+  },
+  'mashAdjustment.saltAdditions.note.invalidVolume': {
+    en: 'Batch volume must be greater than zero to compute salt additions.',
+    de: 'Das Sudvolumen muss größer als null sein, um Salzgaben zu berechnen.',
+    hi: 'नमक मिलावट की गणना के लिए बैच मात्रा शून्य से अधिक होनी चाहिए।',
+    mr: 'मीठ मिसळणीची गणना करण्यासाठी बॅच प्रमाण शून्यापेक्षा जास्त असणे आवश्यक आहे.',
+  },
+  'mashAdjustment.saltAdditions.note.ionBelowSource': {
+    en: 'Target {ion} ({target} mg/L) is below the source value ({source} mg/L). No salt addition can lower an ion -- consider diluting with RO/distilled water or blending with a lower-mineral source.',
+    de: 'Ziel-{ion} ({target} mg/L) liegt unter dem Quellwert ({source} mg/L). Keine Salzgabe kann einen Ionenwert senken -- verdünnen Sie mit RO-/destilliertem Wasser oder mischen Sie mit einer mineralärmeren Quelle.',
+    hi: 'लक्ष्य {ion} ({target} mg/L) स्रोत मान ({source} mg/L) से कम है। कोई भी नमक मिलावट किसी आयन को कम नहीं कर सकती -- RO/डिस्टिल्ड जल से पतला करें या कम-खनिज स्रोत के साथ मिश्रण करने पर विचार करें।',
+    mr: 'लक्ष्य {ion} ({target} mg/L) स्रोत मूल्यापेक्षा ({source} mg/L) कमी आहे. कोणतीही मीठ मिसळणी आयन कमी करू शकत नाही -- RO/डिस्टिल्ड पाण्याने सौम्य करा किंवा कमी-खनिज स्रोतासोबत मिश्रण करण्याचा विचार करा.',
+  },
+  'mashAdjustment.saltAdditions.note.multiSaltApproximate': {
+    en: 'Multiple salts affect {ions}; the result is a best-fit approximation, not an exact multi-ion solve. Fine-tune manually if precise targets matter.',
+    de: 'Mehrere Salze beeinflussen {ions}; das Ergebnis ist eine Best-Fit-Näherung, keine exakte Mehr-Ionen-Lösung. Feinjustieren Sie manuell, wenn präzise Zielwerte wichtig sind.',
+    hi: 'कई नमक {ions} को प्रभावित करते हैं; परिणाम एक सर्वोत्तम-फिट अनुमान है, सटीक बहु-आयन समाधान नहीं। यदि सटीक लक्ष्य मायने रखते हैं तो मैन्युअल रूप से सूक्ष्म समायोजन करें।',
+    mr: 'अनेक मीठे {ions} वर परिणाम करतात; निकाल हा सर्वोत्तम-अंदाज आहे, अचूक बहु-आयन उपाय नाही. अचूक लक्ष्य महत्त्वाचे असल्यास हाताने बारीक समायोजन करा.',
+  },
+  'mashAdjustment.saltAdditions.note.noAdditionsNeeded': {
+    en: 'Source water already meets or exceeds all specified targets -- no salt additions needed.',
+    de: 'Das Quellwasser erfüllt oder übertrifft bereits alle angegebenen Ziele -- keine Salzgaben erforderlich.',
+    hi: 'स्रोत जल पहले से ही सभी निर्दिष्ट लक्ष्यों को पूरा करता है या उनसे अधिक है -- किसी नमक मिलावट की आवश्यकता नहीं है।',
+    mr: 'स्रोत पाणी आधीच सर्व निर्दिष्ट लक्ष्ये पूर्ण करते किंवा त्यापेक्षा जास्त आहे -- मीठ मिसळण्याची गरज नाही.',
   },
   // Split into 4 segments (instead of one flat sentence) so the two key
   // figures -- the dilution ratio and the binding ion -- can be wrapped

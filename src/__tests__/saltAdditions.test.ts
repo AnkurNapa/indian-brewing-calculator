@@ -28,7 +28,7 @@ describe('solveSaltAdditions', () => {
     const hardSource: IonProfile = { ...EMPTY_ION_PROFILE, calcium: 300 };
     const result = solveSaltAdditions(hardSource, { calcium: 50 }, 20);
     expect(result.infeasible).toBe(true);
-    expect(result.notes.some((n) => n.toLowerCase().includes('dilut'))).toBe(true);
+    expect(result.notes.some((n) => n.code === 'ionBelowSource')).toBe(true);
     for (const dose of result.doses) {
       expect(dose.grams).toBeGreaterThanOrEqual(0);
     }
