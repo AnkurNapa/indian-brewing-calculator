@@ -18,6 +18,22 @@ describe('seed water profiles', () => {
     expect(medium.profile.alkalinity).toBeLessThan(hard.profile.alkalinity);
   });
 
+  it('includes Bengaluru, Mumbai, and Delhi city profiles ordered soft -> hard by alkalinity', () => {
+    const blr = SOURCE_WATER_PROFILES.find((p) => p.id === 'bengaluru-cauvery')!;
+    const mumbai = SOURCE_WATER_PROFILES.find((p) => p.id === 'mumbai-lakes')!;
+    const delhi = SOURCE_WATER_PROFILES.find((p) => p.id === 'delhi-yamuna')!;
+    expect(blr).toBeDefined();
+    expect(mumbai).toBeDefined();
+    expect(delhi).toBeDefined();
+    // Mumbai (soft lakes) < Bengaluru (medium Cauvery) < Delhi (hard Yamuna/groundwater).
+    expect(mumbai.profile.alkalinity).toBeLessThan(blr.profile.alkalinity);
+    expect(blr.profile.alkalinity).toBeLessThan(delhi.profile.alkalinity);
+    // All ions non-negative.
+    for (const city of [blr, mumbai, delhi]) {
+      for (const v of Object.values(city.profile)) expect(v).toBeGreaterThanOrEqual(0);
+    }
+  });
+
   it('includes Pale Ale, Pilsner, and Stout target style profiles', () => {
     const ids = TARGET_STYLE_PROFILES.map((p) => p.id);
     expect(ids).toContain('pale-ale');

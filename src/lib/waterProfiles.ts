@@ -72,6 +72,51 @@ export const SOURCE_WATER_PROFILES: NamedWaterProfile[] = [
       alkalinity: 230,
     },
   },
+  // Representative Indian city municipal supplies. Indian tap water varies
+  // widely by zone, source (surface vs borewell), and season -- these are
+  // planning midpoints, not a substitute for your own lab report.
+  {
+    id: 'bengaluru-cauvery',
+    name: 'Bengaluru (Cauvery) Tap',
+    description: 'BWSSB Cauvery-supplied water: medium hardness and alkalinity. Borewell water in the city runs much harder -- test yours.',
+    profile: {
+      calcium: 45,
+      magnesium: 18,
+      sodium: 25,
+      sulfate: 30,
+      chloride: 40,
+      bicarbonate: 150,
+      alkalinity: 125,
+    },
+  },
+  {
+    id: 'mumbai-lakes',
+    name: 'Mumbai (Lake) Tap',
+    description: 'Surface water from the Tansa/Bhatsa/Vaitarna lakes: soft, low-mineral, low alkalinity -- close to a clean lager/pilsner base.',
+    profile: {
+      calcium: 20,
+      magnesium: 6,
+      sodium: 12,
+      sulfate: 10,
+      chloride: 20,
+      bicarbonate: 55,
+      alkalinity: 45,
+    },
+  },
+  {
+    id: 'delhi-yamuna',
+    name: 'Delhi (Yamuna/Groundwater) Tap',
+    description: 'Yamuna + Ganga-canal treated water and groundwater: hard, high sodium and alkalinity. Usually needs dilution/acid for pale, hoppy beers.',
+    profile: {
+      calcium: 85,
+      magnesium: 30,
+      sodium: 55,
+      sulfate: 55,
+      chloride: 70,
+      bicarbonate: 300,
+      alkalinity: 245,
+    },
+  },
 ];
 
 export const TARGET_STYLE_PROFILES: NamedWaterProfile[] = [
