@@ -16,6 +16,9 @@ import { buildRecipeShareText } from '@/lib/recipeShareText';
 import { TabDef } from '@/components/ui/Tabs';
 import { predictOriginalGravity } from '@/lib/efficiency';
 import { GravityDisplay, GravityUnitToggle, GravityUnit } from '@/components/ui/GravityDisplay';
+import { SectionCard } from '@/components/ui/SectionCard';
+import { StatHero } from '@/components/ui/StatHero';
+import { StatTile } from '@/components/ui/StatTile';
 import { useLanguage } from '@/i18n/LanguageContext';
 
 interface HomeSummaryPanelProps {
@@ -44,15 +47,11 @@ function SummarySection({
 }) {
   const { t } = useLanguage();
   return (
-    <div className="group rounded-xl border border-[#e6e0d4] bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
-      <div className="flex items-center justify-between gap-2">
-        <h3 className="flex items-center gap-2 font-display text-sm font-bold uppercase tracking-wide text-amber-900">
-          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-teal-50 text-teal-700 ring-1 ring-teal-100">
-            <Icon className="h-4 w-4" />
-          </span>
-          {title}
-        </h3>
-        <div className="flex flex-shrink-0 items-center gap-2">
+    <SectionCard
+      title={title}
+      icon={Icon}
+      action={
+        <>
           {headerExtra}
           <button
             type="button"
@@ -61,10 +60,11 @@ function SummarySection({
           >
             {t('home.edit')}
           </button>
-        </div>
-      </div>
-      <div className="mt-2 flex flex-col gap-1 font-body text-sm text-ink">{children}</div>
-    </div>
+        </>
+      }
+    >
+      <div className="flex flex-col gap-1">{children}</div>
+    </SectionCard>
   );
 }
 
@@ -91,35 +91,6 @@ function DeviationRow({ label, unit, compliance }: { label: string; unit: string
       <span className={compliance.inRange ? 'text-teal-800' : 'text-red-700'}>
         {roundForDisplay(compliance.value, 3)}
         {unit} <span className="text-xs text-ink/60">({deviationText(compliance, unit, t)})</span>
-      </span>
-    </div>
-  );
-}
-
-/** A single headline stat in the Brew Vitals hero -- big value, small caption. */
-function VitalTile({
-  label,
-  value,
-  unit,
-  swatch,
-  tone = 'default',
-}: {
-  label: string;
-  value: string;
-  unit?: string;
-  swatch?: string;
-  tone?: 'default' | 'good' | 'warn';
-}) {
-  const valueColor = tone === 'good' ? 'text-teal-700' : tone === 'warn' ? 'text-[#c2410c]' : 'text-ink';
-  return (
-    <div className="flex flex-col items-center justify-center gap-1 rounded-xl border border-amber-100 bg-white/70 px-2 py-3 text-center shadow-sm backdrop-blur-sm">
-      <span className="flex items-center gap-1.5 font-body text-[0.6rem] font-semibold uppercase tracking-wider text-amber-700/80">
-        {swatch ? <span className="h-2.5 w-2.5 rounded-full ring-1 ring-black/10" style={{ backgroundColor: swatch }} /> : null}
-        {label}
-      </span>
-      <span className={`font-display text-2xl font-extrabold leading-none ${valueColor}`}>
-        {value}
-        {unit ? <span className="ml-0.5 text-sm font-bold text-ink/40">{unit}</span> : null}
       </span>
     </div>
   );
@@ -197,42 +168,30 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
       <p className="font-body text-sm text-amber-800">{t('home.subtitle')}</p>
 
       {/* Brew Vitals hero: the recipe's headline numbers, big and scannable,
-          with the beer's own SRM color washed in as atmosphere. The single
-          "what am I brewing" glance before the detailed section cards. */}
-      <div className="relative overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-br from-white to-amber-50/70 shadow-sm">
-        {colorHex ? (
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-10 -top-10 h-44 w-44 rounded-full opacity-25 blur-2xl"
-            style={{ backgroundColor: colorHex }}
+          with the beer's own SRM color washed in as atmosphere. Built from
+          the shared StatHero / StatTile primitives (see docs/DESIGN.md). */}
+      <StatHero
+        title={t('home.vitals.title')}
+        accentColor={colorHex}
+        empty={!hasVitals ? <p className="font-body text-sm text-ink/60">{t('home.vitals.emptyHint')}</p> : undefined}
+      >
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-5">
+          <StatTile label={t('home.vitals.og')} value={heroOg > 1 ? roundForDisplay(heroOg, 3).toString() : '--'} />
+          <StatTile label={t('home.vitals.abv')} value={advancedAbv > 0 ? advancedAbv.toFixed(1) : '--'} unit={advancedAbv > 0 ? '%' : undefined} />
+          <StatTile label={t('home.vitals.ibu')} value={ibuResult.totalIbu > 0 ? roundForDisplay(ibuResult.totalIbu, 0).toString() : '--'} />
+          <StatTile
+            label={t('home.vitals.color')}
+            value={srm !== null ? roundForDisplay(srm, 1).toString() : '--'}
+            unit={srm !== null ? 'SRM' : undefined}
+            swatch={colorHex}
           />
-        ) : null}
-        <div className="relative p-4 sm:p-5">
-          <h3 className="mb-3 font-display text-xs font-bold uppercase tracking-widest text-amber-700/80">
-            {t('home.vitals.title')}
-          </h3>
-          {hasVitals ? (
-            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-5">
-              <VitalTile label={t('home.vitals.og')} value={heroOg > 1 ? roundForDisplay(heroOg, 3).toString() : '--'} />
-              <VitalTile label={t('home.vitals.abv')} value={advancedAbv > 0 ? advancedAbv.toFixed(1) : '--'} unit={advancedAbv > 0 ? '%' : undefined} />
-              <VitalTile label={t('home.vitals.ibu')} value={ibuResult.totalIbu > 0 ? roundForDisplay(ibuResult.totalIbu, 0).toString() : '--'} />
-              <VitalTile
-                label={t('home.vitals.color')}
-                value={srm !== null ? roundForDisplay(srm, 1).toString() : '--'}
-                unit={srm !== null ? 'SRM' : undefined}
-                swatch={colorHex}
-              />
-              <VitalTile
-                label={t('home.vitals.styleMatch')}
-                value={t('home.vitals.styleMatchValue', { count: compliance.parametersInRange })}
-                tone={styleTone}
-              />
-            </div>
-          ) : (
-            <p className="font-body text-sm text-ink/60">{t('home.vitals.emptyHint')}</p>
-          )}
+          <StatTile
+            label={t('home.vitals.styleMatch')}
+            value={t('home.vitals.styleMatchValue', { count: compliance.parametersInRange })}
+            tone={styleTone}
+          />
         </div>
-      </div>
+      </StatHero>
 
       <div className="rounded-lg border-2 border-amber-200 bg-amber-50/40 p-3">
         <div className="flex items-center justify-between">

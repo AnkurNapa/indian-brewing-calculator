@@ -1,6 +1,20 @@
 import { TranslationDict } from './types';
 
 export const waterReportFormTranslations = {
+  'waterVitals.title': { en: 'Water Vitals', de: 'Wasser-Kennzahlen', hi: 'जल विटल्स', mr: 'जल विटल्स' },
+  'waterVitals.ra': { en: 'Residual alk.', de: 'Restalkalität', hi: 'अवशिष्ट क्षार.', mr: 'अवशिष्ट क्षार.' },
+  'waterVitals.hardness': { en: 'Hardness', de: 'Härte', hi: 'कठोरता', mr: 'कठोरता' },
+  'waterVitals.so4cl': { en: 'SO₄ : Cl', de: 'SO₄ : Cl', hi: 'SO₄ : Cl', mr: 'SO₄ : Cl' },
+  'waterVitals.alkalinity': { en: 'Alkalinity', de: 'Alkalität', hi: 'क्षारीयता', mr: 'क्षारता' },
+  'waterVitals.hoppy': { en: 'crisp / hoppy', de: 'herb / hopfig', hi: 'कुरकुरा / हॉपी', mr: 'कुरकुरीत / हॉपी' },
+  'waterVitals.malty': { en: 'round / malty', de: 'rund / malzig', hi: 'गोल / माल्टी', mr: 'गोल / माल्टी' },
+  'waterVitals.balanced': { en: 'balanced', de: 'ausgewogen', hi: 'संतुलित', mr: 'संतुलित' },
+  'waterVitals.emptyHint': {
+    en: 'Enter your source water below (or pick a preset) to see its brewing character.',
+    de: 'Geben Sie unten Ihr Quellwasser ein (oder wählen Sie eine Vorlage), um seinen Braucharakter zu sehen.',
+    hi: 'इसका ब्रूइंग चरित्र देखने के लिए नीचे अपना स्रोत जल दर्ज करें (या प्रीसेट चुनें)।',
+    mr: 'त्याचे ब्रूइंग वैशिष्ट्य पाहण्यासाठी खाली तुमचे स्रोत पाणी टाका (किंवा प्रीसेट निवडा).',
+  },
   'waterReportForm.title': {
     en: 'Source Water Report',
     de: 'Quellwasserbericht',

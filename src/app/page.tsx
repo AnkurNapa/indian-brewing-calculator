@@ -10,6 +10,7 @@ import { useLanguage } from '@/i18n/LanguageContext';
 import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
 import { roundForDisplay } from '@/lib/units';
 import { WaterReportForm } from '@/components/water-report/WaterReportForm';
+import { WaterVitals } from '@/components/water-report/WaterVitals';
 import { TargetStyleReference } from '@/components/water-report/TargetStyleReference';
 import { MashAdjustmentPanel } from '@/components/mash-adjustment/MashAdjustmentPanel';
 import { SpargeAdjustmentPanel } from '@/components/sparge-adjustment/SpargeAdjustmentPanel';
@@ -197,7 +198,8 @@ export default function Home() {
         ) : null}
 
         {activeTab === 'water-report' ? (
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-6">
+            <WaterVitals profile={state.sourceProfile} />
             <TutorialCallout
               title={t('waterReport.tutorial.title')}
               steps={[

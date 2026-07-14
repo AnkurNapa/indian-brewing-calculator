@@ -3,6 +3,8 @@
 import { IonProfile } from '@/lib/waterChemistry';
 import { TARGET_STYLE_PROFILES } from '@/lib/waterProfiles';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
+import { SectionCard } from '@/components/ui/SectionCard';
+import { StyleCheckIcon } from '@/components/ui/icons';
 import { roundForDisplay } from '@/lib/units';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { TranslationKey } from '@/i18n/translations';
@@ -60,11 +62,8 @@ export function TargetStyleReference({ targetStyleId, onTargetStyleChange, sourc
   const style = TARGET_STYLE_PROFILES.find((s) => s.id === targetStyleId) ?? TARGET_STYLE_PROFILES[0];
 
   return (
-    <div className="rounded-lg border-2 border-teal-200 bg-teal-50/40 p-4">
-      <h3 className="font-display text-sm font-bold uppercase tracking-wide text-teal-800">
-        {t('targetStyleReference.heading')}
-      </h3>
-      <p className="mt-1 font-body text-xs text-ink/70">{t('targetStyleReference.description')}</p>
+    <SectionCard title={t('targetStyleReference.heading')} icon={StyleCheckIcon} tone="teal">
+      <p className="font-body text-xs text-ink/70">{t('targetStyleReference.description')}</p>
       <div className="mt-3">
         <SearchableSelect
           label={t('targetStyleReference.picker.label')}
@@ -121,6 +120,6 @@ export function TargetStyleReference({ targetStyleId, onTargetStyleChange, sourc
           </tbody>
         </table>
       </div>
-    </div>
+    </SectionCard>
   );
 }
