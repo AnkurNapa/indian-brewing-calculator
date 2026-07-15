@@ -4,6 +4,7 @@ import { ComponentType } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { RouteNav } from '@/components/ui/RouteNav';
+import ingredientCounts from '../../../public/data/ingredient-counts.json';
 import { TAB_GROUP_ORDER, TAB_GROUP_BY_ID, TAB_GROUP_LABEL_KEY, type TabId } from '@/lib/navigation';
 import {
   DropletIcon,
@@ -138,6 +139,9 @@ export default function WelcomePage() {
               <span className="flex flex-col">
                 <span className="font-body text-sm font-semibold leading-tight text-ink">{t('app.ingredients')}</span>
                 <span className="font-body text-xs text-ink/60">{t('welcome.ingredientsDesc')}</span>
+                <span className="mt-0.5 font-body text-[0.7rem] font-semibold text-[#a35f1c]">
+                  {ingredientCounts.hops} hops · {ingredientCounts.malts} malts · {ingredientCounts.yeasts} yeasts
+                </span>
               </span>
             </Link>
           </div>
