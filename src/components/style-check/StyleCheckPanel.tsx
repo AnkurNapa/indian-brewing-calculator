@@ -12,6 +12,7 @@ import { NumberField } from '@/components/ui/NumberField';
 import { GravityField } from '@/components/ui/GravityField';
 import { Input } from '@/components/ui/Input';
 import { SearchableSelect } from '@/components/ui/SearchableSelect';
+import { useCatalog, HopOption } from '@/hooks/useCatalog';
 import { ResultCard } from '@/components/ui/ResultCard';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { IbuFormulaSelector } from '@/components/ui/IbuFormulaSelector';
@@ -84,6 +85,7 @@ export function StyleCheckPanel({
   targetFinalVolumeL = 0,
 }: StyleCheckPanelProps) {
   const { t } = useLanguage();
+  const catalogHops = useCatalog<HopOption>('hops');
 
   const style = BJCP_STYLES.find((s) => s.id === bjcpStyleId) ?? BJCP_STYLES[0];
 
@@ -162,7 +164,18 @@ export function StyleCheckPanel({
         </div>
         <div className="mt-3 flex flex-col gap-2">
           {hopAdditions.map((row, index) => (
-            <div key={index} className="grid grid-cols-1 gap-3 sm:grid-cols-4">
+            <div key={index} className="flex flex-col gap-2 rounded-lg border border-amber-100 bg-amber-50/30 p-2">
+              <SearchableSelect
+                label={t('styleCheck.hop.pick')}
+                placeholder={t('styleCheck.hop.pickPlaceholder')}
+                value={row.name}
+                options={catalogHops.map((h) => ({ id: h.name, label: h.alpha != null ? `${h.name} (${h.alpha}% AA)` : h.name }))}
+                onChange={(name) => {
+                  const h = catalogHops.find((x) => x.name === name);
+                  if (h) updateHopRow(index, h.alpha != null ? { name: h.name, alphaAcidPercent: h.alpha } : { name: h.name });
+                }}
+              />
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
               <Input
                 label={t('styleCheck.hop.label')}
                 value={row.name}
@@ -190,6 +203,7 @@ export function StyleCheckPanel({
                 step={1}
                 onChange={(value) => updateHopRow(index, { boilTimeMinutes: value })}
               />
+              </div>
             </div>
           ))}
           <button

@@ -80,6 +80,8 @@ export const styleCheckTranslations = {
   'styleCheck.hopsForIbu.title': { en: 'Hops (for IBU)', de: 'Hopfen (für IBU)', hi: 'हॉप्स (IBU के लिए)', mr: 'हॉप्स (IBU साठी)' },
   'styleCheck.wortGravity': { en: 'Wort Gravity (SG)', de: 'Würzedichte (SG)', hi: 'वोर्ट गुरुत्व (SG)', mr: 'वॉर्ट गुरुत्व (SG)' },
   'styleCheck.hop.label': { en: 'Hop', de: 'Hopfen', hi: 'हॉप', mr: 'हॉप' },
+  'styleCheck.hop.pick': { en: 'Pick a hop (fills alpha)', de: 'Hopfen wählen (füllt Alpha)', hi: 'हॉप चुनें (अल्फा भरता है)', mr: 'हॉप निवडा (अल्फा भरते)' },
+  'styleCheck.hop.pickPlaceholder': { en: 'Search 400+ hop varieties', de: '400+ Hopfensorten suchen', hi: '400+ हॉप किस्में खोजें', mr: '400+ हॉप प्रकार शोधा' },
   'styleCheck.hop.placeholder': {
     en: 'Type any hop name...',
     de: 'Beliebigen Hopfennamen eingeben...',
