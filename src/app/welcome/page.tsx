@@ -37,6 +37,7 @@ const MODULE_META: Record<Exclude<TabId, 'home'>, { labelKey: string; icon: Icon
   'mixing-cross': { labelKey: 'tab.mixingCross.label', icon: MixingCrossIcon },
   brewhouse: { labelKey: 'tab.brewhouse.label', icon: CalculatorIcon },
   'brewhouse-yield': { labelKey: 'tab.brewhouseYield.label', icon: KettleIcon },
+  'spent-grain': { labelKey: 'tab.spentGrain.label', icon: FunnelIcon },
   'fermentation-tracker': { labelKey: 'tab.fermentationTracker.label', icon: FermenterIcon },
   'style-check': { labelKey: 'tab.styleCheck.label', icon: StyleCheckIcon },
   recipes: { labelKey: 'tab.recipes.label', icon: BookmarkIcon },

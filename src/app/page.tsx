@@ -20,6 +20,7 @@ import { SpargeAdjustmentPanel } from '@/components/sparge-adjustment/SpargeAdju
 import { BlendingPanel } from '@/components/blending/BlendingPanel';
 import { MixingCrossPanel } from '@/components/mixing-cross/MixingCrossPanel';
 import { BrewhouseYieldPanel } from '@/components/brewhouse-yield/BrewhouseYieldPanel';
+import { SpentGrainPanel } from '@/components/spent-grain/SpentGrainPanel';
 import { WaterVolumesPanel } from '@/components/water-volumes/WaterVolumesPanel';
 import { BrewhouseCalculatorsPanel } from '@/components/brewhouse/BrewhouseCalculatorsPanel';
 import { TransferLauteringPanel } from '@/components/transfer-lautering/TransferLauteringPanel';
@@ -77,6 +78,7 @@ export default function Home() {
       { id: 'transfer-lautering', label: t('tab.transferLautering.label'), shortLabel: t('tab.transferLautering.short'), icon: PipeFlowIcon },
       { id: 'brewhouse', label: t('tab.brewhouse.label'), shortLabel: t('tab.brewhouse.short'), icon: CalculatorIcon },
       { id: 'brewhouse-yield', label: t('tab.brewhouseYield.label'), shortLabel: t('tab.brewhouseYield.short'), icon: KettleIcon },
+      { id: 'spent-grain', label: t('tab.spentGrain.label'), shortLabel: t('tab.spentGrain.short'), icon: FunnelIcon },
       { id: 'fermentation-tracker', label: t('tab.fermentationTracker.label'), shortLabel: t('tab.fermentationTracker.short'), icon: FermenterIcon },
       { id: 'style-check', label: t('tab.styleCheck.label'), shortLabel: t('tab.styleCheck.short'), icon: StyleCheckIcon },
       { id: 'blending', label: t('tab.blending.label'), shortLabel: t('tab.blending.short'), icon: BlendIcon },
@@ -340,6 +342,10 @@ export default function Home() {
         {activeTab === 'mixing-cross' ? <MixingCrossPanel /> : null}
 
         {activeTab === 'brewhouse-yield' ? <BrewhouseYieldPanel /> : null}
+
+        {activeTab === 'spent-grain' ? (
+          <SpentGrainPanel grainBillKg={state.grainBill.reduce((sum, r) => sum + (Number.isFinite(r.weightKg) ? r.weightKg : 0), 0)} />
+        ) : null}
 
         {activeTab === 'water-volumes' ? <WaterVolumesPanel grainBill={state.grainBill} /> : null}
 
