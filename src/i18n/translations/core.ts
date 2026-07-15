@@ -20,6 +20,7 @@ export const coreTranslations = {
     mr: 'ब्रूइंग वॉटर केमिस्ट्रीची मेट्रिक (L / HL / mg / g / °C) लॅब नोटबुक.',
   },
   'app.goHome': { en: 'Go to Home overview', de: 'Zur Startseite', hi: 'होम पर जाएँ', mr: 'होमवर जा' },
+  'app.analytics': { en: 'Recipe Analytics', de: 'Rezept-Analyse', hi: 'रेसिपी विश्लेषण', mr: 'रेसिपी विश्लेषण' },
   'app.stepOf': {
     en: 'Step {current} of {total}',
     de: 'Schritt {current} von {total}',

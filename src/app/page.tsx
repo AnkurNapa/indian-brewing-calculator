@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import { Tabs, TabDef } from '@/components/ui/Tabs';
 import { WhereNext } from '@/components/ui/WhereNext';
 import { TAB_GROUP_BY_ID } from '@/lib/navigation';
@@ -48,6 +49,7 @@ import {
   InfoIcon,
   CloudSyncIcon,
   BookmarkIcon,
+  ChartBarIcon,
 } from '@/components/ui/icons';
 
 export default function Home() {
@@ -162,6 +164,13 @@ export default function Home() {
           <h1 className="font-display text-2xl font-extrabold text-amber-900 sm:text-3xl">{t('app.title')}</h1>
         </div>
         <p className="font-body text-sm text-amber-800">{t('app.tagline')}</p>
+        <Link
+          href="/analytics"
+          className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-white/70 px-3 py-1 font-body text-xs font-semibold text-amber-900 shadow-sm transition-colors hover:border-[#e08b2d]/60 hover:text-[#e08b2d]"
+        >
+          <ChartBarIcon className="h-3.5 w-3.5" />
+          {t('app.analytics')}
+        </Link>
       </header>
 
       {/* Compact native-style app bar on phones: a short (2-3 word) screen
@@ -193,6 +202,13 @@ export default function Home() {
               {t('app.stepOf', { current: activeIndex, total: TABS.length - 1 })}
             </span>
           ) : null}
+          <Link
+            href="/analytics"
+            aria-label={t('app.analytics')}
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-teal-700 hover:bg-teal-50 active:bg-teal-100"
+          >
+            <ChartBarIcon className="h-5 w-5" />
+          </Link>
           <ShareAppButton compact />
           <LanguageToggle />
         </div>

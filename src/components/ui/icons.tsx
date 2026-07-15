@@ -181,3 +181,15 @@ export function CloudSyncIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+export function ChartBarIcon({ className }: IconProps) {
+  return (
+    <svg {...commonProps} className={className} aria-hidden="true">
+      <path d="M4 20V4" />
+      <path d="M4 20h16" />
+      <rect x="7" y="12" width="3" height="5" rx="0.5" />
+      <rect x="12" y="8" width="3" height="9" rx="0.5" />
+      <rect x="17" y="14" width="3" height="3" rx="0.5" />
+    </svg>
+  );
+}
