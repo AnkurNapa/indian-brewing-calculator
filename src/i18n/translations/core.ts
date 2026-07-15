@@ -23,6 +23,13 @@ export const coreTranslations = {
   'app.analytics': { en: 'Recipe Analytics', de: 'Rezept-Analyse', hi: 'रेसिपी विश्लेषण', mr: 'रेसिपी विश्लेषण' },
   'app.guide': { en: 'All tools', de: 'Alle Werkzeuge', hi: 'सभी टूल', mr: 'सर्व साधने' },
   'app.faults': { en: 'Beer faults', de: 'Bierfehler', hi: 'बीयर दोष', mr: 'बिअर दोष' },
+  'app.ingredients': { en: 'Raw materials', de: 'Rohstoffe', hi: 'कच्चा माल', mr: 'कच्चा माल' },
+  'welcome.ingredientsDesc': {
+    en: 'Hops, malts and yeasts from the major suppliers, with specs',
+    de: 'Hopfen, Malze und Hefen der großen Lieferanten, mit Spezifikationen',
+    hi: 'प्रमुख आपूर्तिकर्ताओं से हॉप्स, माल्ट और यीस्ट, विनिर्देशों के साथ',
+    mr: 'प्रमुख पुरवठादारांकडून हॉप्स, माल्ट आणि यीस्ट, तपशीलांसह',
+  },
   'welcome.title': { en: 'All tools', de: 'Alle Werkzeuge', hi: 'सभी टूल', mr: 'सर्व साधने' },
   'welcome.subtitle': {
     en: 'Every calculator in the app, grouped by brew stage. Tap any tool to open it.',

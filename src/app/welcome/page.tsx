@@ -114,18 +114,32 @@ export default function WelcomePage() {
           >
             {t('welcome.reference')}
           </h2>
-          <Link
-            href="/faults"
-            className="group flex items-center gap-3 rounded-xl border border-amber-100 bg-white px-3 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#e08b2d]/50 hover:shadow-md"
-          >
-            <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-teal-50 text-teal-700 ring-1 ring-teal-100 transition-colors group-hover:bg-[#e08b2d]/10 group-hover:text-[#e08b2d]">
-              <FlaskIcon className="h-5 w-5" />
-            </span>
-            <span className="flex flex-col">
-              <span className="font-body text-sm font-semibold leading-tight text-ink">{t('app.faults')}</span>
-              <span className="font-body text-xs text-ink/60">{t('welcome.faultsDesc')}</span>
-            </span>
-          </Link>
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+            <Link
+              href="/faults"
+              className="group flex items-center gap-3 rounded-xl border border-amber-100 bg-white px-3 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#e08b2d]/50 hover:shadow-md"
+            >
+              <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-teal-50 text-teal-700 ring-1 ring-teal-100 transition-colors group-hover:bg-[#e08b2d]/10 group-hover:text-[#e08b2d]">
+                <FlaskIcon className="h-5 w-5" />
+              </span>
+              <span className="flex flex-col">
+                <span className="font-body text-sm font-semibold leading-tight text-ink">{t('app.faults')}</span>
+                <span className="font-body text-xs text-ink/60">{t('welcome.faultsDesc')}</span>
+              </span>
+            </Link>
+            <Link
+              href="/ingredients"
+              className="group flex items-center gap-3 rounded-xl border border-amber-100 bg-white px-3 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#e08b2d]/50 hover:shadow-md"
+            >
+              <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-teal-50 text-teal-700 ring-1 ring-teal-100 transition-colors group-hover:bg-[#e08b2d]/10 group-hover:text-[#e08b2d]">
+                <JugIcon className="h-5 w-5" />
+              </span>
+              <span className="flex flex-col">
+                <span className="font-body text-sm font-semibold leading-tight text-ink">{t('app.ingredients')}</span>
+                <span className="font-body text-xs text-ink/60">{t('welcome.ingredientsDesc')}</span>
+              </span>
+            </Link>
+          </div>
         </section>
       </div>
     </main>
