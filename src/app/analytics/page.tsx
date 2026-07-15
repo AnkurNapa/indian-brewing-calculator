@@ -5,6 +5,7 @@ import { StatHero } from '@/components/ui/StatHero';
 import { StatTile } from '@/components/ui/StatTile';
 import { HBarChart, type BarDatum } from '@/components/analytics/HBarChart';
 import { StyleRangeChart, type StyleRow } from '@/components/analytics/StyleRangeChart';
+import { YourRecipeVsTypical } from '@/components/analytics/YourRecipeVsTypical';
 
 import indexData from '../../../public/analytics/index.json';
 import stylesData from '../../../public/analytics/styles.json';
@@ -92,6 +93,9 @@ export default function AnalyticsPage() {
       </StatHero>
 
       <div className="mt-6 space-y-6">
+        {/* personalised: the brewer's recipe vs the community for its style */}
+        <YourRecipeVsTypical />
+
         {/* narrative trends */}
         <SectionCard title="What brewers are making now">
           <p className="mb-3 text-xs text-ink/60">A read on recent community output (2025-26).</p>
