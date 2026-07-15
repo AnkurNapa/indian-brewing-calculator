@@ -108,5 +108,5 @@ const maltPotential = (m) => {
 };
 writeFileSync(join(OUT_DIR, 'select-malts.json'), JSON.stringify(malts.map((m) => ({ name: m.name, supplier: m.supplier, colorLovibond: m.colorLovibond, potentialSg: maltPotential(m) }))));
 writeFileSync(join(OUT_DIR, 'select-hops.json'), JSON.stringify(hops.map((h) => ({ name: h.name, supplier: h.supplier, alpha: h.alphaLow != null && h.alphaHigh != null ? +((h.alphaLow + h.alphaHigh) / 2).toFixed(1) : null }))));
-writeFileSync(join(OUT_DIR, 'select-yeasts.json'), JSON.stringify(yeasts.map((y) => ({ name: y.name, supplier: y.supplier, attenuation: y.attenPercent, tempMinC: y.tempMinC, tempMaxC: y.tempMaxC }))));
+writeFileSync(join(OUT_DIR, 'select-yeasts.json'), JSON.stringify(yeasts.map((y) => ({ name: y.name, supplier: y.supplier, attenuation: y.attenPercent, tempMinC: y.tempMinC, tempMaxC: y.tempMaxC, style: String(y.yeastType).toLowerCase() === 'lager' ? 'lager' : 'ale' }))));
 console.log(`[ingredients] ${hops.length} hops, ${malts.length} malts, ${yeasts.length} yeasts -> ${OUT.replace(ROOT, '')}`);

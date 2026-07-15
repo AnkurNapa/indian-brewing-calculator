@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   calculateAbvSimple,
   calculateAbvAdvanced,
@@ -31,6 +31,7 @@ import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { IbuFormulaSelector } from '@/components/ui/IbuFormulaSelector';
 import { HOP_VARIETIES } from '@/lib/hopVarieties';
 import { YEAST_STRAINS } from '@/lib/yeastStrains';
+import { useCatalog, YeastOption } from '@/hooks/useCatalog';
 import { roundForDisplay } from '@/lib/units';
 import { useLanguage } from '@/i18n/LanguageContext';
 
@@ -258,6 +259,16 @@ function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange
   const [style, setStyle] = useState<YeastStyle>('ale');
   const [strainName, setStrainName] = useState('');
 
+  const catalogYeasts = useCatalog<YeastOption>('yeasts');
+  const allYeasts = useMemo(() => {
+    const seen = new Set(YEAST_STRAINS.map((s) => s.name.toLowerCase()));
+    const presets = YEAST_STRAINS.map((s) => ({ id: s.id, name: s.name, label: s.name, style: s.style as YeastStyle }));
+    const fromCatalog = catalogYeasts
+      .filter((y) => !seen.has(y.name.toLowerCase()))
+      .map((y, i) => ({ id: `cat-yeast-${i}`, name: y.name, label: `${y.name} (${y.supplier})`, style: y.style as YeastStyle }));
+    return [...presets, ...fromCatalog];
+  }, [catalogYeasts]);
+
   const result = calculatePitchRate(og, batchVolumeL, style);
 
   const [slurryDensity, setSlurryDensity] = useState(1.2);
@@ -269,10 +280,10 @@ function PitchRateCalculator({ og, onOgChange, batchVolumeL, onBatchVolumeChange
       <SearchableSelect
         label={t('brewhouse.pitchRate.quickFill')}
         placeholder={t('brewhouse.pitchRate.searchPlaceholder')}
-        value={YEAST_STRAINS.find((s) => s.name === strainName)?.id ?? ''}
-        options={YEAST_STRAINS.map((strain) => ({ id: strain.id, label: strain.name }))}
+        value={allYeasts.find((s) => s.name === strainName)?.id ?? ''}
+        options={allYeasts.map((strain) => ({ id: strain.id, label: strain.label }))}
         onChange={(id) => {
-          const strain = YEAST_STRAINS.find((s) => s.id === id);
+          const strain = allYeasts.find((s) => s.id === id);
           if (strain) {
             setStrainName(strain.name);
             setStyle(strain.style);

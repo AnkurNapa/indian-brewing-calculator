@@ -19,6 +19,7 @@ export interface YeastOption {
   attenuation: number | null;
   tempMinC: number | null;
   tempMaxC: number | null;
+  style: 'ale' | 'lager';
 }
 
 // Explicit loaders so each trimmed list is its own lazy chunk (loaded only
