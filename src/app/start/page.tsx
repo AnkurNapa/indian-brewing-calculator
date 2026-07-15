@@ -13,6 +13,16 @@ const INPUT =
   'w-full rounded-lg border border-amber-200 bg-white px-3 py-2 font-body text-sm text-ink focus:border-[#e08b2d] focus:outline-none focus:ring-1 focus:ring-[#e08b2d]/40';
 const LABEL = 'mb-1 block font-body text-xs font-semibold uppercase tracking-wide text-amber-700/80';
 
+// Batch-scale presets (L). Commercial-first per the product direction: the
+// intake defaults to a commercial batch, one tap switches to pilot/homebrew.
+const SCALES = {
+  commercial: { batch: '1000', final: '950' },
+  pilot: { batch: '100', final: '95' },
+  homebrew: { batch: '20', final: '19' },
+} as const;
+type Scale = keyof typeof SCALES;
+const SCALE_KEYS: Scale[] = ['homebrew', 'pilot', 'commercial'];
+
 /** Small "in style / out of style" chip vs a BJCP min-max range. */
 function RangeBadge({ value, min, max, inLabel, outLabel }: { value: number; min: number; max: number; inLabel: string; outLabel: string }) {
   if (!value) return null;
@@ -34,8 +44,14 @@ export default function StartPage() {
 
   const [recipeName, setRecipeName] = useState('');
   const [bjcpStyleId, setBjcpStyleId] = useState(BJCP_STYLES[0].id);
-  const [batch, setBatch] = useState('20');
-  const [finalVol, setFinalVol] = useState('19');
+  const [scale, setScale] = useState<Scale>('commercial');
+  const [batch, setBatch] = useState<string>(SCALES.commercial.batch);
+  const [finalVol, setFinalVol] = useState<string>(SCALES.commercial.final);
+  const applyScale = (s: Scale) => {
+    setScale(s);
+    setBatch(SCALES[s].batch);
+    setFinalVol(SCALES[s].final);
+  };
   const [abv, setAbv] = useState('');
   const [ibu, setIbu] = useState('');
   const [co2, setCo2] = useState('');
@@ -107,6 +123,31 @@ export default function StartPage() {
             <div>SRM <b>{style.srm.min}-{style.srm.max}</b></div>
           </div>
         </SectionCard>
+
+        {/* Batch scale preset */}
+        <div>
+          <label className={LABEL}>{t('start.scale')}</label>
+          <div className="flex flex-wrap gap-1.5">
+            {SCALE_KEYS.map((s) => {
+              const labelKey = ('start.scale' + s.charAt(0).toUpperCase() + s.slice(1)) as Parameters<typeof t>[0];
+              const active = scale === s;
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => applyScale(s)}
+                  className={
+                    active
+                      ? 'rounded-full bg-[#e08b2d] px-4 py-1.5 font-body text-xs font-bold text-parchment shadow-sm'
+                      : 'rounded-full border border-amber-200 bg-white/70 px-4 py-1.5 font-body text-xs font-semibold text-amber-900 transition-colors hover:border-[#e08b2d]/60 hover:text-[#e08b2d]'
+                  }
+                >
+                  {t(labelKey)}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Volumes */}
         <div className="grid grid-cols-2 gap-4">
