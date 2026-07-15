@@ -59,8 +59,14 @@ export default function WelcomePage() {
         <p className="mt-1 max-w-prose font-body text-sm text-ink/70">{t('welcome.subtitle')}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
+            href="/start"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#e08b2d] px-4 py-2 font-body text-sm font-bold text-parchment shadow-sm transition-colors hover:bg-[#c67722]"
+          >
+            {t('app.startBrew')}
+          </Link>
+          <Link
             href="/"
-            className="inline-flex items-center gap-1.5 rounded-full bg-[#e08b2d] px-4 py-2 font-body text-sm font-semibold text-parchment shadow-sm transition-colors hover:bg-[#c67722]"
+            className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-white/70 px-4 py-2 font-body text-sm font-semibold text-amber-900 shadow-sm transition-colors hover:border-[#e08b2d]/60 hover:text-[#e08b2d]"
           >
             {t('welcome.openApp')}
           </Link>

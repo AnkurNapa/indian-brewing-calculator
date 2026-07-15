@@ -180,6 +180,12 @@ export default function Home() {
         <p className="font-body text-sm text-amber-800">{t('app.tagline')}</p>
         <div className="mt-1 flex items-center gap-2">
           <Link
+            href="/start"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#e08b2d] px-3 py-1 font-body text-xs font-bold text-parchment shadow-sm transition-colors hover:bg-[#c67722]"
+          >
+            {t('app.startBrew')}
+          </Link>
+          <Link
             href="/welcome"
             className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-white/70 px-3 py-1 font-body text-xs font-semibold text-amber-900 shadow-sm transition-colors hover:border-[#e08b2d]/60 hover:text-[#e08b2d]"
           >

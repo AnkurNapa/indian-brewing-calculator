@@ -29,6 +29,18 @@ export interface AppState {
   ibuFormula: IbuFormula;
   /** Extra inputs only the Garetz formula uses (altitude, hop freshness, boil volume). */
   garetzExtras: GaretzExtras;
+  /**
+   * Brewer's planning targets, captured on the "Start a brew" intake and
+   * used for target-vs-actual guidance. 0 means "not set". Kept separate
+   * from the computed OG/FG/IBU so the tools can show the goal alongside
+   * what the current recipe actually produces.
+   */
+  targetAbvPercent: number;
+  targetIbu: number;
+  /** Target carbonation, CO2 volumes. */
+  targetCo2Volumes: number;
+  /** Target packaged/final volume, litres (may differ from batch volume). */
+  targetFinalVolumeL: number;
 }
 
 export const DEFAULT_APP_STATE: AppState = {
@@ -47,6 +59,10 @@ export const DEFAULT_APP_STATE: AppState = {
   assumedEfficiencyPercent: 72,
   ibuFormula: 'tinseth',
   garetzExtras: { ...DEFAULT_GARETZ_EXTRAS },
+  targetAbvPercent: 0,
+  targetIbu: 0,
+  targetCo2Volumes: 0,
+  targetFinalVolumeL: 0,
 };
 
 function isValidAppState(value: unknown): value is AppState {
@@ -81,4 +97,29 @@ export function useWaterProfile() {
   );
 
   return { state: { ...DEFAULT_APP_STATE, ...state }, setState };
+}
+
+/**
+ * Write partial recipe fields into the persisted app state from OUTSIDE the
+ * React tree -- used by the /start intake page (a separate route). Merges
+ * with any existing saved recipe so we seed the chosen style/volume/targets
+ * without clobbering other fields; the app picks them up on its next load.
+ */
+export function seedAppState(partial: Partial<AppState>): void {
+  if (typeof window === 'undefined') return;
+  let current: AppState = DEFAULT_APP_STATE;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (isValidAppState(parsed)) current = { ...DEFAULT_APP_STATE, ...parsed };
+    }
+  } catch {
+    // ignore corrupt storage; fall back to defaults
+  }
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...current, ...partial }));
+  } catch {
+    // storage full/unavailable -- non-fatal for the intake flow
+  }
 }
