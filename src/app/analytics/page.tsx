@@ -64,7 +64,6 @@ export default function AnalyticsPage() {
     recipeCount: number;
     ingredientRecipeCount: number;
     styleCount: number;
-    sources: string[];
   };
   const fmt = (n: number) => n.toLocaleString('en-IN');
 

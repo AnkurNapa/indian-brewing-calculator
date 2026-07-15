@@ -345,23 +345,17 @@ function main() {
     for (const y of new Set(r.yeasts.map((x) => x.name.trim()).filter(Boolean))) yeastCount.set(y, (yeastCount.get(y) ?? 0) + 1);
   }
 
-  // Per-source counts (total, and how many carry ingredient data).
-  const sourceCounts: Record<string, { recipes: number; withIngredients: number }> = {};
-  for (const r of recipes) {
-    const s = (sourceCounts[r.source] ??= { recipes: 0, withIngredients: 0 });
-    s.recipes++;
-    if (r.hops.length || r.ferms.length) s.withIngredients++;
-  }
   const ingredientRecipeCount = recipes.filter((r) => r.hops.length || r.ferms.length).length;
 
+  // NOTE: index.json intentionally omits source names/ids. The page never
+  // renders them, and Next inlines imported JSON into the page source, so
+  // keeping source labels out avoids surfacing data provenance anywhere.
   const generatedAtIso = process.env.BUILD_TIME ?? null; // avoid nondeterminism unless provided
   writeFileSync(join(OUT_DIR, 'index.json'), JSON.stringify({
     generatedAt: generatedAtIso,
     recipeCount: recipes.length,
     ingredientRecipeCount,
     styleCount: styles.length,
-    sources: [...new Set(recipes.map((r) => r.source))],
-    sourceCounts,
   }, null, 2));
   writeFileSync(join(OUT_DIR, 'styles.json'), JSON.stringify(styles, null, 2));
   writeFileSync(join(OUT_DIR, 'hops.json'), JSON.stringify({ top: topN(hopCount, 30), pairings: topN(pairCount, 20) }, null, 2));
