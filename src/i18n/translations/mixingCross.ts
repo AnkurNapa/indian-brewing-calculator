@@ -78,6 +78,21 @@ export const mixingCrossTranslations = {
   'mixingCross.amount.known': { en: 'Amount you have', de: 'Vorhandene Menge', hi: 'आपके पास मात्रा', mr: 'तुमच्याकडील प्रमाण' },
   'mixingCross.amount.unit': { en: 'kg or L', de: 'kg oder L', hi: 'kg या L', mr: 'kg किंवा L' },
 
+  'mixingCross.inputHint': {
+    en: 'Enter the value of each source (Component A and B) and the target you want. Component A is the stronger/higher source, B the weaker/lower one; the target sits between them.',
+    de: 'Geben Sie den Wert jeder Ausgangskomponente (A und B) und Ihr Ziel ein. Komponente A ist die stärkere/höhere, B die schwächere/niedrigere; das Ziel liegt dazwischen.',
+    hi: 'प्रत्येक स्रोत (घटक A और B) का मान तथा अपना लक्ष्य दर्ज करें। घटक A अधिक/तेज़ स्रोत है, B कम/हल्का; लक्ष्य इनके बीच रहता है।',
+    mr: 'प्रत्येक स्रोताचे (घटक A व B) मूल्य आणि तुमचे लक्ष्य टाका. घटक A अधिक/जास्त स्रोत आहे, B कमी/हलका; लक्ष्य त्यांच्या दरम्यान असते.',
+  },
+
+  'mixingCross.outcome.title': { en: 'What to do', de: 'Was zu tun ist', hi: 'क्या करें', mr: 'काय करावे' },
+  'mixingCross.outcome.sentence': {
+    en: 'Combine {amountA} of A ({paramA}{paramUnit}) with {amountB} of B ({paramB}{paramUnit}) to get {total} {amountUnit} at {target}{paramUnit}.',
+    de: 'Kombinieren Sie {amountA} von A ({paramA}{paramUnit}) mit {amountB} von B ({paramB}{paramUnit}), um {total} {amountUnit} mit {target}{paramUnit} zu erhalten.',
+    hi: '{amountA} घटक A ({paramA}{paramUnit}) को {amountB} घटक B ({paramB}{paramUnit}) के साथ मिलाएँ, जिससे {target}{paramUnit} पर {total} {amountUnit} बनेगा।',
+    mr: '{amountA} घटक A ({paramA}{paramUnit}) आणि {amountB} घटक B ({paramB}{paramUnit}) एकत्र करा, म्हणजे {target}{paramUnit} वर {total} {amountUnit} तयार होईल.',
+  },
+
   'mixingCross.result.title': { en: 'Amounts to Combine', de: 'Zu kombinierende Mengen', hi: 'मिलाने की मात्रा', mr: 'एकत्र करण्याचे प्रमाण' },
   'mixingCross.result.componentA': { en: 'Component A', de: 'Komponente A', hi: 'घटक A', mr: 'घटक A' },
   'mixingCross.result.componentB': { en: 'Component B', de: 'Komponente B', hi: 'घटक B', mr: 'घटक B' },

@@ -106,6 +106,64 @@ export const coreTranslations = {
   'tab.about.label': { en: 'About', de: 'Über', hi: 'परिचय', mr: 'परिचय' },
   'tab.about.short': { en: 'About', de: 'Über', hi: 'परिचय', mr: 'परिचय' },
 
+  // Tab-group captions, shown above each cluster in the navigation.
+  'nav.group.water': { en: 'Water', de: 'Wasser', hi: 'जल', mr: 'पाणी' },
+  'nav.group.volumes': { en: 'Volumes', de: 'Mengen', hi: 'मात्रा', mr: 'प्रमाण' },
+  'nav.group.brewhouse': { en: 'Brewhouse', de: 'Sudhaus', hi: 'ब्रूहाउस', mr: 'ब्रूहाऊस' },
+  'nav.group.ferment': { en: 'Ferment & Style', de: 'Gärung & Stil', hi: 'किण्वन व शैली', mr: 'किण्वन व शैली' },
+  'nav.group.session': { en: 'Session', de: 'Sitzung', hi: 'सत्र', mr: 'सत्र' },
+
+  // "Where to next" contextual navigation, replacing the linear next button.
+  'nav.whereNext': { en: 'Where to next', de: 'Wie geht es weiter', hi: 'आगे कहाँ जाएँ', mr: 'पुढे कुठे जावे' },
+  'nav.reason.start': {
+    en: 'Start here — enter your source water',
+    de: 'Hier starten — Ausgangswasser eingeben',
+    hi: 'यहाँ से शुरू करें — अपना स्रोत जल दर्ज करें',
+    mr: 'येथून सुरू करा — तुमचे स्रोत पाणी टाका',
+  },
+  'nav.reason.water': {
+    en: 'Uses this water profile',
+    de: 'Nutzt dieses Wasserprofil',
+    hi: 'इसी जल प्रोफ़ाइल का उपयोग करता है',
+    mr: 'हेच पाणी प्रोफाइल वापरते',
+  },
+  'nav.reason.grainBill': {
+    en: 'Uses your grain bill',
+    de: 'Nutzt Ihre Schüttung',
+    hi: 'आपके ग्रेन बिल का उपयोग करता है',
+    mr: 'तुमचे ग्रेन बिल वापरते',
+  },
+  'nav.reason.volume': {
+    en: 'Uses your batch volume',
+    de: 'Nutzt Ihr Sudvolumen',
+    hi: 'आपकी बैच मात्रा का उपयोग करता है',
+    mr: 'तुमचे बॅच प्रमाण वापरते',
+  },
+  'nav.reason.gravity': {
+    en: 'Uses your OG / FG',
+    de: 'Nutzt Ihre Stammwürze / Restextrakt',
+    hi: 'आपके OG / FG का उपयोग करता है',
+    mr: 'तुमचे OG / FG वापरते',
+  },
+  'nav.reason.continue': {
+    en: 'Continue the brew-day flow',
+    de: 'Brautag fortsetzen',
+    hi: 'ब्रू-डे प्रवाह जारी रखें',
+    mr: 'ब्रू-डे प्रवाह सुरू ठेवा',
+  },
+  'nav.reason.record': {
+    en: 'Save & review the recipe',
+    de: 'Rezept speichern & prüfen',
+    hi: 'रेसिपी सहेजें व समीक्षा करें',
+    mr: 'पाककृती जतन करा व तपासा',
+  },
+  'nav.reason.overview': {
+    en: 'Back to the session overview',
+    de: 'Zurück zur Sitzungsübersicht',
+    hi: 'सत्र अवलोकन पर वापस',
+    mr: 'सत्र आढाव्याकडे परत',
+  },
+
   'summary.targetStyle': { en: 'Target Style', de: 'Zielstil', hi: 'लक्ष्य शैली', mr: 'लक्ष्य शैली' },
   'summary.grainBill': { en: 'Grain Bill', de: 'Schüttung', hi: 'ग्रेन बिल', mr: 'ग्रेन बिल' },
   'summary.batchVolume': { en: 'Batch Volume', de: 'Sudvolumen', hi: 'बैच मात्रा', mr: 'बॅच प्रमाण' },

@@ -134,6 +134,8 @@ export function MixingCrossPanel() {
         />
       </div>
 
+      <p className="-mt-3 font-body text-xs text-amber-700/90">{t('mixingCross.inputHint')}</p>
+
       {/* Visual Pearson square: each component's arm crosses to the
           opposite corner, where its parts (= the other component's
           distance from the target) appear -- the classic textbook layout. */}
@@ -205,8 +207,30 @@ export function MixingCrossPanel() {
           )}
 
           {quantities ? (
-            <ResultCard title={t('mixingCross.result.title')} tone="success">
-              <div className="overflow-x-auto">
+            <>
+              {/* Plain-language outcome first: the actual "do this" answer, in
+                  words, before the numeric breakdown table -- so the takeaway
+                  is legible at a glance instead of read out of a table. */}
+              <div className="rounded-xl border-2 border-teal-300 bg-teal-50/70 p-4">
+                <p className="flex items-center gap-1.5 font-body text-xs font-bold uppercase tracking-wide text-teal-700">
+                  <span aria-hidden="true">→</span> {t('mixingCross.outcome.title')}
+                </p>
+                <p className="mt-1.5 font-display text-base font-semibold leading-snug text-ink">
+                  {t('mixingCross.outcome.sentence', {
+                    amountA: roundForDisplay(quantities.amountA, 2),
+                    paramA: fmtParam(paramA),
+                    amountB: roundForDisplay(quantities.amountB, 2),
+                    paramB: fmtParam(paramB),
+                    total: roundForDisplay(quantities.total, 2),
+                    amountUnit: t('mixingCross.amount.unit'),
+                    target: fmtParam(target),
+                    paramUnit: unit,
+                  })}
+                </p>
+              </div>
+
+              <ResultCard title={t('mixingCross.result.title')} tone="success">
+                <div className="overflow-x-auto">
                 <table className="w-full min-w-[280px] text-left text-sm">
                   <tbody>
                     <tr className="border-b border-ink/10">
@@ -230,7 +254,8 @@ export function MixingCrossPanel() {
                   </tbody>
                 </table>
               </div>
-            </ResultCard>
+              </ResultCard>
+            </>
           ) : null}
         </>
       )}

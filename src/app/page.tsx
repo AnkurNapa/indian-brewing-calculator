@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Tabs, TabDef } from '@/components/ui/Tabs';
+import { WhereNext } from '@/components/ui/WhereNext';
+import { TAB_GROUP_BY_ID } from '@/lib/navigation';
 import { SessionSummary } from '@/components/ui/SessionSummary';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { LanguageToggle } from '@/components/ui/LanguageToggle';
@@ -79,7 +81,7 @@ export default function Home() {
       { id: 'recipes', label: t('tab.recipes.label'), shortLabel: t('tab.recipes.short'), icon: BookmarkIcon },
       { id: 'backup', label: t('tab.backup.label'), shortLabel: t('tab.backup.short'), icon: CloudSyncIcon },
       { id: 'about', label: t('tab.about.label'), shortLabel: t('tab.about.short'), icon: InfoIcon },
-    ],
+    ].map((tab) => ({ ...tab, group: TAB_GROUP_BY_ID[tab.id as keyof typeof TAB_GROUP_BY_ID] })),
     [t],
   );
 
@@ -132,7 +134,6 @@ export default function Home() {
   const summaryItems = summaryItemsByTab[activeTab] ?? [];
 
   const activeIndex = TABS.findIndex((tab) => tab.id === activeTab);
-  const nextTab = activeIndex >= 0 && activeIndex < TABS.length - 1 ? TABS[activeIndex + 1] : null;
 
   useEffect(() => {
     document.title = activeTab === 'home' ? t('app.title') : `${activeTabDef.label} - ${t('app.title')}`;
@@ -339,28 +340,8 @@ export default function Home() {
 
         {activeTab === 'about' ? <AboutPanel /> : null}
 
-        {nextTab ? (
-          <div className="mt-6 border-t border-amber-200 pt-4">
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab(nextTab.id);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className="flex min-h-[52px] w-full items-center justify-between gap-2 rounded-xl bg-teal-700 px-4 py-3 text-left font-body text-sm font-semibold text-parchment shadow hover:bg-teal-800 active:bg-teal-900"
-            >
-              <span className="flex flex-col">
-                <span className="text-xs font-normal uppercase tracking-wide text-parchment/70">{t('app.nextStep')}</span>
-                <span className="flex items-center gap-1.5">
-                  <nextTab.icon className="h-4 w-4 flex-shrink-0" />
-                  {nextTab.label}
-                </span>
-              </span>
-              <span aria-hidden="true" className="text-lg">
-                →
-              </span>
-            </button>
-          </div>
+        {activeTab !== 'home' ? (
+          <WhereNext currentTab={activeTab} tabsById={TAB_BY_ID} onNavigate={setActiveTab} />
         ) : null}
       </div>
 
