@@ -94,4 +94,19 @@ writeFileSync(OUT, JSON.stringify({
 // Tiny counts file so the welcome screen can show totals without importing
 // the whole (large) catalogue into its bundle.
 writeFileSync(join(OUT_DIR, 'ingredient-counts.json'), JSON.stringify({ hops: hops.length, malts: malts.length, yeasts: yeasts.length }));
+
+// Trimmed, lazy-loaded selection lists for the in-calculator dropdowns —
+// only the fields a picker needs, so the SPA can dynamic-import them on
+// demand rather than shipping the full 400KB catalogue in the landing bundle.
+const maltPotential = (m) => {
+  if (m.potentialSg) return m.potentialSg;
+  const c = String(m.category ?? '').toLowerCase();
+  if (c.includes('roast')) return 1.03;
+  if (c.includes('crystal') || c.includes('caramel')) return 1.033;
+  if (c.includes('sugar')) return 1.046;
+  return 1.036;
+};
+writeFileSync(join(OUT_DIR, 'select-malts.json'), JSON.stringify(malts.map((m) => ({ name: m.name, supplier: m.supplier, colorLovibond: m.colorLovibond, potentialSg: maltPotential(m) }))));
+writeFileSync(join(OUT_DIR, 'select-hops.json'), JSON.stringify(hops.map((h) => ({ name: h.name, supplier: h.supplier, alpha: h.alphaLow != null && h.alphaHigh != null ? +((h.alphaLow + h.alphaHigh) / 2).toFixed(1) : null }))));
+writeFileSync(join(OUT_DIR, 'select-yeasts.json'), JSON.stringify(yeasts.map((y) => ({ name: y.name, supplier: y.supplier, attenuation: y.attenPercent, tempMinC: y.tempMinC, tempMaxC: y.tempMaxC }))));
 console.log(`[ingredients] ${hops.length} hops, ${malts.length} malts, ${yeasts.length} yeasts -> ${OUT.replace(ROOT, '')}`);

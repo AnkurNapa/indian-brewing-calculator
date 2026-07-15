@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { GrainBillItem, MaltCategory, classifyMaltCategory } from '@/lib/waterChemistry';
 import { WEYERMANN_MALTS } from '@/lib/weyermannMalts';
 import { INDIAN_GRAINS } from '@/lib/indianIngredients';
+import { useCatalog, MaltOption } from '@/hooks/useCatalog';
 import { solveGrainWeightsByPercent } from '@/lib/efficiency';
 import { Input } from '@/components/ui/Input';
 import { NumberField } from '@/components/ui/NumberField';
@@ -52,6 +53,31 @@ export function GrainBillEditor({
   const { t } = useLanguage();
   const [mode, setMode] = useState<BillMode>('weight');
   const maltCategoryOptions = MALT_CATEGORY_OPTION_KEYS.map((opt) => ({ id: opt.id, label: t(opt.labelKey) }));
+
+  // Curated presets + the lazy-loaded supplier malt catalogue (288 malts).
+  const catalogMalts = useCatalog<MaltOption>('malts');
+  const allMalts = useMemo(() => {
+    const seen = new Set(GRAIN_PRESETS.map((p) => p.name.toLowerCase()));
+    const fromCatalog = catalogMalts
+      .filter((m) => !seen.has(m.name.toLowerCase()))
+      .map((m, i) => ({
+        id: `cat-malt-${i}`,
+        name: m.name,
+        label: `${m.name} (${m.supplier})`,
+        colorLovibond: m.colorLovibond,
+        potentialSg: m.potentialSg,
+        category: classifyMaltCategory(m.colorLovibond),
+      }));
+    const presets = GRAIN_PRESETS.map((p) => ({
+      id: p.id,
+      name: p.name,
+      label: p.name,
+      colorLovibond: p.colorLovibond,
+      potentialSg: p.potentialSg,
+      category: p.category,
+    }));
+    return [...presets, ...fromCatalog];
+  }, [catalogMalts]);
 
   const updateRow = (index: number, patch: Partial<GrainBillItem>) => {
     const next = grainBill.map((row, i) => (i === index ? { ...row, ...patch } : row));
@@ -198,10 +224,10 @@ export function GrainBillEditor({
             <SearchableSelect
               label={t('mashAdjustment.grainBill.quickFillLabel')}
               placeholder={t('mashAdjustment.grainBill.quickFillPlaceholder')}
-              value={GRAIN_PRESETS.find((m) => m.name === row.name)?.id ?? ''}
-              options={GRAIN_PRESETS.map((malt) => ({ id: malt.id, label: malt.name }))}
+              value={allMalts.find((m) => m.name === row.name)?.id ?? ''}
+              options={allMalts.map((malt) => ({ id: malt.id, label: malt.label }))}
               onChange={(id) => {
-                const malt = GRAIN_PRESETS.find((m) => m.id === id);
+                const malt = allMalts.find((m) => m.id === id);
                 if (malt) {
                   updateRow(index, {
                     name: malt.name,
