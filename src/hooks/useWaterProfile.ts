@@ -6,6 +6,8 @@ import { HopAddition, IbuFormula, GaretzExtras, DEFAULT_GARETZ_EXTRAS } from '@/
 import { BJCP_STYLES } from '@/lib/bjcpStyles';
 
 export interface AppState {
+  /** The current brew's name, set on the /start intake; '' when unnamed. */
+  recipeName: string;
   sourceProfile: IonProfile;
   secondSourceProfile: IonProfile;
   grainBill: GrainBillItem[];
@@ -44,6 +46,7 @@ export interface AppState {
 }
 
 export const DEFAULT_APP_STATE: AppState = {
+  recipeName: '',
   sourceProfile: { ...EMPTY_ION_PROFILE },
   secondSourceProfile: { ...EMPTY_ION_PROFILE },
   grainBill: [],

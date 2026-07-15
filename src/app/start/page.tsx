@@ -46,6 +46,7 @@ export default function StartPage() {
 
   const handleSave = () => {
     seedAppState({
+      recipeName: recipeName.trim(),
       bjcpStyleId,
       batchVolumeL: parseFloat(batch) || 20,
       targetFinalVolumeL: parseFloat(finalVol) || 0,

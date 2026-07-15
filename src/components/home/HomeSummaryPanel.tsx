@@ -177,7 +177,16 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-display text-xl font-bold text-ink">{t('home.title')}</h2>
+      {state.recipeName ? (
+        <div>
+          <p className="font-body text-[0.65rem] font-bold uppercase tracking-widest text-amber-700/80">
+            {t('home.currentBrew')}
+          </p>
+          <h2 className="font-display text-2xl font-extrabold text-amber-900">{state.recipeName}</h2>
+        </div>
+      ) : (
+        <h2 className="font-display text-xl font-bold text-ink">{t('home.title')}</h2>
+      )}
       <p className="font-body text-sm text-amber-800">{t('home.subtitle')}</p>
 
       {/* Brew Vitals hero: the recipe's headline numbers, big and scannable,

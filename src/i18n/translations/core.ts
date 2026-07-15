@@ -53,6 +53,7 @@ export const coreTranslations = {
   'start.outOfStyle': { en: 'out of style', de: 'außerhalb', hi: 'शैली से बाहर', mr: 'शैलीबाहेर' },
   'start.save': { en: 'Save and open the calculator', de: 'Speichern und Rechner öffnen', hi: 'सहेजें और कैलकुलेटर खोलें', mr: 'जतन करा आणि कॅल्क्युलेटर उघडा' },
   'start.optional': { en: 'optional', de: 'optional', hi: 'वैकल्पिक', mr: 'ऐच्छिक' },
+  'home.currentBrew': { en: 'Current brew', de: 'Aktueller Sud', hi: 'वर्तमान ब्रू', mr: 'सध्याचा ब्रू' },
   'home.targets.title': { en: 'Your targets', de: 'Deine Zielwerte', hi: 'आपके लक्ष्य', mr: 'तुमची उद्दिष्टे' },
   'home.targets.subtitle': {
     en: 'How the current recipe tracks to the plan you set.',
