@@ -95,7 +95,7 @@ export function StyleRangeChart({
               fontWeight={700}
               fill={LABEL}
             >
-              {r.p50 ?? '–'}
+              {r.p50 ?? '-'}
               {unit}
             </text>
           </Group>

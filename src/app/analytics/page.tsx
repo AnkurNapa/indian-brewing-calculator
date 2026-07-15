@@ -13,7 +13,7 @@ import fermentablesData from '../../../public/analytics/fermentables.json';
 import yeastsData from '../../../public/analytics/yeasts.json';
 
 export const metadata: Metadata = {
-  title: 'Recipe Analytics · Indian Brewer’s Calculator',
+  title: "Recipe Analytics - Indian Brewer's Calculator",
   description:
     'Aggregate insights from real brewing recipes: typical ABV, IBU, and colour by BJCP style, plus the most-used hops, fermentables, and yeasts.',
 };
@@ -82,7 +82,7 @@ export default function AnalyticsPage() {
           Recipe Analytics
         </h1>
         <p className="mt-1 max-w-prose font-body text-sm text-ink/70">
-          What real recipes reveal about typical brewing practice — vital-stat ranges by BJCP style,
+          What real recipes reveal about typical brewing practice: vital-stat ranges by BJCP style,
           and the ingredients brewers actually reach for. Every number here is <em>computed</em> from
           the recipes, using the same IBU, colour, and style engines that power this calculator.
         </p>
@@ -101,7 +101,7 @@ export default function AnalyticsPage() {
         {/* style vitals — ABV */}
         <SectionCard title="Strength by style · ABV %" tone="teal">
           <p className="mb-3 text-xs text-ink/60">
-            Bar = 10th–90th percentile spread. Tick = median. Dot = typical colour.
+            Bar = 10th to 90th percentile spread. Tick = median. Dot = typical colour.
           </p>
           <StyleRangeChart rows={styleRows('abv', 12)} unit="%" ariaLabel="Median ABV percent by style" />
         </SectionCard>
@@ -115,7 +115,7 @@ export default function AnalyticsPage() {
         {/* hops */}
         <SectionCard title="Most-used hops">
           <p className="mb-3 text-xs text-ink/60">
-            From the {fmt(meta.ingredientRecipeCount)} recipes with full ingredient data (DIY Dog).
+            From the {fmt(meta.ingredientRecipeCount)} recipes with full ingredient data.
           </p>
           <HBarChart data={toBars(hops.top, 12)} ariaLabel="Most-used hops by recipe count" />
         </SectionCard>
@@ -137,22 +137,11 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* provenance / legality note */}
+      {/* aggregate-only note */}
       <p className="mt-8 border-t border-amber-200 pt-4 font-body text-[0.7rem] leading-relaxed text-ink/50">
-        Style ranges are aggregate statistics — derived facts such as median ABV, not reproductions
-        of any recipe. Ingredient rankings come from BrewDog’s freely-released{' '}
-        <a
-          href="https://www.brewdog.com/uk/diy-dog"
-          className="underline decoration-dotted underline-offset-2 hover:text-[#e08b2d]"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          DIY Dog
-        </a>{' '}
-        collection ({fmt(meta.ingredientRecipeCount)} recipes), with each metric recomputed from the
-        grain and hop bill. Style distributions additionally draw on a larger public homebrew dataset
-        used in aggregate only; individual recipes are never stored or shown. Styles are inferred
-        against the BJCP 2015 guidelines.
+        Figures shown are aggregate statistics: derived values such as median ABV and typical
+        ingredient usage, computed across many brewing recipes. They are not reproductions of any
+        individual recipe. Styles are classified against the BJCP 2015 style guidelines.
       </p>
     </main>
   );
