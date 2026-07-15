@@ -22,6 +22,7 @@ export const coreTranslations = {
   'app.goHome': { en: 'Go to Home overview', de: 'Zur Startseite', hi: 'होम पर जाएँ', mr: 'होमवर जा' },
   'app.analytics': { en: 'Recipe Analytics', de: 'Rezept-Analyse', hi: 'रेसिपी विश्लेषण', mr: 'रेसिपी विश्लेषण' },
   'app.guide': { en: 'All tools', de: 'Alle Werkzeuge', hi: 'सभी टूल', mr: 'सर्व साधने' },
+  'app.userGuide': { en: 'User guide', de: 'Anleitung', hi: 'उपयोगकर्ता गाइड', mr: 'वापरकर्ता मार्गदर्शक' },
   'app.faults': { en: 'Beer faults', de: 'Bierfehler', hi: 'बीयर दोष', mr: 'बिअर दोष' },
   'app.ingredients': { en: 'Raw materials', de: 'Rohstoffe', hi: 'कच्चा माल', mr: 'कच्चा माल' },
   'welcome.ingredientsDesc': {

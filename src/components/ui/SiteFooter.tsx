@@ -13,6 +13,7 @@ export function SiteFooter() {
 
   const links = [
     { href: '/', label: t('welcome.openApp') },
+    { href: '/guide', label: t('app.userGuide') },
     { href: '/start', label: t('app.startBrew') },
     { href: '/welcome', label: t('app.guide') },
     { href: '/analytics', label: t('app.analytics') },

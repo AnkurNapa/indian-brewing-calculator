@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { ComponentType } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { CalculatorIcon, GridIcon, ChartBarIcon, FlaskIcon, JugIcon } from '@/components/ui/icons';
+import { CalculatorIcon, GridIcon, ChartBarIcon, FlaskIcon, JugIcon, InfoIcon } from '@/components/ui/icons';
 
-type RouteKey = 'app' | 'start' | 'welcome' | 'analytics' | 'faults' | 'ingredients';
+type RouteKey = 'app' | 'guide' | 'start' | 'welcome' | 'analytics' | 'faults' | 'ingredients';
 
 /**
  * The shared top wayfinding bar for the standalone routes (/start, /welcome,
@@ -18,6 +18,7 @@ export function RouteNav({ current }: { current: RouteKey }) {
 
   const items: { key: RouteKey; href: string; label: string; icon?: ComponentType<{ className?: string }> }[] = [
     { key: 'app', href: '/', label: t('welcome.openApp'), icon: CalculatorIcon },
+    { key: 'guide', href: '/guide', label: t('app.userGuide'), icon: InfoIcon },
     { key: 'start', href: '/start', label: t('app.startBrew') },
     { key: 'welcome', href: '/welcome', label: t('app.guide'), icon: GridIcon },
     { key: 'analytics', href: '/analytics', label: t('app.analytics'), icon: ChartBarIcon },
