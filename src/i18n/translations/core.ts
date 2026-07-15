@@ -21,6 +21,16 @@ export const coreTranslations = {
   },
   'app.goHome': { en: 'Go to Home overview', de: 'Zur Startseite', hi: 'होम पर जाएँ', mr: 'होमवर जा' },
   'app.analytics': { en: 'Recipe Analytics', de: 'Rezept-Analyse', hi: 'रेसिपी विश्लेषण', mr: 'रेसिपी विश्लेषण' },
+  'app.guide': { en: 'All tools', de: 'Alle Werkzeuge', hi: 'सभी टूल', mr: 'सर्व साधने' },
+  'welcome.title': { en: 'All tools', de: 'Alle Werkzeuge', hi: 'सभी टूल', mr: 'सर्व साधने' },
+  'welcome.subtitle': {
+    en: 'Every calculator in the app, grouped by brew stage. Tap any tool to open it.',
+    de: 'Jeder Rechner der App, nach Braustufe gruppiert. Tippe auf ein Werkzeug, um es zu öffnen.',
+    hi: 'ऐप का हर कैलकुलेटर, ब्रू चरण के अनुसार समूहित। खोलने के लिए किसी भी टूल पर टैप करें।',
+    mr: 'अ‍ॅपमधील प्रत्येक कॅल्क्युलेटर, ब्रू टप्प्यानुसार गटबद्ध. उघडण्यासाठी कोणत्याही साधनावर टॅप करा.',
+  },
+  'welcome.openApp': { en: 'Open calculator', de: 'Rechner öffnen', hi: 'कैलकुलेटर खोलें', mr: 'कॅल्क्युलेटर उघडा' },
+  'welcome.viewAnalytics': { en: 'Recipe Analytics', de: 'Rezept-Analyse', hi: 'रेसिपी विश्लेषण', mr: 'रेसिपी विश्लेषण' },
   'app.stepOf': {
     en: 'Step {current} of {total}',
     de: 'Schritt {current} von {total}',

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Tabs, TabDef } from '@/components/ui/Tabs';
 import { WhereNext } from '@/components/ui/WhereNext';
-import { TAB_GROUP_BY_ID } from '@/lib/navigation';
+import { TAB_GROUP_BY_ID, TAB_IDS } from '@/lib/navigation';
 import { SessionSummary } from '@/components/ui/SessionSummary';
 import { TutorialCallout } from '@/components/ui/TutorialCallout';
 import { LanguageToggle } from '@/components/ui/LanguageToggle';
@@ -50,6 +50,7 @@ import {
   CloudSyncIcon,
   BookmarkIcon,
   ChartBarIcon,
+  GridIcon,
 } from '@/components/ui/icons';
 
 export default function Home() {
@@ -141,6 +142,19 @@ export default function Home() {
     document.title = activeTab === 'home' ? t('app.title') : `${activeTabDef.label} - ${t('app.title')}`;
   }, [activeTab, activeTabDef.label, t]);
 
+  // Deep-link support: open a specific tool when arrived at with a #tab-id
+  // hash (e.g. from the /welcome directory). No-op when the hash is absent
+  // or not a known tab, so default home-first behavior is unchanged.
+  useEffect(() => {
+    const openFromHash = () => {
+      const id = window.location.hash.replace(/^#/, '');
+      if (id && (TAB_IDS as readonly string[]).includes(id)) setActiveTab(id);
+    };
+    openFromHash();
+    window.addEventListener('hashchange', openFromHash);
+    return () => window.removeEventListener('hashchange', openFromHash);
+  }, []);
+
   // Per-tab analytics. The initial home load is already captured by GA's
   // automatic pageview (in layout), so we skip the first effect run and
   // send a virtual pageview only on subsequent tab switches -- this is what
@@ -164,13 +178,22 @@ export default function Home() {
           <h1 className="font-display text-2xl font-extrabold text-amber-900 sm:text-3xl">{t('app.title')}</h1>
         </div>
         <p className="font-body text-sm text-amber-800">{t('app.tagline')}</p>
-        <Link
-          href="/analytics"
-          className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-white/70 px-3 py-1 font-body text-xs font-semibold text-amber-900 shadow-sm transition-colors hover:border-[#e08b2d]/60 hover:text-[#e08b2d]"
-        >
-          <ChartBarIcon className="h-3.5 w-3.5" />
-          {t('app.analytics')}
-        </Link>
+        <div className="mt-1 flex items-center gap-2">
+          <Link
+            href="/welcome"
+            className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-white/70 px-3 py-1 font-body text-xs font-semibold text-amber-900 shadow-sm transition-colors hover:border-[#e08b2d]/60 hover:text-[#e08b2d]"
+          >
+            <GridIcon className="h-3.5 w-3.5" />
+            {t('app.guide')}
+          </Link>
+          <Link
+            href="/analytics"
+            className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-white/70 px-3 py-1 font-body text-xs font-semibold text-amber-900 shadow-sm transition-colors hover:border-[#e08b2d]/60 hover:text-[#e08b2d]"
+          >
+            <ChartBarIcon className="h-3.5 w-3.5" />
+            {t('app.analytics')}
+          </Link>
+        </div>
       </header>
 
       {/* Compact native-style app bar on phones: a short (2-3 word) screen
@@ -202,6 +225,13 @@ export default function Home() {
               {t('app.stepOf', { current: activeIndex, total: TABS.length - 1 })}
             </span>
           ) : null}
+          <Link
+            href="/welcome"
+            aria-label={t('app.guide')}
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-teal-700 hover:bg-teal-50 active:bg-teal-100"
+          >
+            <GridIcon className="h-5 w-5" />
+          </Link>
           <Link
             href="/analytics"
             aria-label={t('app.analytics')}
