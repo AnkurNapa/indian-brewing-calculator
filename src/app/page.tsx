@@ -373,6 +373,10 @@ export default function Home() {
             onIbuFormulaChange={(ibuFormula) => setState((prev) => ({ ...prev, ibuFormula }))}
             garetzExtras={state.garetzExtras}
             onGaretzExtrasChange={(garetzExtras) => setState((prev) => ({ ...prev, garetzExtras }))}
+            targetAbvPercent={state.targetAbvPercent}
+            targetIbu={state.targetIbu}
+            targetCo2Volumes={state.targetCo2Volumes}
+            targetFinalVolumeL={state.targetFinalVolumeL}
           />
         ) : null}
 

@@ -7,6 +7,7 @@ import { calculateAbvAdvanced } from '@/lib/fermentation';
 import { calculateIbu, HopAddition, IbuFormula, GaretzExtras } from '@/lib/ibu';
 import { BJCP_STYLES } from '@/lib/bjcpStyles';
 import { checkStyleCompliance, ParameterCompliance } from '@/lib/styleCompliance';
+import { TargetVsActual, TargetRow } from '@/components/ui/TargetVsActual';
 import { NumberField } from '@/components/ui/NumberField';
 import { GravityField } from '@/components/ui/GravityField';
 import { Input } from '@/components/ui/Input';
@@ -33,6 +34,11 @@ interface StyleCheckPanelProps {
   onIbuFormulaChange: (formula: IbuFormula) => void;
   garetzExtras: GaretzExtras;
   onGaretzExtrasChange: (extras: GaretzExtras) => void;
+  /** Planning targets from /start (0 = not set); shown as target-vs-actual. */
+  targetAbvPercent?: number;
+  targetIbu?: number;
+  targetCo2Volumes?: number;
+  targetFinalVolumeL?: number;
 }
 
 function ParameterRow({ label, unit, compliance }: { label: string; unit: string; compliance: ParameterCompliance }) {
@@ -71,6 +77,10 @@ export function StyleCheckPanel({
   onIbuFormulaChange,
   garetzExtras,
   onGaretzExtrasChange,
+  targetAbvPercent = 0,
+  targetIbu = 0,
+  targetCo2Volumes = 0,
+  targetFinalVolumeL = 0,
 }: StyleCheckPanelProps) {
   const { t } = useLanguage();
   const [styleSearch, setStyleSearch] = useState('');
@@ -268,6 +278,24 @@ export function StyleCheckPanel({
         <ParameterRow label={t('styleCheck.param.colorSrm')} unit="" compliance={compliance.srm} />
         <ParameterRow label={t('styleCheck.param.abv')} unit="%" compliance={compliance.abvPercent} />
       </div>
+
+      {(() => {
+        const targetRows: TargetRow[] = [
+          { label: t('styleCheck.param.abv'), target: targetAbvPercent, actual: abvPercent, unit: '%', range: style.abvPercent, decimals: 1 },
+          { label: t('styleCheck.param.ibu'), target: targetIbu, actual: ibuResult.totalIbu, unit: '', range: style.ibu, decimals: 0 },
+          { label: t('home.targets.finalVolume'), target: targetFinalVolumeL, actual: batchVolumeL, unit: ' L', decimals: 0 },
+          { label: t('home.targets.co2'), target: targetCo2Volumes, unit: '', decimals: 1 },
+        ];
+        if (!targetRows.some((r) => r.target > 0)) return null;
+        return (
+          <div className="rounded-lg border border-teal-200 bg-teal-50/40 p-3">
+            <h4 className="mb-1.5 font-display text-xs font-bold uppercase tracking-wide text-teal-800">
+              {t('home.targets.title')}
+            </h4>
+            <TargetVsActual rows={targetRows} inStyleLabel={t('start.inStyle')} outStyleLabel={t('start.outOfStyle')} />
+          </div>
+        );
+      })()}
     </section>
   );
 }
