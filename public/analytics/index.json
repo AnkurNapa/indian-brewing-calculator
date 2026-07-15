@@ -1,0 +1,20 @@
+{
+  "generatedAt": null,
+  "recipeCount": 71966,
+  "ingredientRecipeCount": 324,
+  "styleCount": 99,
+  "sources": [
+    "brewdog",
+    "brewersfriend"
+  ],
+  "sourceCounts": {
+    "brewdog": {
+      "recipes": 325,
+      "withIngredients": 324
+    },
+    "brewersfriend": {
+      "recipes": 71641,
+      "withIngredients": 0
+    }
+  }
+}

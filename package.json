@@ -9,9 +9,14 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "build:analytics": "tsx scripts/build-analytics.ts"
   },
   "dependencies": {
+    "@visx/axis": "^4.0.0",
+    "@visx/group": "^4.0.0",
+    "@visx/scale": "^4.0.0",
+    "@visx/shape": "^4.0.0",
     "next": "14.2.35",
     "qrcode.react": "^4.2.0",
     "react": "18.3.1",
@@ -24,11 +29,14 @@
     "@types/react-dom": "18.3.0",
     "@vitest/coverage-v8": "^2.0.5",
     "autoprefixer": "10.4.19",
+    "csv-parse": "^5.6.0",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.35",
+    "fast-xml-parser": "^4.5.7",
     "jsdom": "^24.1.1",
     "postcss": "8.4.40",
     "tailwindcss": "3.4.7",
+    "tsx": "^4.23.1",
     "typescript": "5.5.4",
     "vitest": "^2.0.5"
   }

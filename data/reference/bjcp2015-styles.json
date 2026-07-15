@@ -1,0 +1,2502 @@
+[
+  {
+    "id": "1a",
+    "name": "American Light Lager",
+    "category": "Standard American Beer",
+    "og": {
+      "min": 1.028,
+      "max": 1.04
+    },
+    "fg": {
+      "min": 0.998,
+      "max": 1.008
+    },
+    "ibu": {
+      "min": 8,
+      "max": 12
+    },
+    "srm": {
+      "min": 2,
+      "max": 3
+    },
+    "abvPercent": {
+      "min": 2.8,
+      "max": 4.2
+    }
+  },
+  {
+    "id": "1b",
+    "name": "American Lager",
+    "category": "Standard American Beer",
+    "og": {
+      "min": 1.04,
+      "max": 1.05
+    },
+    "fg": {
+      "min": 1.004,
+      "max": 1.01
+    },
+    "ibu": {
+      "min": 8,
+      "max": 18
+    },
+    "srm": {
+      "min": 2,
+      "max": 4
+    },
+    "abvPercent": {
+      "min": 4.2,
+      "max": 5.3
+    }
+  },
+  {
+    "id": "1c",
+    "name": "Cream Ale",
+    "category": "Standard American Beer",
+    "og": {
+      "min": 1.042,
+      "max": 1.055
+    },
+    "fg": {
+      "min": 1.006,
+      "max": 1.012
+    },
+    "ibu": {
+      "min": 8,
+      "max": 20
+    },
+    "srm": {
+      "min": 2.5,
+      "max": 5
+    },
+    "abvPercent": {
+      "min": 4.2,
+      "max": 5.6
+    }
+  },
+  {
+    "id": "1d",
+    "name": "American Wheat Beer",
+    "category": "Standard American Beer",
+    "og": {
+      "min": 1.04,
+      "max": 1.055
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.013
+    },
+    "ibu": {
+      "min": 15,
+      "max": 30
+    },
+    "srm": {
+      "min": 3,
+      "max": 6
+    },
+    "abvPercent": {
+      "min": 4,
+      "max": 5.5
+    }
+  },
+  {
+    "id": "2a",
+    "name": "International Pale Lager",
+    "category": "International Lager",
+    "og": {
+      "min": 1.042,
+      "max": 1.05
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.012
+    },
+    "ibu": {
+      "min": 18,
+      "max": 25
+    },
+    "srm": {
+      "min": 2,
+      "max": 6
+    },
+    "abvPercent": {
+      "min": 4.6,
+      "max": 6
+    }
+  },
+  {
+    "id": "2b",
+    "name": "International Amber Lager",
+    "category": "International Lager",
+    "og": {
+      "min": 1.042,
+      "max": 1.055
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 8,
+      "max": 25
+    },
+    "srm": {
+      "min": 7,
+      "max": 14
+    },
+    "abvPercent": {
+      "min": 4.6,
+      "max": 6
+    }
+  },
+  {
+    "id": "2c",
+    "name": "International Dark Lager",
+    "category": "International Lager",
+    "og": {
+      "min": 1.044,
+      "max": 1.056
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.012
+    },
+    "ibu": {
+      "min": 8,
+      "max": 20
+    },
+    "srm": {
+      "min": 14,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 4.2,
+      "max": 6
+    }
+  },
+  {
+    "id": "3a",
+    "name": "Czech Pale Lager",
+    "category": "Czech Lager",
+    "og": {
+      "min": 1.028,
+      "max": 1.044
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 20,
+      "max": 35
+    },
+    "srm": {
+      "min": 3,
+      "max": 6
+    },
+    "abvPercent": {
+      "min": 3,
+      "max": 4.1
+    }
+  },
+  {
+    "id": "3b",
+    "name": "Czech Premium Pale Lager",
+    "category": "Czech Lager",
+    "og": {
+      "min": 1.044,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1.013,
+      "max": 1.017
+    },
+    "ibu": {
+      "min": 30,
+      "max": 45
+    },
+    "srm": {
+      "min": 3.5,
+      "max": 6
+    },
+    "abvPercent": {
+      "min": 4.2,
+      "max": 5.8
+    }
+  },
+  {
+    "id": "3c",
+    "name": "Czech Amber Lager",
+    "category": "Czech Lager",
+    "og": {
+      "min": 1.044,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1.013,
+      "max": 1.017
+    },
+    "ibu": {
+      "min": 20,
+      "max": 35
+    },
+    "srm": {
+      "min": 10,
+      "max": 16
+    },
+    "abvPercent": {
+      "min": 4.4,
+      "max": 5.8
+    }
+  },
+  {
+    "id": "3d",
+    "name": "Czech Dark Lager",
+    "category": "Czech Lager",
+    "og": {
+      "min": 1.044,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1.013,
+      "max": 1.017
+    },
+    "ibu": {
+      "min": 18,
+      "max": 34
+    },
+    "srm": {
+      "min": 14,
+      "max": 35
+    },
+    "abvPercent": {
+      "min": 4.4,
+      "max": 5.8
+    }
+  },
+  {
+    "id": "4a",
+    "name": "Munich Helles",
+    "category": "Pale Malty European Lager",
+    "og": {
+      "min": 1.044,
+      "max": 1.048
+    },
+    "fg": {
+      "min": 1.006,
+      "max": 1.012
+    },
+    "ibu": {
+      "min": 16,
+      "max": 22
+    },
+    "srm": {
+      "min": 3,
+      "max": 5
+    },
+    "abvPercent": {
+      "min": 4.7,
+      "max": 5.4
+    }
+  },
+  {
+    "id": "4b",
+    "name": "Festbier",
+    "category": "Pale Malty European Lager",
+    "og": {
+      "min": 1.054,
+      "max": 1.057
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.012
+    },
+    "ibu": {
+      "min": 18,
+      "max": 25
+    },
+    "srm": {
+      "min": 4,
+      "max": 7
+    },
+    "abvPercent": {
+      "min": 5.8,
+      "max": 6.3
+    }
+  },
+  {
+    "id": "4c",
+    "name": "Helles Bock",
+    "category": "Pale Malty European Lager",
+    "og": {
+      "min": 1.064,
+      "max": 1.072
+    },
+    "fg": {
+      "min": 1.011,
+      "max": 1.018
+    },
+    "ibu": {
+      "min": 23,
+      "max": 35
+    },
+    "srm": {
+      "min": 6,
+      "max": 11
+    },
+    "abvPercent": {
+      "min": 6.3,
+      "max": 7.4
+    }
+  },
+  {
+    "id": "5a",
+    "name": "German Leichtbier",
+    "category": "Pale Bitter European Beer",
+    "og": {
+      "min": 1.026,
+      "max": 1.034
+    },
+    "fg": {
+      "min": 1.006,
+      "max": 1.01
+    },
+    "ibu": {
+      "min": 15,
+      "max": 28
+    },
+    "srm": {
+      "min": 2,
+      "max": 5
+    },
+    "abvPercent": {
+      "min": 2.4,
+      "max": 3.6
+    }
+  },
+  {
+    "id": "5b",
+    "name": "Kölsch",
+    "category": "Pale Bitter European Beer",
+    "og": {
+      "min": 1.044,
+      "max": 1.05
+    },
+    "fg": {
+      "min": 1.007,
+      "max": 1.011
+    },
+    "ibu": {
+      "min": 18,
+      "max": 30
+    },
+    "srm": {
+      "min": 3.5,
+      "max": 5
+    },
+    "abvPercent": {
+      "min": 4.4,
+      "max": 5.2
+    }
+  },
+  {
+    "id": "5c",
+    "name": "German Helles Exportbier",
+    "category": "Pale Bitter European Beer",
+    "og": {
+      "min": 1.048,
+      "max": 1.056
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.015
+    },
+    "ibu": {
+      "min": 20,
+      "max": 30
+    },
+    "srm": {
+      "min": 4,
+      "max": 7
+    },
+    "abvPercent": {
+      "min": 4.8,
+      "max": 6
+    }
+  },
+  {
+    "id": "5d",
+    "name": "German Pils",
+    "category": "Pale Bitter European Beer",
+    "og": {
+      "min": 1.044,
+      "max": 1.05
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.013
+    },
+    "ibu": {
+      "min": 22,
+      "max": 40
+    },
+    "srm": {
+      "min": 2,
+      "max": 5
+    },
+    "abvPercent": {
+      "min": 4.4,
+      "max": 5.2
+    }
+  },
+  {
+    "id": "6a",
+    "name": "Märzen",
+    "category": "Amber Malty European Lager",
+    "og": {
+      "min": 1.054,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 18,
+      "max": 24
+    },
+    "srm": {
+      "min": 8,
+      "max": 17
+    },
+    "abvPercent": {
+      "min": 5.8,
+      "max": 6.3
+    }
+  },
+  {
+    "id": "6b",
+    "name": "Rauchbier",
+    "category": "Amber Malty European Lager",
+    "og": {
+      "min": 1.05,
+      "max": 1.057
+    },
+    "fg": {
+      "min": 1.012,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 20,
+      "max": 30
+    },
+    "srm": {
+      "min": 12,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 4.8,
+      "max": 6
+    }
+  },
+  {
+    "id": "6c",
+    "name": "Dunkles Bock",
+    "category": "Amber Malty European Lager",
+    "og": {
+      "min": 1.064,
+      "max": 1.072
+    },
+    "fg": {
+      "min": 1.013,
+      "max": 1.019
+    },
+    "ibu": {
+      "min": 20,
+      "max": 27
+    },
+    "srm": {
+      "min": 14,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 6.3,
+      "max": 7.2
+    }
+  },
+  {
+    "id": "7a",
+    "name": "Vienna Lager",
+    "category": "Amber Bitter European Beer",
+    "og": {
+      "min": 1.048,
+      "max": 1.055
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 18,
+      "max": 30
+    },
+    "srm": {
+      "min": 9,
+      "max": 15
+    },
+    "abvPercent": {
+      "min": 4.7,
+      "max": 5.5
+    }
+  },
+  {
+    "id": "7b",
+    "name": "Altbier",
+    "category": "Amber Bitter European Beer",
+    "og": {
+      "min": 1.044,
+      "max": 1.052
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 25,
+      "max": 50
+    },
+    "srm": {
+      "min": 11,
+      "max": 17
+    },
+    "abvPercent": {
+      "min": 4.3,
+      "max": 5.5
+    }
+  },
+  {
+    "id": "7c-pale",
+    "name": "Kellerbier: Pale Kellerbier",
+    "category": "Amber Bitter European Beer",
+    "og": {
+      "min": 1.045,
+      "max": 1.051
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.011
+    },
+    "ibu": {
+      "min": 20,
+      "max": 45
+    },
+    "srm": {
+      "min": 3,
+      "max": 7
+    },
+    "abvPercent": {
+      "min": 4.7,
+      "max": 5.4
+    }
+  },
+  {
+    "id": "7c-amber",
+    "name": "Kellerbier: Amber Kellerbier",
+    "category": "Amber Bitter European Beer",
+    "og": {
+      "min": 1.048,
+      "max": 1.054
+    },
+    "fg": {
+      "min": 1.012,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 25,
+      "max": 40
+    },
+    "srm": {
+      "min": 7,
+      "max": 17
+    },
+    "abvPercent": {
+      "min": 4.8,
+      "max": 5.4
+    }
+  },
+  {
+    "id": "8a",
+    "name": "Munich Dunkel",
+    "category": "Dark European Lager",
+    "og": {
+      "min": 1.048,
+      "max": 1.056
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 18,
+      "max": 28
+    },
+    "srm": {
+      "min": 14,
+      "max": 28
+    },
+    "abvPercent": {
+      "min": 4.5,
+      "max": 5.6
+    }
+  },
+  {
+    "id": "8b",
+    "name": "Schwarzbier",
+    "category": "Dark European Lager",
+    "og": {
+      "min": 1.046,
+      "max": 1.052
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 20,
+      "max": 30
+    },
+    "srm": {
+      "min": 17,
+      "max": 30
+    },
+    "abvPercent": {
+      "min": 4.4,
+      "max": 5.4
+    }
+  },
+  {
+    "id": "9a",
+    "name": "Doppelbock",
+    "category": "Strong European Beer",
+    "og": {
+      "min": 1.072,
+      "max": 1.112
+    },
+    "fg": {
+      "min": 1.016,
+      "max": 1.024
+    },
+    "ibu": {
+      "min": 16,
+      "max": 26
+    },
+    "srm": {
+      "min": 6,
+      "max": 25
+    },
+    "abvPercent": {
+      "min": 7,
+      "max": 10
+    }
+  },
+  {
+    "id": "9b",
+    "name": "Eisbock",
+    "category": "Strong European Beer",
+    "og": {
+      "min": 1.078,
+      "max": 1.12
+    },
+    "fg": {
+      "min": 1.02,
+      "max": 1.035
+    },
+    "ibu": {
+      "min": 25,
+      "max": 35
+    },
+    "srm": {
+      "min": 18,
+      "max": 30
+    },
+    "abvPercent": {
+      "min": 9,
+      "max": 14
+    }
+  },
+  {
+    "id": "9c",
+    "name": "Baltic Porter",
+    "category": "Strong European Beer",
+    "og": {
+      "min": 1.06,
+      "max": 1.09
+    },
+    "fg": {
+      "min": 1.016,
+      "max": 1.024
+    },
+    "ibu": {
+      "min": 20,
+      "max": 40
+    },
+    "srm": {
+      "min": 17,
+      "max": 30
+    },
+    "abvPercent": {
+      "min": 6.5,
+      "max": 9.5
+    }
+  },
+  {
+    "id": "10a",
+    "name": "Weissbier",
+    "category": "German Wheat Beer",
+    "og": {
+      "min": 1.044,
+      "max": 1.052
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 8,
+      "max": 15
+    },
+    "srm": {
+      "min": 2,
+      "max": 6
+    },
+    "abvPercent": {
+      "min": 4.3,
+      "max": 5.6
+    }
+  },
+  {
+    "id": "10b",
+    "name": "Dunkles Weissbier",
+    "category": "German Wheat Beer",
+    "og": {
+      "min": 1.044,
+      "max": 1.056
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 10,
+      "max": 18
+    },
+    "srm": {
+      "min": 14,
+      "max": 23
+    },
+    "abvPercent": {
+      "min": 4.3,
+      "max": 5.6
+    }
+  },
+  {
+    "id": "10c",
+    "name": "Weizenbock",
+    "category": "German Wheat Beer",
+    "og": {
+      "min": 1.064,
+      "max": 1.09
+    },
+    "fg": {
+      "min": 1.015,
+      "max": 1.022
+    },
+    "ibu": {
+      "min": 15,
+      "max": 30
+    },
+    "srm": {
+      "min": 6,
+      "max": 25
+    },
+    "abvPercent": {
+      "min": 6.5,
+      "max": 9
+    }
+  },
+  {
+    "id": "11a",
+    "name": "Ordinary Bitter",
+    "category": "British Bitter",
+    "og": {
+      "min": 1.03,
+      "max": 1.039
+    },
+    "fg": {
+      "min": 1.007,
+      "max": 1.011
+    },
+    "ibu": {
+      "min": 25,
+      "max": 35
+    },
+    "srm": {
+      "min": 8,
+      "max": 14
+    },
+    "abvPercent": {
+      "min": 3.2,
+      "max": 3.8
+    }
+  },
+  {
+    "id": "11b",
+    "name": "Best Bitter",
+    "category": "British Bitter",
+    "og": {
+      "min": 1.04,
+      "max": 1.048
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.012
+    },
+    "ibu": {
+      "min": 25,
+      "max": 40
+    },
+    "srm": {
+      "min": 8,
+      "max": 16
+    },
+    "abvPercent": {
+      "min": 3.8,
+      "max": 4.6
+    }
+  },
+  {
+    "id": "11c",
+    "name": "Strong Bitter",
+    "category": "British Bitter",
+    "og": {
+      "min": 1.048,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 30,
+      "max": 50
+    },
+    "srm": {
+      "min": 8,
+      "max": 18
+    },
+    "abvPercent": {
+      "min": 4.6,
+      "max": 6.2
+    }
+  },
+  {
+    "id": "12a",
+    "name": "British Golden Ale",
+    "category": "Pale Commonwealth Beer",
+    "og": {
+      "min": 1.038,
+      "max": 1.053
+    },
+    "fg": {
+      "min": 1.006,
+      "max": 1.012
+    },
+    "ibu": {
+      "min": 20,
+      "max": 45
+    },
+    "srm": {
+      "min": 2,
+      "max": 6
+    },
+    "abvPercent": {
+      "min": 3.8,
+      "max": 5
+    }
+  },
+  {
+    "id": "12b",
+    "name": "Australian Sparkling Ale",
+    "category": "Pale Commonwealth Beer",
+    "og": {
+      "min": 1.038,
+      "max": 1.05
+    },
+    "fg": {
+      "min": 1.004,
+      "max": 1.006
+    },
+    "ibu": {
+      "min": 20,
+      "max": 35
+    },
+    "srm": {
+      "min": 4,
+      "max": 7
+    },
+    "abvPercent": {
+      "min": 4.5,
+      "max": 6
+    }
+  },
+  {
+    "id": "12c",
+    "name": "English IPA",
+    "category": "Pale Commonwealth Beer",
+    "og": {
+      "min": 1.05,
+      "max": 1.075
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.018
+    },
+    "ibu": {
+      "min": 40,
+      "max": 60
+    },
+    "srm": {
+      "min": 6,
+      "max": 14
+    },
+    "abvPercent": {
+      "min": 5,
+      "max": 7.5
+    }
+  },
+  {
+    "id": "13a",
+    "name": "Dark Mild",
+    "category": "Brown British Beer",
+    "og": {
+      "min": 1.03,
+      "max": 1.038
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.013
+    },
+    "ibu": {
+      "min": 10,
+      "max": 25
+    },
+    "srm": {
+      "min": 12,
+      "max": 25
+    },
+    "abvPercent": {
+      "min": 3,
+      "max": 3.8
+    }
+  },
+  {
+    "id": "13b",
+    "name": "British Brown Ale",
+    "category": "Brown British Beer",
+    "og": {
+      "min": 1.04,
+      "max": 1.052
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.013
+    },
+    "ibu": {
+      "min": 20,
+      "max": 30
+    },
+    "srm": {
+      "min": 12,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 4.2,
+      "max": 5.4
+    }
+  },
+  {
+    "id": "13c",
+    "name": "English Porter",
+    "category": "Brown British Beer",
+    "og": {
+      "min": 1.04,
+      "max": 1.052
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 18,
+      "max": 35
+    },
+    "srm": {
+      "min": 20,
+      "max": 30
+    },
+    "abvPercent": {
+      "min": 4,
+      "max": 5.4
+    }
+  },
+  {
+    "id": "14a",
+    "name": "Scottish Light",
+    "category": "Scottish Ale",
+    "og": {
+      "min": 1.03,
+      "max": 1.035
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.013
+    },
+    "ibu": {
+      "min": 10,
+      "max": 20
+    },
+    "srm": {
+      "min": 17,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 2.5,
+      "max": 3.2
+    }
+  },
+  {
+    "id": "14b",
+    "name": "Scottish Heavy",
+    "category": "Scottish Ale",
+    "og": {
+      "min": 1.035,
+      "max": 1.04
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.015
+    },
+    "ibu": {
+      "min": 10,
+      "max": 20
+    },
+    "srm": {
+      "min": 13,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 3.2,
+      "max": 3.9
+    }
+  },
+  {
+    "id": "14c",
+    "name": "Scottish Export",
+    "category": "Scottish Ale",
+    "og": {
+      "min": 1.04,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 15,
+      "max": 30
+    },
+    "srm": {
+      "min": 13,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 3.9,
+      "max": 6
+    }
+  },
+  {
+    "id": "15a",
+    "name": "Irish Red Ale",
+    "category": "Irish Beer",
+    "og": {
+      "min": 1.036,
+      "max": 1.046
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 18,
+      "max": 28
+    },
+    "srm": {
+      "min": 9,
+      "max": 14
+    },
+    "abvPercent": {
+      "min": 3.8,
+      "max": 5
+    }
+  },
+  {
+    "id": "15b",
+    "name": "Irish Stout",
+    "category": "Irish Beer",
+    "og": {
+      "min": 1.036,
+      "max": 1.044
+    },
+    "fg": {
+      "min": 1.007,
+      "max": 1.011
+    },
+    "ibu": {
+      "min": 25,
+      "max": 45
+    },
+    "srm": {
+      "min": 25,
+      "max": 40
+    },
+    "abvPercent": {
+      "min": 4,
+      "max": 4.5
+    }
+  },
+  {
+    "id": "15c",
+    "name": "Irish Extra Stout",
+    "category": "Irish Beer",
+    "og": {
+      "min": 1.052,
+      "max": 1.062
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 35,
+      "max": 50
+    },
+    "srm": {
+      "min": 25,
+      "max": 40
+    },
+    "abvPercent": {
+      "min": 5.5,
+      "max": 6.5
+    }
+  },
+  {
+    "id": "16a",
+    "name": "Sweet Stout",
+    "category": "Dark British Beer",
+    "og": {
+      "min": 1.044,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1.012,
+      "max": 1.024
+    },
+    "ibu": {
+      "min": 20,
+      "max": 40
+    },
+    "srm": {
+      "min": 30,
+      "max": 40
+    },
+    "abvPercent": {
+      "min": 4,
+      "max": 6
+    }
+  },
+  {
+    "id": "16b",
+    "name": "Oatmeal Stout",
+    "category": "Dark British Beer",
+    "og": {
+      "min": 1.045,
+      "max": 1.065
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.018
+    },
+    "ibu": {
+      "min": 25,
+      "max": 40
+    },
+    "srm": {
+      "min": 22,
+      "max": 40
+    },
+    "abvPercent": {
+      "min": 4.2,
+      "max": 5.9
+    }
+  },
+  {
+    "id": "16c",
+    "name": "Tropical Stout",
+    "category": "Dark British Beer",
+    "og": {
+      "min": 1.056,
+      "max": 1.075
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.018
+    },
+    "ibu": {
+      "min": 30,
+      "max": 50
+    },
+    "srm": {
+      "min": 30,
+      "max": 40
+    },
+    "abvPercent": {
+      "min": 5.5,
+      "max": 8
+    }
+  },
+  {
+    "id": "16d",
+    "name": "Foreign Extra Stout",
+    "category": "Dark British Beer",
+    "og": {
+      "min": 1.056,
+      "max": 1.075
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.018
+    },
+    "ibu": {
+      "min": 50,
+      "max": 70
+    },
+    "srm": {
+      "min": 30,
+      "max": 40
+    },
+    "abvPercent": {
+      "min": 6.3,
+      "max": 8
+    }
+  },
+  {
+    "id": "17a",
+    "name": "British Strong Ale",
+    "category": "Strong British Ale",
+    "og": {
+      "min": 1.055,
+      "max": 1.08
+    },
+    "fg": {
+      "min": 1.015,
+      "max": 1.022
+    },
+    "ibu": {
+      "min": 30,
+      "max": 60
+    },
+    "srm": {
+      "min": 8,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 5.5,
+      "max": 8
+    }
+  },
+  {
+    "id": "17b",
+    "name": "Old Ale",
+    "category": "Strong British Ale",
+    "og": {
+      "min": 1.055,
+      "max": 1.088
+    },
+    "fg": {
+      "min": 1.015,
+      "max": 1.022
+    },
+    "ibu": {
+      "min": 30,
+      "max": 60
+    },
+    "srm": {
+      "min": 10,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 5.5,
+      "max": 9
+    }
+  },
+  {
+    "id": "17c",
+    "name": "Wee Heavy",
+    "category": "Strong British Ale",
+    "og": {
+      "min": 1.07,
+      "max": 1.13
+    },
+    "fg": {
+      "min": 1.018,
+      "max": 1.04
+    },
+    "ibu": {
+      "min": 17,
+      "max": 35
+    },
+    "srm": {
+      "min": 14,
+      "max": 25
+    },
+    "abvPercent": {
+      "min": 6.5,
+      "max": 10
+    }
+  },
+  {
+    "id": "17d",
+    "name": "English Barleywine",
+    "category": "Strong British Ale",
+    "og": {
+      "min": 1.08,
+      "max": 1.12
+    },
+    "fg": {
+      "min": 1.018,
+      "max": 1.03
+    },
+    "ibu": {
+      "min": 35,
+      "max": 70
+    },
+    "srm": {
+      "min": 8,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 8,
+      "max": 12
+    }
+  },
+  {
+    "id": "18a",
+    "name": "Blonde Ale",
+    "category": "Pale American Ale",
+    "og": {
+      "min": 1.038,
+      "max": 1.054
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.013
+    },
+    "ibu": {
+      "min": 15,
+      "max": 28
+    },
+    "srm": {
+      "min": 3,
+      "max": 6
+    },
+    "abvPercent": {
+      "min": 3.8,
+      "max": 5.5
+    }
+  },
+  {
+    "id": "18b",
+    "name": "American Pale Ale",
+    "category": "Pale American Ale",
+    "og": {
+      "min": 1.045,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.015
+    },
+    "ibu": {
+      "min": 30,
+      "max": 50
+    },
+    "srm": {
+      "min": 5,
+      "max": 10
+    },
+    "abvPercent": {
+      "min": 4.5,
+      "max": 6.2
+    }
+  },
+  {
+    "id": "19a",
+    "name": "American Amber Ale",
+    "category": "Amber and Brown American Beer",
+    "og": {
+      "min": 1.045,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.015
+    },
+    "ibu": {
+      "min": 25,
+      "max": 40
+    },
+    "srm": {
+      "min": 10,
+      "max": 17
+    },
+    "abvPercent": {
+      "min": 4.5,
+      "max": 6.2
+    }
+  },
+  {
+    "id": "19b",
+    "name": "California Common",
+    "category": "Amber and Brown American Beer",
+    "og": {
+      "min": 1.048,
+      "max": 1.054
+    },
+    "fg": {
+      "min": 1.011,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 30,
+      "max": 45
+    },
+    "srm": {
+      "min": 10,
+      "max": 14
+    },
+    "abvPercent": {
+      "min": 4.5,
+      "max": 5.5
+    }
+  },
+  {
+    "id": "19c",
+    "name": "American Brown Ale",
+    "category": "Amber and Brown American Beer",
+    "og": {
+      "min": 1.045,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 20,
+      "max": 30
+    },
+    "srm": {
+      "min": 18,
+      "max": 35
+    },
+    "abvPercent": {
+      "min": 4.3,
+      "max": 6.2
+    }
+  },
+  {
+    "id": "20a",
+    "name": "American Porter",
+    "category": "American Porter and Stout",
+    "og": {
+      "min": 1.05,
+      "max": 1.07
+    },
+    "fg": {
+      "min": 1.012,
+      "max": 1.018
+    },
+    "ibu": {
+      "min": 25,
+      "max": 50
+    },
+    "srm": {
+      "min": 22,
+      "max": 40
+    },
+    "abvPercent": {
+      "min": 4.8,
+      "max": 6.5
+    }
+  },
+  {
+    "id": "20b",
+    "name": "American Stout",
+    "category": "American Porter and Stout",
+    "og": {
+      "min": 1.05,
+      "max": 1.075
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.022
+    },
+    "ibu": {
+      "min": 35,
+      "max": 75
+    },
+    "srm": {
+      "min": 30,
+      "max": 40
+    },
+    "abvPercent": {
+      "min": 5,
+      "max": 7
+    }
+  },
+  {
+    "id": "20c",
+    "name": "Imperial Stout",
+    "category": "American Porter and Stout",
+    "og": {
+      "min": 1.075,
+      "max": 1.115
+    },
+    "fg": {
+      "min": 1.018,
+      "max": 1.03
+    },
+    "ibu": {
+      "min": 50,
+      "max": 90
+    },
+    "srm": {
+      "min": 30,
+      "max": 40
+    },
+    "abvPercent": {
+      "min": 8,
+      "max": 12
+    }
+  },
+  {
+    "id": "21a",
+    "name": "American IPA",
+    "category": "IPA",
+    "og": {
+      "min": 1.056,
+      "max": 1.07
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 40,
+      "max": 70
+    },
+    "srm": {
+      "min": 6,
+      "max": 14
+    },
+    "abvPercent": {
+      "min": 5.5,
+      "max": 7.5
+    }
+  },
+  {
+    "id": "21b-belgian",
+    "name": "Specialty IPA: Belgian IPA",
+    "category": "IPA",
+    "og": {
+      "min": 1.058,
+      "max": 1.08
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 50,
+      "max": 100
+    },
+    "srm": {
+      "min": 5,
+      "max": 15
+    },
+    "abvPercent": {
+      "min": 6.2,
+      "max": 9.5
+    }
+  },
+  {
+    "id": "21b-black",
+    "name": "Specialty IPA: Black IPA",
+    "category": "IPA",
+    "og": {
+      "min": 1.05,
+      "max": 1.085
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.018
+    },
+    "ibu": {
+      "min": 50,
+      "max": 90
+    },
+    "srm": {
+      "min": 25,
+      "max": 40
+    },
+    "abvPercent": {
+      "min": 5.5,
+      "max": 9
+    }
+  },
+  {
+    "id": "21b-brown",
+    "name": "Specialty IPA: Brown IPA",
+    "category": "IPA",
+    "og": {
+      "min": 1.056,
+      "max": 1.07
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 40,
+      "max": 70
+    },
+    "srm": {
+      "min": 11,
+      "max": 19
+    },
+    "abvPercent": {
+      "min": 5.5,
+      "max": 7.5
+    }
+  },
+  {
+    "id": "21b-red",
+    "name": "Specialty IPA: Red IPA",
+    "category": "IPA",
+    "og": {
+      "min": 1.056,
+      "max": 1.07
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 40,
+      "max": 70
+    },
+    "srm": {
+      "min": 11,
+      "max": 19
+    },
+    "abvPercent": {
+      "min": 5.5,
+      "max": 7.5
+    }
+  },
+  {
+    "id": "21b-rye",
+    "name": "Specialty IPA: Rye IPA",
+    "category": "IPA",
+    "og": {
+      "min": 1.056,
+      "max": 1.075
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 50,
+      "max": 75
+    },
+    "srm": {
+      "min": 6,
+      "max": 14
+    },
+    "abvPercent": {
+      "min": 5.5,
+      "max": 8
+    }
+  },
+  {
+    "id": "21b-white",
+    "name": "Specialty IPA: White IPA",
+    "category": "IPA",
+    "og": {
+      "min": 1.056,
+      "max": 1.065
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 40,
+      "max": 70
+    },
+    "srm": {
+      "min": 5,
+      "max": 8
+    },
+    "abvPercent": {
+      "min": 5.5,
+      "max": 7
+    }
+  },
+  {
+    "id": "22a",
+    "name": "Double IPA",
+    "category": "Strong American Ale",
+    "og": {
+      "min": 1.065,
+      "max": 1.085
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.018
+    },
+    "ibu": {
+      "min": 60,
+      "max": 120
+    },
+    "srm": {
+      "min": 6,
+      "max": 14
+    },
+    "abvPercent": {
+      "min": 7.5,
+      "max": 10
+    }
+  },
+  {
+    "id": "22b",
+    "name": "American Strong Ale",
+    "category": "Strong American Ale",
+    "og": {
+      "min": 1.062,
+      "max": 1.09
+    },
+    "fg": {
+      "min": 1.014,
+      "max": 1.024
+    },
+    "ibu": {
+      "min": 50,
+      "max": 100
+    },
+    "srm": {
+      "min": 7,
+      "max": 19
+    },
+    "abvPercent": {
+      "min": 6.3,
+      "max": 10
+    }
+  },
+  {
+    "id": "22c",
+    "name": "American Barleywine",
+    "category": "Strong American Ale",
+    "og": {
+      "min": 1.08,
+      "max": 1.12
+    },
+    "fg": {
+      "min": 1.016,
+      "max": 1.03
+    },
+    "ibu": {
+      "min": 50,
+      "max": 100
+    },
+    "srm": {
+      "min": 10,
+      "max": 19
+    },
+    "abvPercent": {
+      "min": 8,
+      "max": 12
+    }
+  },
+  {
+    "id": "22d",
+    "name": "Wheatwine",
+    "category": "Strong American Ale",
+    "og": {
+      "min": 1.08,
+      "max": 1.12
+    },
+    "fg": {
+      "min": 1.016,
+      "max": 1.03
+    },
+    "ibu": {
+      "min": 30,
+      "max": 60
+    },
+    "srm": {
+      "min": 8,
+      "max": 15
+    },
+    "abvPercent": {
+      "min": 8,
+      "max": 12
+    }
+  },
+  {
+    "id": "23a",
+    "name": "Berliner Weisse",
+    "category": "European Sour Ale",
+    "og": {
+      "min": 1.028,
+      "max": 1.032
+    },
+    "fg": {
+      "min": 1.003,
+      "max": 1.006
+    },
+    "ibu": {
+      "min": 3,
+      "max": 8
+    },
+    "srm": {
+      "min": 2,
+      "max": 3
+    },
+    "abvPercent": {
+      "min": 2.8,
+      "max": 3.8
+    }
+  },
+  {
+    "id": "23b",
+    "name": "Flanders Red Ale",
+    "category": "European Sour Ale",
+    "og": {
+      "min": 1.048,
+      "max": 1.057
+    },
+    "fg": {
+      "min": 1.002,
+      "max": 1.012
+    },
+    "ibu": {
+      "min": 10,
+      "max": 25
+    },
+    "srm": {
+      "min": 10,
+      "max": 16
+    },
+    "abvPercent": {
+      "min": 4.6,
+      "max": 6.5
+    }
+  },
+  {
+    "id": "23c",
+    "name": "Oud Bruin",
+    "category": "European Sour Ale",
+    "og": {
+      "min": 1.04,
+      "max": 1.074
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.012
+    },
+    "ibu": {
+      "min": 20,
+      "max": 25
+    },
+    "srm": {
+      "min": 15,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 4,
+      "max": 8
+    }
+  },
+  {
+    "id": "23d",
+    "name": "Lambic",
+    "category": "European Sour Ale",
+    "og": {
+      "min": 1.04,
+      "max": 1.054
+    },
+    "fg": {
+      "min": 1.001,
+      "max": 1.01
+    },
+    "ibu": {
+      "min": 0,
+      "max": 10
+    },
+    "srm": {
+      "min": 3,
+      "max": 7
+    },
+    "abvPercent": {
+      "min": 5,
+      "max": 6.5
+    }
+  },
+  {
+    "id": "23e",
+    "name": "Gueuze",
+    "category": "European Sour Ale",
+    "og": {
+      "min": 1.04,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1,
+      "max": 1.006
+    },
+    "ibu": {
+      "min": 0,
+      "max": 10
+    },
+    "srm": {
+      "min": 3,
+      "max": 7
+    },
+    "abvPercent": {
+      "min": 5,
+      "max": 8
+    }
+  },
+  {
+    "id": "23f",
+    "name": "Fruit Lambic",
+    "category": "European Sour Ale",
+    "og": {
+      "min": 1.04,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1,
+      "max": 1.01
+    },
+    "ibu": {
+      "min": 0,
+      "max": 10
+    },
+    "srm": {
+      "min": 3,
+      "max": 7
+    },
+    "abvPercent": {
+      "min": 5,
+      "max": 7
+    }
+  },
+  {
+    "id": "24a",
+    "name": "Witbier",
+    "category": "Belgian Ale",
+    "og": {
+      "min": 1.044,
+      "max": 1.052
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.012
+    },
+    "ibu": {
+      "min": 8,
+      "max": 20
+    },
+    "srm": {
+      "min": 2,
+      "max": 4
+    },
+    "abvPercent": {
+      "min": 4.5,
+      "max": 5.5
+    }
+  },
+  {
+    "id": "24b",
+    "name": "Belgian Pale Ale",
+    "category": "Belgian Ale",
+    "og": {
+      "min": 1.048,
+      "max": 1.054
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 20,
+      "max": 30
+    },
+    "srm": {
+      "min": 8,
+      "max": 14
+    },
+    "abvPercent": {
+      "min": 4.8,
+      "max": 5.5
+    }
+  },
+  {
+    "id": "24c",
+    "name": "Bière de Garde",
+    "category": "Belgian Ale",
+    "og": {
+      "min": 1.06,
+      "max": 1.08
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 18,
+      "max": 28
+    },
+    "srm": {
+      "min": 6,
+      "max": 19
+    },
+    "abvPercent": {
+      "min": 6,
+      "max": 8.5
+    }
+  },
+  {
+    "id": "25a",
+    "name": "Belgian Blond Ale",
+    "category": "Strong Belgian Ale",
+    "og": {
+      "min": 1.062,
+      "max": 1.075
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.018
+    },
+    "ibu": {
+      "min": 15,
+      "max": 30
+    },
+    "srm": {
+      "min": 4,
+      "max": 7
+    },
+    "abvPercent": {
+      "min": 6,
+      "max": 7.5
+    }
+  },
+  {
+    "id": "25b",
+    "name": "Saison",
+    "category": "Strong Belgian Ale",
+    "og": {
+      "min": 1.048,
+      "max": 1.065
+    },
+    "fg": {
+      "min": 1.002,
+      "max": 1.008
+    },
+    "ibu": {
+      "min": 20,
+      "max": 35
+    },
+    "srm": {
+      "min": 5,
+      "max": 14
+    },
+    "abvPercent": {
+      "min": 3.5,
+      "max": 5
+    }
+  },
+  {
+    "id": "25c",
+    "name": "Belgian Golden Strong Ale",
+    "category": "Strong Belgian Ale",
+    "og": {
+      "min": 1.07,
+      "max": 1.095
+    },
+    "fg": {
+      "min": 1.005,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 22,
+      "max": 35
+    },
+    "srm": {
+      "min": 3,
+      "max": 6
+    },
+    "abvPercent": {
+      "min": 7.5,
+      "max": 10.5
+    }
+  },
+  {
+    "id": "26a",
+    "name": "Trappist Single",
+    "category": "Trappist Ale",
+    "og": {
+      "min": 1.044,
+      "max": 1.054
+    },
+    "fg": {
+      "min": 1.004,
+      "max": 1.01
+    },
+    "ibu": {
+      "min": 25,
+      "max": 45
+    },
+    "srm": {
+      "min": 3,
+      "max": 5
+    },
+    "abvPercent": {
+      "min": 4.8,
+      "max": 6
+    }
+  },
+  {
+    "id": "26b",
+    "name": "Belgian Dubbel",
+    "category": "Trappist Ale",
+    "og": {
+      "min": 1.062,
+      "max": 1.075
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.018
+    },
+    "ibu": {
+      "min": 15,
+      "max": 25
+    },
+    "srm": {
+      "min": 10,
+      "max": 17
+    },
+    "abvPercent": {
+      "min": 6,
+      "max": 7.6
+    }
+  },
+  {
+    "id": "26c",
+    "name": "Belgian Tripel",
+    "category": "Trappist Ale",
+    "og": {
+      "min": 1.075,
+      "max": 1.085
+    },
+    "fg": {
+      "min": 1.008,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 20,
+      "max": 40
+    },
+    "srm": {
+      "min": 4.5,
+      "max": 7
+    },
+    "abvPercent": {
+      "min": 7.5,
+      "max": 9.5
+    }
+  },
+  {
+    "id": "26d",
+    "name": "Belgian Dark Strong Ale",
+    "category": "Trappist Ale",
+    "og": {
+      "min": 1.075,
+      "max": 1.11
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.024
+    },
+    "ibu": {
+      "min": 20,
+      "max": 35
+    },
+    "srm": {
+      "min": 12,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 8,
+      "max": 12
+    }
+  },
+  {
+    "id": "27-gose",
+    "name": "Historical Beer: Gose",
+    "category": "Historical Beer",
+    "og": {
+      "min": 1.036,
+      "max": 1.056
+    },
+    "fg": {
+      "min": 1.006,
+      "max": 1.01
+    },
+    "ibu": {
+      "min": 5,
+      "max": 12
+    },
+    "srm": {
+      "min": 3,
+      "max": 4
+    },
+    "abvPercent": {
+      "min": 4.2,
+      "max": 4.8
+    }
+  },
+  {
+    "id": "27-ky",
+    "name": "Historical Beer: Kentucky Common",
+    "category": "Historical Beer",
+    "og": {
+      "min": 1.044,
+      "max": 1.055
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.018
+    },
+    "ibu": {
+      "min": 15,
+      "max": 30
+    },
+    "srm": {
+      "min": 11,
+      "max": 20
+    },
+    "abvPercent": {
+      "min": 4,
+      "max": 5.5
+    }
+  },
+  {
+    "id": "27-lichtenhainer",
+    "name": "Historical Beer: Lichtenhainer",
+    "category": "Historical Beer",
+    "og": {
+      "min": 1.032,
+      "max": 1.04
+    },
+    "fg": {
+      "min": 1.004,
+      "max": 1.008
+    },
+    "ibu": {
+      "min": 5,
+      "max": 12
+    },
+    "srm": {
+      "min": 3,
+      "max": 6
+    },
+    "abvPercent": {
+      "min": 3.5,
+      "max": 4.7
+    }
+  },
+  {
+    "id": "27-london-brown",
+    "name": "Historical Beer: London Brown Ale",
+    "category": "Historical Beer",
+    "og": {
+      "min": 1.033,
+      "max": 1.038
+    },
+    "fg": {
+      "min": 1.012,
+      "max": 1.015
+    },
+    "ibu": {
+      "min": 15,
+      "max": 20
+    },
+    "srm": {
+      "min": 22,
+      "max": 35
+    },
+    "abvPercent": {
+      "min": 2.8,
+      "max": 3.6
+    }
+  },
+  {
+    "id": "27-piwo",
+    "name": "Historical Beer: Piwo Grodziskie",
+    "category": "Historical Beer",
+    "og": {
+      "min": 1.028,
+      "max": 1.032
+    },
+    "fg": {
+      "min": 1.006,
+      "max": 1.012
+    },
+    "ibu": {
+      "min": 20,
+      "max": 35
+    },
+    "srm": {
+      "min": 3,
+      "max": 6
+    },
+    "abvPercent": {
+      "min": 2.5,
+      "max": 3.3
+    }
+  },
+  {
+    "id": "27-pre18-lager",
+    "name": "Historical Beer: Pre-Prohibition Lager",
+    "category": "Historical Beer",
+    "og": {
+      "min": 1.044,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.015
+    },
+    "ibu": {
+      "min": 25,
+      "max": 40
+    },
+    "srm": {
+      "min": 3,
+      "max": 6
+    },
+    "abvPercent": {
+      "min": 4.5,
+      "max": 6
+    }
+  },
+  {
+    "id": "27-pre18-porter",
+    "name": "Historical Beer: Pre-Prohibition Porter",
+    "category": "Historical Beer",
+    "og": {
+      "min": 1.046,
+      "max": 1.06
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.016
+    },
+    "ibu": {
+      "min": 20,
+      "max": 30
+    },
+    "srm": {
+      "min": 18,
+      "max": 30
+    },
+    "abvPercent": {
+      "min": 4.5,
+      "max": 6
+    }
+  },
+  {
+    "id": "27-roggenbier",
+    "name": "Historical Beer: Roggenbier",
+    "category": "Historical Beer",
+    "og": {
+      "min": 1.046,
+      "max": 1.056
+    },
+    "fg": {
+      "min": 1.01,
+      "max": 1.014
+    },
+    "ibu": {
+      "min": 10,
+      "max": 20
+    },
+    "srm": {
+      "min": 14,
+      "max": 19
+    },
+    "abvPercent": {
+      "min": 4.5,
+      "max": 6
+    }
+  },
+  {
+    "id": "27-sahti",
+    "name": "Historical Beer: Sahti",
+    "category": "Historical Beer",
+    "og": {
+      "min": 1.076,
+      "max": 1.12
+    },
+    "fg": {
+      "min": 1.016,
+      "max": 1.02
+    },
+    "ibu": {
+      "min": 7,
+      "max": 15
+    },
+    "srm": {
+      "min": 4,
+      "max": 22
+    },
+    "abvPercent": {
+      "min": 7,
+      "max": 11
+    }
+  }
+]

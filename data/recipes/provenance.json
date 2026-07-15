@@ -1,0 +1,13 @@
+{
+  "sources": {
+    "brewdog-diydog": {
+      "name": "BrewDog DIY Dog",
+      "recipeCount": 325,
+      "license": "Released free by BrewDog for anyone to brew (DIY Dog)",
+      "sourceUrl": "https://www.brewdog.com/uk/diy-dog",
+      "via": "https://github.com/stuartraetaylor/diydog-beerxml",
+      "display": "aggregate+full",
+      "notes": "Aggregate statistics are facts (not copyrightable). Full recipes shown are BrewDog's own freely-released set."
+    }
+  }
+}
