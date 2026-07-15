@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Archivo } from 'next/font/google';
 import Script from 'next/script';
 import { LanguageProvider } from '@/i18n/LanguageContext';
+import { SiteFooter } from '@/components/ui/SiteFooter';
 import { GA_MEASUREMENT_ID } from '@/lib/analytics';
 import './globals.css';
 
@@ -62,7 +63,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={brandFont.variable}>
       <body className="min-h-screen bg-parchment font-body text-ink">
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider>
+          {children}
+          <SiteFooter />
+        </LanguageProvider>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"

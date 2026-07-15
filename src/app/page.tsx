@@ -421,26 +421,6 @@ export default function Home() {
         ) : null}
       </div>
 
-      <footer className="flex flex-col items-center gap-2 border-t border-amber-200 pt-6 text-center font-body text-xs text-amber-700/70">
-        <p className="font-display text-sm font-bold text-amber-900">{t('app.title')}</p>
-        <p>{t('app.footer.units')}</p>
-        <p>
-          {t('app.footer.builtBy')} &middot;{' '}
-          <a
-            href="https://www.linkedin.com/in/ankur-napa"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-amber-900"
-          >
-            LinkedIn
-          </a>{' '}
-          &middot;{' '}
-          <a href="mailto:napaankur@gmail.com" className="underline hover:text-amber-900">
-            napaankur@gmail.com
-          </a>
-        </p>
-        <p className="max-w-md text-amber-700/60">{t('app.footer.privacy')}</p>
-      </footer>
     </main>
   );
 }
