@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { RouteNav } from '@/components/ui/RouteNav';
 import { BJCP_STYLES } from '@/lib/bjcpStyles';
 import { seedAppState } from '@/hooks/useWaterProfile';
 import { SectionCard } from '@/components/ui/SectionCard';
@@ -58,6 +58,7 @@ export default function StartPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-8 sm:py-10">
+      <RouteNav current="start" />
       <div className="mb-6">
         <h1 className="font-display text-3xl font-extrabold tracking-tight text-amber-900 sm:text-4xl">
           {t('start.title')}
@@ -156,7 +157,7 @@ export default function StartPage() {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-wrap gap-2 pt-2">
+        <div className="pt-2">
           <button
             type="button"
             onClick={handleSave}
@@ -164,12 +165,6 @@ export default function StartPage() {
           >
             {t('start.save')}
           </button>
-          <Link
-            href="/welcome"
-            className="inline-flex items-center rounded-full border border-amber-200 bg-white/70 px-4 py-2.5 font-body text-sm font-semibold text-amber-900 transition-colors hover:border-[#e08b2d]/60 hover:text-[#e08b2d]"
-          >
-            {t('app.guide')}
-          </Link>
         </div>
       </div>
     </main>

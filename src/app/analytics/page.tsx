@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { RouteNav } from '@/components/ui/RouteNav';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { StatHero } from '@/components/ui/StatHero';
 import { StatTile } from '@/components/ui/StatTile';
@@ -69,15 +69,10 @@ export default function AnalyticsPage() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
+      <RouteNav current="analytics" />
       {/* header */}
       <div className="mb-6">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1 font-body text-xs font-semibold uppercase tracking-wider text-amber-700/80 transition-colors hover:text-[#e08b2d]"
-        >
-          <span aria-hidden="true">←</span> Calculator
-        </Link>
-        <h1 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-amber-900 sm:text-4xl">
+        <h1 className="font-display text-3xl font-extrabold tracking-tight text-amber-900 sm:text-4xl">
           Recipe Analytics
         </h1>
         <p className="mt-1 max-w-prose font-body text-sm text-ink/70">

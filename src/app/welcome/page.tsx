@@ -3,6 +3,7 @@
 import { ComponentType } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { RouteNav } from '@/components/ui/RouteNav';
 import { TAB_GROUP_ORDER, TAB_GROUP_BY_ID, TAB_GROUP_LABEL_KEY, type TabId } from '@/lib/navigation';
 import {
   DropletIcon,
@@ -19,7 +20,6 @@ import {
   BookmarkIcon,
   CloudSyncIcon,
   InfoIcon,
-  ChartBarIcon,
 } from '@/components/ui/icons';
 
 type IconType = ComponentType<{ className?: string }>;
@@ -51,31 +51,19 @@ export default function WelcomePage() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
+      <RouteNav current="welcome" />
       {/* header */}
       <div className="mb-6">
         <h1 className="font-display text-3xl font-extrabold tracking-tight text-amber-900 sm:text-4xl">
           {t('welcome.title')}
         </h1>
         <p className="mt-1 max-w-prose font-body text-sm text-ink/70">{t('welcome.subtitle')}</p>
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4">
           <Link
             href="/start"
             className="inline-flex items-center gap-1.5 rounded-full bg-[#e08b2d] px-4 py-2 font-body text-sm font-bold text-parchment shadow-sm transition-colors hover:bg-[#c67722]"
           >
             {t('app.startBrew')}
-          </Link>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-white/70 px-4 py-2 font-body text-sm font-semibold text-amber-900 shadow-sm transition-colors hover:border-[#e08b2d]/60 hover:text-[#e08b2d]"
-          >
-            {t('welcome.openApp')}
-          </Link>
-          <Link
-            href="/analytics"
-            className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-white/70 px-4 py-2 font-body text-sm font-semibold text-amber-900 shadow-sm transition-colors hover:border-[#e08b2d]/60 hover:text-[#e08b2d]"
-          >
-            <ChartBarIcon className="h-4 w-4" />
-            {t('welcome.viewAnalytics')}
           </Link>
         </div>
       </div>
