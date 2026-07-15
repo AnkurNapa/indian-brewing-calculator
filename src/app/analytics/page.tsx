@@ -97,6 +97,35 @@ export default function AnalyticsPage() {
       </StatHero>
 
       <div className="mt-6 space-y-6">
+        {/* narrative trends */}
+        <SectionCard title="What brewers are making now">
+          <p className="mb-3 text-xs text-ink/60">A read on recent community output (2025-26).</p>
+          <ul className="space-y-2 font-body text-sm text-ink/80">
+            <li>
+              <b className="text-amber-900">Hazy IPA is the modern wave.</b> It is the fastest-rising
+              new-wave style, well ahead of the next.
+            </li>
+            <li>
+              <b className="text-amber-900">IPA leads, but not alone.</b> American IPA and Pale Ale top
+              the list, with a strong middle of sessionable and classic European styles: Saison,
+              Witbier, Blonde.
+            </li>
+            <li>
+              <b className="text-amber-900">Citra and Cascade run neck and neck.</b> The classic
+              American C-hops still outrank the newer varieties.
+            </li>
+            <li>
+              <b className="text-amber-900">Clean American ale yeast dominates.</b> US-05 style strains
+              carry close to a quarter of recipes; hazy strains are emerging but still niche.
+            </li>
+            <li>
+              <b className="text-amber-900">Adjuncts are getting adventurous.</b> Orange peel, vanilla,
+              grapefruit, hibiscus, honey and lime are showing up, alongside seltzers, fruited sours
+              and the odd Brut IPA.
+            </li>
+          </ul>
+        </SectionCard>
+
         {/* style vitals — ABV */}
         <SectionCard title="Strength by style · ABV %" tone="teal">
           <p className="mb-3 text-xs text-ink/60">
