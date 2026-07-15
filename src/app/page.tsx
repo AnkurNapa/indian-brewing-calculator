@@ -199,6 +199,13 @@ export default function Home() {
             <ChartBarIcon className="h-3.5 w-3.5" />
             {t('app.analytics')}
           </Link>
+          <Link
+            href="/faults"
+            className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-white/70 px-3 py-1 font-body text-xs font-semibold text-amber-900 shadow-sm transition-colors hover:border-[#e08b2d]/60 hover:text-[#e08b2d]"
+          >
+            <FlaskIcon className="h-3.5 w-3.5" />
+            {t('app.faults')}
+          </Link>
         </div>
       </header>
 

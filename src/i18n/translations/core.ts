@@ -22,6 +22,7 @@ export const coreTranslations = {
   'app.goHome': { en: 'Go to Home overview', de: 'Zur Startseite', hi: 'होम पर जाएँ', mr: 'होमवर जा' },
   'app.analytics': { en: 'Recipe Analytics', de: 'Rezept-Analyse', hi: 'रेसिपी विश्लेषण', mr: 'रेसिपी विश्लेषण' },
   'app.guide': { en: 'All tools', de: 'Alle Werkzeuge', hi: 'सभी टूल', mr: 'सर्व साधने' },
+  'app.faults': { en: 'Beer faults', de: 'Bierfehler', hi: 'बीयर दोष', mr: 'बिअर दोष' },
   'welcome.title': { en: 'All tools', de: 'Alle Werkzeuge', hi: 'सभी टूल', mr: 'सर्व साधने' },
   'welcome.subtitle': {
     en: 'Every calculator in the app, grouped by brew stage. Tap any tool to open it.',
