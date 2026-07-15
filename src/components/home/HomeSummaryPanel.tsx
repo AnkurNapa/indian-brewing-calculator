@@ -1,6 +1,7 @@
 'use client';
 
 import { ComponentType, useState } from 'react';
+import Link from 'next/link';
 import { AppState } from '@/hooks/useWaterProfile';
 import { useShareText } from '@/hooks/useShareText';
 import { FermentationBatch, calculateFermentationStats } from '@/lib/fermentationTracker';
@@ -19,6 +20,7 @@ import { GravityDisplay, GravityUnitToggle, GravityUnit } from '@/components/ui/
 import { SectionCard } from '@/components/ui/SectionCard';
 import { StatHero } from '@/components/ui/StatHero';
 import { StatTile } from '@/components/ui/StatTile';
+import { TargetVsActual, TargetRow } from '@/components/ui/TargetVsActual';
 import { useLanguage } from '@/i18n/LanguageContext';
 
 interface HomeSummaryPanelProps {
@@ -140,6 +142,17 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
   const styleTone: 'good' | 'warn' | 'default' =
     compliance.parametersInRange >= 4 ? 'good' : compliance.parametersInRange <= 2 ? 'warn' : 'default';
 
+  // Target-vs-actual: the planning targets set on /start, compared against the
+  // current recipe's computed values, with BJCP in-style badges. Rows with no
+  // target (0) hide themselves; the whole block shows an empty CTA otherwise.
+  const targetRows: TargetRow[] = [
+    { label: t('home.vitals.abv'), target: state.targetAbvPercent, actual: advancedAbv, unit: '%', range: bjcpStyle.abvPercent, decimals: 1 },
+    { label: t('home.vitals.ibu'), target: state.targetIbu, actual: ibuResult.totalIbu, unit: '', range: bjcpStyle.ibu, decimals: 0 },
+    { label: t('home.targets.finalVolume'), target: state.targetFinalVolumeL, actual: state.batchVolumeL, unit: ' L', decimals: 0 },
+    { label: t('home.targets.co2'), target: state.targetCo2Volumes, unit: '', decimals: 1 },
+  ];
+  const hasTargets = targetRows.some((r) => r.target > 0);
+
   const handleShare = async () => {
     const text = buildRecipeShareText(state, {
       bjcpStyleName: bjcpStyle.name,
@@ -192,6 +205,23 @@ export function HomeSummaryPanel({ state, fermentationBatches, onJumpToTab, proc
           />
         </div>
       </StatHero>
+
+      {/* Target-vs-actual: closes the loop opened by the /start intake. */}
+      <SectionCard title={t('home.targets.title')} icon={StyleCheckIcon} tone="teal">
+        {hasTargets ? (
+          <>
+            <p className="mb-2 text-xs text-ink/60">{t('home.targets.subtitle')}</p>
+            <TargetVsActual rows={targetRows} inStyleLabel={t('start.inStyle')} outStyleLabel={t('start.outOfStyle')} />
+          </>
+        ) : (
+          <p className="text-sm text-ink/60">
+            {t('home.targets.empty')}{' '}
+            <Link href="/start" className="font-semibold text-[#e08b2d] underline decoration-dotted underline-offset-2">
+              {t('app.startBrew')}
+            </Link>
+          </p>
+        )}
+      </SectionCard>
 
       <div className="rounded-lg border-2 border-amber-200 bg-amber-50/40 p-3">
         <div className="flex items-center justify-between">

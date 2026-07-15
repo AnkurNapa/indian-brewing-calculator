@@ -53,6 +53,21 @@ export const coreTranslations = {
   'start.outOfStyle': { en: 'out of style', de: 'außerhalb', hi: 'शैली से बाहर', mr: 'शैलीबाहेर' },
   'start.save': { en: 'Save and open the calculator', de: 'Speichern und Rechner öffnen', hi: 'सहेजें और कैलकुलेटर खोलें', mr: 'जतन करा आणि कॅल्क्युलेटर उघडा' },
   'start.optional': { en: 'optional', de: 'optional', hi: 'वैकल्पिक', mr: 'ऐच्छिक' },
+  'home.targets.title': { en: 'Your targets', de: 'Deine Zielwerte', hi: 'आपके लक्ष्य', mr: 'तुमची उद्दिष्टे' },
+  'home.targets.subtitle': {
+    en: 'How the current recipe tracks to the plan you set.',
+    de: 'Wie das aktuelle Rezept zum geplanten Ziel steht.',
+    hi: 'वर्तमान रेसिपी आपकी योजना के मुकाबले कैसी है।',
+    mr: 'सध्याची रेसिपी तुमच्या योजनेच्या तुलनेत कशी आहे.',
+  },
+  'home.targets.finalVolume': { en: 'Final volume', de: 'Endvolumen', hi: 'अंतिम मात्रा', mr: 'अंतिम प्रमाण' },
+  'home.targets.co2': { en: 'CO₂', de: 'CO₂', hi: 'CO₂', mr: 'CO₂' },
+  'home.targets.empty': {
+    en: 'No targets yet. Plan a brew to set them.',
+    de: 'Noch keine Zielwerte. Plane einen Sud, um sie festzulegen.',
+    hi: 'अभी कोई लक्ष्य नहीं। लक्ष्य तय करने के लिए ब्रू प्लान करें।',
+    mr: 'अजून उद्दिष्टे नाहीत. ती ठरवण्यासाठी ब्रू प्लॅन करा.',
+  },
   'app.stepOf': {
     en: 'Step {current} of {total}',
     de: 'Schritt {current} von {total}',
