@@ -57,6 +57,8 @@ for (const chunk of chunks) {
     increasedBy: pick(fields, 'increased by') ?? null,
     control: pick(fields, 'avoid or control') ?? null,
     appropriate: pick(fields, 'appropriate') ?? null,
+    // Meilgaard Beer Flavor Wheel number; leading digits give the family.
+    wheel: pick(fields, 'flavor wheel number') ?? null,
   });
 }
 

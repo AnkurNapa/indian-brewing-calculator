@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { RouteNav } from '@/components/ui/RouteNav';
 import { useWaterProfile } from '@/hooks/useWaterProfile';
 import { BJCP_STYLES } from '@/lib/bjcpStyles';
+import { FlavorWheel, familyOfWheel, FLAVOR_FAMILIES } from '@/components/analytics/FlavorWheel';
 import faultsData from '../../../public/data/faults.json';
 
 interface Fault {
@@ -16,6 +17,7 @@ interface Fault {
   increasedBy: string | null;
   control: string | null;
   appropriate: string | null;
+  wheel: string | null;
 }
 
 const data = faultsData as {
@@ -71,9 +73,19 @@ export default function FaultsPage() {
   const [mounted, setMounted] = useState(false);
   const [q, setQ] = useState('');
   const [cause, setCause] = useState<string>('all');
+  const [family, setFamily] = useState<string | null>(null);
   useEffect(() => setMounted(true), []);
 
   const faults = data.faults;
+
+  const familyCounts = useMemo(() => {
+    const c: Record<string, number> = {};
+    for (const f of faults) {
+      const k = familyOfWheel(f.wheel);
+      if (k) c[k] = (c[k] ?? 0) + 1;
+    }
+    return c;
+  }, [faults]);
 
   // Phase 2: "watch for in your beer". Style-specific notes (faults whose
   // "when appropriate" text mentions a distinctive token of the brewer's
@@ -96,6 +108,7 @@ export default function FaultsPage() {
     const query = q.trim().toLowerCase();
     return faults.filter((f) => {
       if (cause !== 'all' && !causesOf(f).includes(cause)) return false;
+      if (family && familyOfWheel(f.wheel) !== family) return false;
       if (!query) return true;
       return (
         f.name.toLowerCase().includes(query) ||
@@ -103,7 +116,7 @@ export default function FaultsPage() {
         (f.origins ?? '').toLowerCase().includes(query)
       );
     });
-  }, [q, cause, faults]);
+  }, [q, cause, family, faults]);
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
@@ -143,6 +156,18 @@ export default function FaultsPage() {
           </div>
         </div>
       ) : null}
+
+      {/* Flavor wheel — browse faults by Meilgaard flavor family */}
+      <details className="mb-5 rounded-xl border border-amber-100 bg-white p-3.5 shadow-sm" open>
+        <summary className="cursor-pointer list-none font-display text-sm font-bold uppercase tracking-wide text-amber-900">
+          Beer flavor wheel
+          {family ? <span className="ml-2 font-body text-xs font-semibold normal-case text-teal-700">{FLAVOR_FAMILIES.find((f) => f.key === family)?.label}</span> : null}
+        </summary>
+        <p className="mb-2 mt-1 font-body text-xs text-ink/60">
+          The Meilgaard families. Tap a wedge to spin it up and filter the faults to that flavor.
+        </p>
+        <FlavorWheel counts={familyCounts} selected={family} onSelect={setFamily} />
+      </details>
 
       {/* Search + cause filter */}
       <div className="sticky top-0 z-10 -mx-4 bg-parchment/95 px-4 pb-3 pt-1 backdrop-blur">
