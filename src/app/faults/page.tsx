@@ -1,7 +1,9 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { RouteNav } from '@/components/ui/RouteNav';
+import { useWaterProfile } from '@/hooks/useWaterProfile';
+import { BJCP_STYLES } from '@/lib/bjcpStyles';
 import faultsData from '../../../public/data/faults.json';
 
 interface Fault {
@@ -22,21 +24,42 @@ const data = faultsData as {
   faults: Fault[];
 };
 
-// The senses a fault can show up in, used both as filter chips and as
-// per-fault tags. Each gets an on-brand colour so the page reads at a glance.
+// Senses a fault shows up in — shown as per-card tags.
 const SENSES = [
   { key: 'aroma', label: 'Aroma', chip: 'bg-[#36597f]/10 text-[#36597f] ring-[#36597f]/20' },
   { key: 'flavor', label: 'Flavor', chip: 'bg-[#e08b2d]/10 text-[#c2410c] ring-[#e08b2d]/25' },
   { key: 'mouthfeel', label: 'Mouthfeel', chip: 'bg-teal-50 text-teal-700 ring-teal-200' },
   { key: 'appearance', label: 'Appearance', chip: 'bg-amber-100 text-amber-800 ring-amber-200' },
 ] as const;
-
 const sensesOf = (f: Fault) => SENSES.filter((s) => (f.detectedIn ?? '').toLowerCase().includes(s.key));
 
+// Four broad causes, derived from each fault's stated origins. "Process" is
+// the catch-all for anything that isn't a yeast, contamination or oxidation
+// signature. A fault can carry more than one.
+const CAUSES = [
+  { key: 'yeast', label: 'Yeast' },
+  { key: 'infection', label: 'Infection' },
+  { key: 'oxidation', label: 'Oxidation' },
+  { key: 'process', label: 'Process' },
+] as const;
+function causesOf(f: Fault): string[] {
+  const o = (f.origins ?? '').toLowerCase();
+  const tags: string[] = [];
+  if (/yeast|ferment/.test(o)) tags.push('yeast');
+  if (/microbial|contaminat|bacteri|wild|infection|brett|lacto|pedio|acetobacter|zymomonas|lactic/.test(o)) tags.push('infection');
+  if (/oxidation|oxidi|aeration|stal|aged|aging|light-?struck/.test(o)) tags.push('oxidation');
+  if (!tags.length) tags.push('process');
+  return tags;
+}
+
+// Universally worth-checking faults, plus any whose style notes match the
+// brewer's current style. Names are filtered to what actually exists.
+const CORE_CHECKS = ['Acetaldehyde', 'Buttery', 'Acetic (Sour)', 'Cardboard', 'Astringent', 'Metallic'];
+
 function Field({ label, value, tone = 'default' }: { label: string; value: string; tone?: 'default' | 'fix' | 'ok' }) {
-  const border = tone === 'fix' ? 'border-teal-200 bg-teal-50/40' : tone === 'ok' ? 'border-[#e08b2d]/30 bg-[#e08b2d]/5' : 'border-transparent';
+  const box = tone === 'fix' ? 'border-teal-200 bg-teal-50/50 p-2.5' : tone === 'ok' ? 'border-[#e08b2d]/30 bg-[#e08b2d]/5 p-2.5' : 'border-transparent';
   return (
-    <div className={`rounded-lg border ${border} ${tone === 'default' ? '' : 'p-2.5'}`}>
+    <div className={`rounded-lg border ${box}`}>
       <span className="font-body text-[0.65rem] font-bold uppercase tracking-wide text-amber-700/80">{label}</span>
       <p className="mt-0.5 font-body text-sm leading-relaxed text-ink/80">{value}</p>
     </div>
@@ -44,14 +67,35 @@ function Field({ label, value, tone = 'default' }: { label: string; value: strin
 }
 
 export default function FaultsPage() {
+  const { state } = useWaterProfile();
+  const [mounted, setMounted] = useState(false);
   const [q, setQ] = useState('');
-  const [sense, setSense] = useState<string>('all');
+  const [cause, setCause] = useState<string>('all');
+  useEffect(() => setMounted(true), []);
+
   const faults = data.faults;
+
+  // Phase 2: "watch for in your beer". Style-specific notes (faults whose
+  // "when appropriate" text mentions a distinctive token of the brewer's
+  // style) plus the core checks. Only when a brew has been planned.
+  const styleName = BJCP_STYLES.find((s) => s.id === state.bjcpStyleId)?.name ?? '';
+  const hasBrew = mounted && (Boolean(state.recipeName) || state.grainBill.length > 0);
+  const relevant = useMemo(() => {
+    if (!hasBrew) return [];
+    const stop = new Set(['american', 'english', 'belgian', 'german', 'czech', 'irish', 'standard', 'strong', 'dark', 'pale', 'light', 'international', 'specialty', 'historical', 'other', 'style', 'premium']);
+    const tokens = styleName.toLowerCase().split(/[^a-z]+/).filter((w) => w.length >= 3 && !stop.has(w));
+    const byStyle = tokens.length
+      ? faults.filter((f) => tokens.some((tok) => (f.appropriate ?? '').toLowerCase().includes(tok)))
+      : [];
+    const core = CORE_CHECKS.map((n) => faults.find((f) => f.name === n)).filter(Boolean) as Fault[];
+    const seen = new Set<string>();
+    return [...byStyle, ...core].filter((f) => (seen.has(f.name) ? false : seen.add(f.name))).slice(0, 8);
+  }, [hasBrew, styleName, faults]);
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
     return faults.filter((f) => {
-      if (sense !== 'all' && !(f.detectedIn ?? '').toLowerCase().includes(sense)) return false;
+      if (cause !== 'all' && !causesOf(f).includes(cause)) return false;
       if (!query) return true;
       return (
         f.name.toLowerCase().includes(query) ||
@@ -59,7 +103,7 @@ export default function FaultsPage() {
         (f.origins ?? '').toLowerCase().includes(query)
       );
     });
-  }, [q, sense, faults]);
+  }, [q, cause, faults]);
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
@@ -70,11 +114,37 @@ export default function FaultsPage() {
         </h1>
         <p className="mt-1 max-w-prose font-body text-sm text-ink/70">
           A sensory reference of {data.count} descriptors: what each fault tastes or smells like, where
-          it comes from, its perception threshold, and how to control it.
+          it comes from, and how to fix it. Suspect a problem? Filter by cause or search what you taste.
         </p>
       </div>
 
-      {/* Search + sense filters */}
+      {/* Phase 2: relevance to the current brew */}
+      {hasBrew && relevant.length ? (
+        <div className="mb-5 rounded-xl border border-teal-200 bg-teal-50/50 p-3.5">
+          <h2 className="font-display text-xs font-bold uppercase tracking-wide text-teal-800">
+            Watch for in {styleName || 'your beer'}
+          </h2>
+          <p className="mb-2 mt-0.5 font-body text-xs text-ink/60">Tap a fault to see how to spot and fix it.</p>
+          <div className="flex flex-wrap gap-1.5">
+            {relevant.map((f) => (
+              <button
+                key={f.name}
+                type="button"
+                onClick={() => {
+                  setCause('all');
+                  setQ(f.name);
+                  if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="rounded-full border border-teal-300 bg-white px-2.5 py-1 font-body text-xs font-semibold text-teal-800 transition-colors hover:bg-teal-100"
+              >
+                {f.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Search + cause filter */}
       <div className="sticky top-0 z-10 -mx-4 bg-parchment/95 px-4 pb-3 pt-1 backdrop-blur">
         <input
           type="search"
@@ -84,20 +154,21 @@ export default function FaultsPage() {
           className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 font-body text-sm text-ink focus:border-[#e08b2d] focus:outline-none focus:ring-1 focus:ring-[#e08b2d]/40"
         />
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
-          {[{ key: 'all', label: 'All' }, ...SENSES].map((s) => {
-            const active = sense === s.key;
+          <span className="font-body text-[0.65rem] font-bold uppercase tracking-wide text-ink/40">Cause</span>
+          {[{ key: 'all', label: 'All' }, ...CAUSES].map((c) => {
+            const active = cause === c.key;
             return (
               <button
-                key={s.key}
+                key={c.key}
                 type="button"
-                onClick={() => setSense(s.key)}
+                onClick={() => setCause(c.key)}
                 className={
                   active
                     ? 'rounded-full bg-[#e08b2d] px-3 py-1 font-body text-xs font-bold text-parchment'
                     : 'rounded-full border border-amber-200 bg-white/70 px-3 py-1 font-body text-xs font-semibold text-amber-900 hover:border-[#e08b2d]/60'
                 }
               >
-                {s.label}
+                {c.label}
               </button>
             );
           })}
@@ -126,9 +197,10 @@ export default function FaultsPage() {
                 {f.describedAs ? <p className="mt-1 font-body text-xs italic text-ink/60">{f.describedAs}</p> : null}
               </summary>
               <div className="mt-3 flex flex-col gap-2.5 border-t border-amber-100 pt-3">
+                {/* Fix-forward: the actionable part first. */}
+                {f.control ? <Field label="How to fix / avoid" value={f.control} tone="fix" /> : null}
                 {f.origins ? <Field label="Typical origins" value={f.origins} /> : null}
                 {f.threshold ? <Field label="Perception threshold" value={f.threshold} /> : null}
-                {f.control ? <Field label="How to avoid or control" value={f.control} tone="fix" /> : null}
                 {f.appropriate ? <Field label="When it is appropriate" value={f.appropriate} tone="ok" /> : null}
                 {f.discussion ? <Field label="Discussion" value={f.discussion} /> : null}
               </div>
