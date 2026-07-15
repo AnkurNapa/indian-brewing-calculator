@@ -31,6 +31,13 @@ export const coreTranslations = {
     mr: 'अ‍ॅपमधील प्रत्येक कॅल्क्युलेटर, ब्रू टप्प्यानुसार गटबद्ध. उघडण्यासाठी कोणत्याही साधनावर टॅप करा.',
   },
   'welcome.openApp': { en: 'Open calculator', de: 'Rechner öffnen', hi: 'कैलकुलेटर खोलें', mr: 'कॅल्क्युलेटर उघडा' },
+  'welcome.reference': { en: 'Reference', de: 'Referenz', hi: 'संदर्भ', mr: 'संदर्भ' },
+  'welcome.faultsDesc': {
+    en: 'Off-flavors: what they taste like and how to fix them',
+    de: 'Fehlaromen: wie sie schmecken und wie man sie behebt',
+    hi: 'ऑफ-फ्लेवर: वे कैसे लगते हैं और उन्हें कैसे ठीक करें',
+    mr: 'ऑफ-फ्लेवर: ते कसे लागतात आणि ते कसे दुरुस्त करावे',
+  },
   'welcome.viewAnalytics': { en: 'Recipe Analytics', de: 'Rezept-Analyse', hi: 'रेसिपी विश्लेषण', mr: 'रेसिपी विश्लेषण' },
   'app.startBrew': { en: 'Start a brew', de: 'Sud starten', hi: 'ब्रू शुरू करें', mr: 'ब्रू सुरू करा' },
   'start.title': { en: 'Start a brew', de: 'Einen Sud starten', hi: 'ब्रू शुरू करें', mr: 'ब्रू सुरू करा' },

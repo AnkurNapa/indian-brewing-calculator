@@ -105,6 +105,28 @@ export default function WelcomePage() {
             </section>
           );
         })}
+
+        {/* Reference (non-calculator learning resources) */}
+        <section aria-labelledby="grp-reference">
+          <h2
+            id="grp-reference"
+            className="mb-2 font-display text-xs font-bold uppercase tracking-widest text-amber-700/80"
+          >
+            {t('welcome.reference')}
+          </h2>
+          <Link
+            href="/faults"
+            className="group flex items-center gap-3 rounded-xl border border-amber-100 bg-white px-3 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#e08b2d]/50 hover:shadow-md"
+          >
+            <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-teal-50 text-teal-700 ring-1 ring-teal-100 transition-colors group-hover:bg-[#e08b2d]/10 group-hover:text-[#e08b2d]">
+              <FlaskIcon className="h-5 w-5" />
+            </span>
+            <span className="flex flex-col">
+              <span className="font-body text-sm font-semibold leading-tight text-ink">{t('app.faults')}</span>
+              <span className="font-body text-xs text-ink/60">{t('welcome.faultsDesc')}</span>
+            </span>
+          </Link>
+        </section>
       </div>
     </main>
   );

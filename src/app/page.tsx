@@ -252,6 +252,13 @@ export default function Home() {
           >
             <ChartBarIcon className="h-5 w-5" />
           </Link>
+          <Link
+            href="/faults"
+            aria-label={t('app.faults')}
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-teal-700 hover:bg-teal-50 active:bg-teal-100"
+          >
+            <FlaskIcon className="h-5 w-5" />
+          </Link>
           <ShareAppButton compact />
           <LanguageToggle />
         </div>
