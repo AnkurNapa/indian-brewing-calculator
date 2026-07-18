@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { GrainBillItem, MaltCategory, classifyMaltCategory } from '@/lib/waterChemistry';
 import { WEYERMANN_MALTS } from '@/lib/weyermannMalts';
+import { buildAromaForgeLink } from '@/lib/aromaForge';
 import { INDIAN_GRAINS } from '@/lib/indianIngredients';
 import { useCatalog, MaltOption } from '@/hooks/useCatalog';
 import { solveGrainWeightsByPercent } from '@/lib/efficiency';
@@ -50,7 +51,7 @@ export function GrainBillEditor({
   assumedEfficiencyPercent,
   onAssumedEfficiencyChange,
 }: GrainBillEditorProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [mode, setMode] = useState<BillMode>('weight');
   const maltCategoryOptions = MALT_CATEGORY_OPTION_KEYS.map((opt) => ({ id: opt.id, label: t(opt.labelKey) }));
 
@@ -317,6 +318,46 @@ export function GrainBillEditor({
       <p className="font-body text-sm text-amber-800">
         {t('mashAdjustment.grainBill.totalGristWeight')} <span className="font-semibold">{totalWeightKg.toFixed(2)} kg</span>
       </p>
+
+      {(() => {
+        const aroma = buildAromaForgeLink(grainBill, {
+          volumeL: batchVolumeL,
+          efficiencyPercent: assumedEfficiencyPercent,
+          lang: language,
+        });
+        return (
+          <div className="mt-4 rounded-lg border-2 border-teal-200 bg-teal-50/60 p-4">
+            <h3 className="font-body text-sm font-semibold text-teal-900">
+              {t('mashAdjustment.grainBill.aromaTitle')}
+            </h3>
+            <p className="mt-1 font-body text-xs text-teal-800/80">
+              {t('mashAdjustment.grainBill.aromaHelper')}
+            </p>
+            {aroma.url ? (
+              <>
+                <a
+                  href={aroma.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex min-h-[44px] items-center rounded-md bg-orange-600 px-4 py-2 font-body text-sm font-semibold text-white hover:bg-orange-700 active:bg-orange-800"
+                >
+                  {t('mashAdjustment.grainBill.aromaButton')}
+                </a>
+                <p className="mt-2 font-body text-xs text-teal-800/70">
+                  {t('mashAdjustment.grainBill.aromaMapped', { mapped: String(aroma.mapped) })}
+                  {aroma.skipped > 0
+                    ? t('mashAdjustment.grainBill.aromaSkipped', { skipped: String(aroma.skipped) })
+                    : ''}
+                </p>
+              </>
+            ) : (
+              <p className="mt-3 font-body text-xs text-teal-800/70">
+                {t('mashAdjustment.grainBill.aromaNone')}
+              </p>
+            )}
+          </div>
+        );
+      })()}
     </section>
   );
 }

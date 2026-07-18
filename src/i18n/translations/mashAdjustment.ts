@@ -356,6 +356,43 @@ export const mashAdjustmentTranslations = {
     mr: 'एकूण ग्रिस्ट वजन:',
   },
 
+  'mashAdjustment.grainBill.aromaTitle': {
+    en: 'Predicted malt aroma',
+    de: 'Vorhergesagtes Malzaroma',
+    hi: 'अनुमानित माल्ट सुगंध',
+    mr: 'अंदाजित माल्ट सुगंध',
+  },
+  'mashAdjustment.grainBill.aromaButton': {
+    en: 'Predict aroma in Aroma Forge →',
+    de: 'Aroma in Aroma Forge vorhersagen →',
+    hi: 'Aroma Forge में सुगंध देखें →',
+    mr: 'Aroma Forge मध्ये सुगंध पाहा →',
+  },
+  'mashAdjustment.grainBill.aromaHelper': {
+    en: 'Superimposes the Weyermann Malt Aroma Wheels of your grist to predict flavor, color and style. Opens in a new tab.',
+    de: 'Überlagert die Weyermann Malzaromaräder deiner Schüttung, um Geschmack, Farbe und Stil vorherzusagen. Öffnet in einem neuen Tab.',
+    hi: 'स्वाद, रंग और शैली का अनुमान लगाने के लिए आपके ग्रिस्ट के Weyermann माल्ट एरोमा व्हील्स को सुपरइम्पोज़ करता है। नए टैब में खुलता है।',
+    mr: 'चव, रंग आणि शैलीचा अंदाज घेण्यासाठी तुमच्या ग्रिस्टच्या Weyermann माल्ट अरोमा व्हील्सचे सुपरइम्पोझ करते. नवीन टॅबमध्ये उघडते.',
+  },
+  'mashAdjustment.grainBill.aromaMapped': {
+    en: '{mapped} Weyermann malt(s) mapped',
+    de: '{mapped} Weyermann-Malz(e) zugeordnet',
+    hi: '{mapped} Weyermann माल्ट मैप किए गए',
+    mr: '{mapped} Weyermann माल्ट मॅप केले',
+  },
+  'mashAdjustment.grainBill.aromaSkipped': {
+    en: ' · {skipped} non-Weyermann grain(s) skipped',
+    de: ' · {skipped} Nicht-Weyermann-Malz(e) übersprungen',
+    hi: ' · {skipped} गैर-Weyermann अनाज छोड़े गए',
+    mr: ' · {skipped} गैर-Weyermann धान्य वगळले',
+  },
+  'mashAdjustment.grainBill.aromaNone': {
+    en: 'Add a Weyermann malt to your grist to predict its aroma.',
+    de: 'Füge ein Weyermann-Malz zu deiner Schüttung hinzu, um das Aroma vorherzusagen.',
+    hi: 'सुगंध का अनुमान लगाने के लिए अपने ग्रिस्ट में एक Weyermann माल्ट जोड़ें।',
+    mr: 'सुगंधाचा अंदाज घेण्यासाठी तुमच्या ग्रिस्टमध्ये एक Weyermann माल्ट जोडा.',
+  },
+
   'mashAdjustment.maltCategory.auto': {
     en: 'Auto (by color)',
     de: 'Automatisch (nach Farbe)',
