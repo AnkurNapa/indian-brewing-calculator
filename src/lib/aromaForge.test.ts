@@ -24,6 +24,7 @@ describe('aromaForge bridge', () => {
     expect(decodeURIComponent(res.url!)).toContain('caramunich-type-1:600');
     expect(res.url).toContain('&b=20-72-78');
     expect(res.url).toContain('&l=en');
+    expect(res.url).toContain('&from=ibc');
   });
 
   it('skips custom grains and zero-weight rows, returns null when nothing maps', () => {

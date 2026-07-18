@@ -95,6 +95,8 @@ export function buildAromaForgeLink(
   const eff = Math.round(opts?.efficiencyPercent ?? 72);
   const vol = opts?.volumeL ? Math.round(opts.volumeL) : null;
   const batch = vol ? `&b=${vol}-${eff}-78` : '';
-  const url = `${AROMA_FORGE_BASE}#g=${encodeURIComponent(parts.join(','))}${batch}&l=${aromaLang(opts?.lang)}`;
+  // `from=ibc` tells Aroma Forge it was opened from this calculator, so it can
+  // show a "Back to calculator" link for a two-way round trip.
+  const url = `${AROMA_FORGE_BASE}#g=${encodeURIComponent(parts.join(','))}${batch}&l=${aromaLang(opts?.lang)}&from=ibc`;
   return { url, mapped, skipped };
 }
