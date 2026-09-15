@@ -11,7 +11,7 @@
  *
  * Pure module, no React -- see aromaForge.test.ts for the id integrity check.
  */
-import { WEYERMANN_MALTS } from './weyermannMalts';
+import { maltNameKey, WEYERMANN_MALTS } from './weyermannMalts';
 
 export const AROMA_FORGE_BASE = 'https://ankurnapa.github.io/aroma-forge/';
 
@@ -47,9 +47,9 @@ export const CALC_TO_AROMA_ID: Record<string, string> = {
   acidulated: 'acidulated-malt',
 };
 
-/** Malt name (as stored on a grain-bill row) -> Aroma Forge id. */
+/** Malt name key (see maltNameKey) -> Aroma Forge id. */
 const NAME_TO_AROMA_ID: Record<string, string> = Object.fromEntries(
-  WEYERMANN_MALTS.filter((m) => CALC_TO_AROMA_ID[m.id]).map((m) => [m.name, CALC_TO_AROMA_ID[m.id]]),
+  WEYERMANN_MALTS.filter((m) => CALC_TO_AROMA_ID[m.id]).map((m) => [maltNameKey(m.name), CALC_TO_AROMA_ID[m.id]]),
 );
 
 export interface AromaBridgeRow {
@@ -82,7 +82,7 @@ export function buildAromaForgeLink(
     const name = (row.name ?? '').trim();
     const grams = Math.round((row.weightKg ?? 0) * 1000);
     if (grams <= 0 || !name) continue;
-    const aromaId = NAME_TO_AROMA_ID[name];
+    const aromaId = NAME_TO_AROMA_ID[maltNameKey(name)];
     if (aromaId) {
       parts.push(`${aromaId}:${grams}`);
       mapped += 1;

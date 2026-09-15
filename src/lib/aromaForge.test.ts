@@ -13,8 +13,8 @@ describe('aromaForge bridge', () => {
 
   it('builds a deep link with mapped malts as id:grams', () => {
     const rows = [
-      { name: 'Weyermann Pilsner Malt', weightKg: 4 },
-      { name: 'Weyermann CaraMunich I', weightKg: 0.6 },
+      { name: 'Weyermann® Pilsner Malt', weightKg: 4 },
+      { name: 'Weyermann® CARAMUNICH® I', weightKg: 0.6 },
     ];
     const res = buildAromaForgeLink(rows, { volumeL: 20, efficiencyPercent: 72, lang: 'en' });
     expect(res.mapped).toBe(2);
@@ -30,15 +30,25 @@ describe('aromaForge bridge', () => {
   it('skips custom grains and zero-weight rows, returns null when nothing maps', () => {
     const res = buildAromaForgeLink([
       { name: 'Bangalore Six-Row', weightKg: 3 },
-      { name: 'Weyermann Pilsner Malt', weightKg: 0 },
+      { name: 'Weyermann® Pilsner Malt', weightKg: 0 },
     ]);
     expect(res.mapped).toBe(0);
     expect(res.skipped).toBe(1);
     expect(res.url).toBeNull();
   });
 
+  it('still maps rows saved under the old names without ®', () => {
+    const res = buildAromaForgeLink([
+      { name: 'Weyermann CaraMunich I', weightKg: 0.6 },
+      { name: 'Weyermann Carafa I (Special/Dehusked)', weightKg: 0.2 },
+    ]);
+    expect(res.mapped).toBe(2);
+    expect(decodeURIComponent(res.url!)).toContain('caramunich-type-1:600');
+    expect(decodeURIComponent(res.url!)).toContain('carafa-special-type-1:200');
+  });
+
   it('falls back to en for hi/mr', () => {
-    const res = buildAromaForgeLink([{ name: 'Weyermann Pilsner Malt', weightKg: 4 }], { lang: 'hi' });
+    const res = buildAromaForgeLink([{ name: 'Weyermann® Pilsner Malt', weightKg: 4 }], { lang: 'hi' });
     expect(res.url).toContain('&l=en');
   });
 });

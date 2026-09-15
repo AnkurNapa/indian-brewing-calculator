@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { GrainBillItem, MaltCategory, classifyMaltCategory } from '@/lib/waterChemistry';
-import { WEYERMANN_MALTS } from '@/lib/weyermannMalts';
+import { WEYERMANN_MALTS, maltNameKey } from '@/lib/weyermannMalts';
 import { buildAromaForgeLink } from '@/lib/aromaForge';
 import { INDIAN_GRAINS } from '@/lib/indianIngredients';
 import { useCatalog, MaltOption } from '@/hooks/useCatalog';
@@ -58,9 +58,9 @@ export function GrainBillEditor({
   // Curated presets + the lazy-loaded supplier malt catalogue (288 malts).
   const catalogMalts = useCatalog<MaltOption>('malts');
   const allMalts = useMemo(() => {
-    const seen = new Set(GRAIN_PRESETS.map((p) => p.name.toLowerCase()));
+    const seen = new Set(GRAIN_PRESETS.map((p) => maltNameKey(p.name)));
     const fromCatalog = catalogMalts
-      .filter((m) => !seen.has(m.name.toLowerCase()))
+      .filter((m) => !seen.has(maltNameKey(m.name)))
       .map((m, i) => ({
         id: `cat-malt-${i}`,
         name: m.name,
@@ -225,7 +225,7 @@ export function GrainBillEditor({
             <SearchableSelect
               label={t('mashAdjustment.grainBill.quickFillLabel')}
               placeholder={t('mashAdjustment.grainBill.quickFillPlaceholder')}
-              value={allMalts.find((m) => m.name === row.name)?.id ?? ''}
+              value={allMalts.find((m) => maltNameKey(m.name) === maltNameKey(row.name))?.id ?? ''}
               options={allMalts.map((malt) => ({ id: malt.id, label: malt.label }))}
               onChange={(id) => {
                 const malt = allMalts.find((m) => m.id === id);
